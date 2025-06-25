@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Brief Generator</title>
+    
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    
+    <!-- Bootstrap für schönes Design -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 10px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 100%;
+            padding: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .btn-primary {
+            background-color: #0078d4;
+            border-color: #0078d4;
+        }
+        .btn-primary:hover {
+            background-color: #106ebe;
+            border-color: #106ebe;
+        }
+        .card {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: none;
+        }
+        .card-header {
+            background-color: #0078d4;
+            color: white;
+            font-weight: bold;
+        }
+        #status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">📝 Brief Generator</h4>
+            </div>
+            <div class="card-body">
+                <form id="briefForm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="absenderName" class="form-label">Absender Name *</label>
+                                <input type="text" class="form-control" id="absenderName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="absenderFirma" class="form-label">Firma</label>
+                                <input type="text" class="form-control" id="absenderFirma">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="absenderStrasse" class="form-label">Straße</label>
+                                <input type="text" class="form-control" id="absenderStrasse">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="absenderOrt" class="form-label">PLZ / Ort</label>
+                                <input type="text" class="form-control" id="absenderOrt">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empfaengerName" class="form-label">Empfänger Name *</label>
+                                <input type="text" class="form-control" id="empfaengerName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empfaengerFirma" class="form-label">Firma</label>
+                                <input type="text" class="form-control" id="empfaengerFirma">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empfaengerStrasse" class="form-label">Straße</label>
+                                <input type="text" class="form-control" id="empfaengerStrasse">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empfaengerOrt" class="form-label">PLZ / Ort</label>
+                                <input type="text" class="form-control" id="empfaengerOrt">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="form-group">
+                        <label for="betreff" class="form-label">Betreff *</label>
+                        <input type="text" class="form-control" id="betreff" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="anrede" class="form-label">Anrede</label>
+                        <select class="form-control" id="anrede">
+                            <option value="Sehr geehrte Damen und Herren">Sehr geehrte Damen und Herren</option>
+                            <option value="Sehr geehrte Frau">Sehr geehrte Frau</option>
+                            <option value="Sehr geehrter Herr">Sehr geehrter Herr</option>
+                            <option value="Liebe">Liebe</option>
+                            <option value="Lieber">Lieber</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="brieftext" class="form-label">Brieftext *</label>
+                        <textarea class="form-control" id="brieftext" rows="6" required 
+                                  placeholder="Geben Sie hier den Inhalt Ihres Briefes ein..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gruss" class="form-label">Grußformel</label>
+                        <select class="form-control" id="gruss">
+                            <option value="Mit freundlichen Grüßen">Mit freundlichen Grüßen</option>
+                            <option value="Mit besten Grüßen">Mit besten Grüßen</option>
+                            <option value="Hochachtungsvoll">Hochachtungsvoll</option>
+                            <option value="Viele Grüße">Viele Grüße</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            📄 Brief in Word erstellen
+                        </button>
+                    </div>
+                </form>
+
+                <div id="status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Office.js Initialisierung
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Word) {
+                console.log('Word Add-In ist bereit');
+                document.getElementById('briefForm').addEventListener('submit', erstelleBrief);
+            } else {
+                showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
+            }
+        });
+
+        // Status anzeigen
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status-${type}`;
+            statusElement.style.display = 'block';
+            
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Hauptfunktion: Brief erstellen
+        async function erstelleBrief(event) {
+            event.preventDefault();
+            
+            try {
+                showStatus('Brief wird erstellt...', 'info');
+                
+                // Formulardaten sammeln
+                const formData = {
+                    absenderName: document.getElementById('absenderName').value,
+                    absenderFirma: document.getElementById('absenderFirma').value,
+                    absenderStrasse: document.getElementById('absenderStrasse').value,
+                    absenderOrt: document.getElementById('absenderOrt').value,
+                    empfaengerName: document.getElementById('empfaengerName').value,
+                    empfaengerFirma: document.getElementById('empfaengerFirma').value,
+                    empfaengerStrasse: document.getElementById('empfaengerStrasse').value,
+                    empfaengerOrt: document.getElementById('empfaengerOrt').value,
+                    betreff: document.getElementById('betreff').value,
+                    anrede: document.getElementById('anrede').value,
+                    brieftext: document.getElementById('brieftext').value,
+                    gruss: document.getElementById('gruss').value
+                };
+
+                // Validation
+                if (!formData.absenderName || !formData.empfaengerName || !formData.betreff || !formData.brieftext) {
+                    showStatus('Bitte füllen Sie alle Pflichtfelder (*) aus', 'error');
+                    return;
+                }
+
+                // Word-Dokument erstellen
+                await Word.run(async (context) => {
+                    // Dokument leeren
+                    context.document.body.clear();
+                    
+                    // Datum (rechtsbündig)
+                    const datumParagraph = context.document.body.insertParagraph(
+                        new Date().toLocaleDateString('de-DE', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        }), 
+                        Word.InsertLocation.end
+                    );
+                    datumParagraph.alignment = Word.Alignment.right;
+                    datumParagraph.spaceAfter = 24;
+
+                    // Absender
+                    if (formData.absenderName) {
+                        const absenderText = [
+                            formData.absenderName,
+                            formData.absenderFirma,
+                            formData.absenderStrasse,
+                            formData.absenderOrt
+                        ].filter(line => line && line.trim()).join('\n');
+                        
+                        const absenderParagraph = context.document.body.insertParagraph(absenderText, Word.InsertLocation.end);
+                        absenderParagraph.spaceAfter = 24;
+                    }
+
+                    // Empfänger
+                    const empfaengerText = [
+                        formData.empfaengerName,
+                        formData.empfaengerFirma,
+                        formData.empfaengerStrasse,
+                        formData.empfaengerOrt
+                    ].filter(line => line && line.trim()).join('\n');
+                    
+                    const empfaengerParagraph = context.document.body.insertParagraph(empfaengerText, Word.InsertLocation.end);
+                    empfaengerParagraph.spaceAfter = 24;
+
+                    // Betreff
+                    const betreffParagraph = context.document.body.insertParagraph(`Betreff: ${formData.betreff}`, Word.InsertLocation.end);
+                    betreffParagraph.font.bold = true;
+                    betreffParagraph.spaceAfter = 24;
+
+                    // Anrede
+                    let anredeText = formData.anrede;
+                    if (formData.anrede.includes('Frau') || formData.anrede.includes('Herr') || formData.anrede.includes('Liebe') || formData.anrede.includes('Lieber')) {
+                        // Wenn Name benötigt wird, nehmen wir den Empfängernamen
+                        const vorname = formData.empfaengerName.split(' ')[0];
+                        anredeText += ` ${vorname}`;
+                    }
+                    anredeText += ',';
+                    
+                    const anredeParagraph = context.document.body.insertParagraph(anredeText, Word.InsertLocation.end);
+                    anredeParagraph.spaceAfter = 12;
+
+                    // Brieftext
+                    const brieftextParagraph = context.document.body.insertParagraph(formData.brieftext, Word.InsertLocation.end);
+                    brieftextParagraph.spaceAfter = 24;
+
+                    // Grußformel
+                    const grussParagraph = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
+                    grussParagraph.spaceAfter = 60; // Platz für Unterschrift
+
+                    // Unterschriftszeile
+                    const unterschriftParagraph = context.document.body.insertParagraph(formData.absenderName, Word.InsertLocation.end);
+
+                    // Änderungen synchronisieren
+                    await context.sync();
+                });
+
+                showStatus('Brief wurde erfolgreich erstellt!', 'success');
+                
+                // Formular zurücksetzen (optional)
+                // document.getElementById('briefForm').reset();
+                
+            } catch (error) {
+                console.error('Fehler beim Erstellen des Briefes:', error);
+                showStatus('Fehler beim Erstellen des Briefes: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
