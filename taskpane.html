@@ -63,48 +63,50 @@
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
+        .standort-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            font-size: 0.85em;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <h4 class="mb-0">📝 Brief Generator</h4>
+                <h4 class="mb-0">📝 Brief Generator Pro</h4>
             </div>
             <div class="card-body">
                 <form id="briefForm">
+                    <!-- Standort Auswahl -->
                     <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="standort" class="form-label">Standort *</label>
+                                <select class="form-control" id="standort" required>
+                                    <option value="">-- Standort auswählen --</option>
+                                    <option value="zuerich">🏢 Zürich Hauptsitz</option>
+                                    <option value="basel">🏭 Basel Niederlassung</option>
+                                    <option value="bern">🏛️ Bern Büro</option>
+                                </select>
+                                <div id="standortPreview" class="standort-preview"></div>
+                            </div>
+                        </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="absenderName" class="form-label">Absender Name *</label>
                                 <input type="text" class="form-control" id="absenderName" required>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="absenderFirma" class="form-label">Firma</label>
-                                <input type="text" class="form-control" id="absenderFirma">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="absenderStrasse" class="form-label">Straße</label>
-                                <input type="text" class="form-control" id="absenderStrasse">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="absenderOrt" class="form-label">PLZ / Ort</label>
-                                <input type="text" class="form-control" id="absenderOrt">
-                            </div>
-                        </div>
                     </div>
 
                     <hr class="my-4">
 
+                    <!-- Empfänger Daten -->
+                    <h5 class="mb-3">📮 Empfänger</h5>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -137,20 +139,37 @@
 
                     <hr class="my-4">
 
+                    <!-- Brief Inhalt -->
+                    <h5 class="mb-3">✉️ Brief Inhalt</h5>
                     <div class="form-group">
                         <label for="betreff" class="form-label">Betreff *</label>
                         <input type="text" class="form-control" id="betreff" required>
                     </div>
 
-                    <div class="form-group">
-                        <label for="anrede" class="form-label">Anrede</label>
-                        <select class="form-control" id="anrede">
-                            <option value="Sehr geehrte Damen und Herren">Sehr geehrte Damen und Herren</option>
-                            <option value="Sehr geehrte Frau">Sehr geehrte Frau</option>
-                            <option value="Sehr geehrter Herr">Sehr geehrter Herr</option>
-                            <option value="Liebe">Liebe</option>
-                            <option value="Lieber">Lieber</option>
-                        </select>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="anrede" class="form-label">Anrede</label>
+                                <select class="form-control" id="anrede">
+                                    <option value="Sehr geehrte Damen und Herren">Sehr geehrte Damen und Herren</option>
+                                    <option value="Sehr geehrte Frau">Sehr geehrte Frau</option>
+                                    <option value="Sehr geehrter Herr">Sehr geehrter Herr</option>
+                                    <option value="Liebe">Liebe</option>
+                                    <option value="Lieber">Lieber</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="gruss" class="form-label">Grußformel</label>
+                                <select class="form-control" id="gruss">
+                                    <option value="Mit freundlichen Grüßen">Mit freundlichen Grüßen</option>
+                                    <option value="Mit besten Grüßen">Mit besten Grüßen</option>
+                                    <option value="Hochachtungsvoll">Hochachtungsvoll</option>
+                                    <option value="Viele Grüße">Viele Grüße</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -159,19 +178,9 @@
                                   placeholder="Geben Sie hier den Inhalt Ihres Briefes ein..."></textarea>
                     </div>
 
-                    <div class="form-group">
-                        <label for="gruss" class="form-label">Grußformel</label>
-                        <select class="form-control" id="gruss">
-                            <option value="Mit freundlichen Grüßen">Mit freundlichen Grüßen</option>
-                            <option value="Mit besten Grüßen">Mit besten Grüßen</option>
-                            <option value="Hochachtungsvoll">Hochachtungsvoll</option>
-                            <option value="Viele Grüße">Viele Grüße</option>
-                        </select>
-                    </div>
-
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary btn-lg">
-                            📄 Brief in Word erstellen
+                            📄 Professionellen Brief erstellen
                         </button>
                     </div>
                 </form>
@@ -182,15 +191,71 @@
     </div>
 
     <script>
+        // Standort-Konfigurationen
+        const standortConfig = {
+            zuerich: {
+                name: "KSH Zürich AG",
+                adresse: "Bahnhofstrasse 123\n8001 Zürich\nSchweiz",
+                telefon: "+41 44 123 45 67",
+                email: "info@ksh-zuerich.ch",
+                web: "www.ksh-zuerich.ch",
+                iban: "CH93 0076 2011 6238 5295 7",
+                uid: "CHE-123.456.789",
+                headerColor: "#0078d4",
+                logo: "🏢"
+            },
+            basel: {
+                name: "KSH Basel GmbH",
+                adresse: "Steinenring 456\n4001 Basel\nSchweiz", 
+                telefon: "+41 61 987 65 43",
+                email: "basel@ksh-gruppe.ch",
+                web: "www.ksh-basel.ch",
+                iban: "CH89 0076 2011 6238 5295 8",
+                uid: "CHE-987.654.321",
+                headerColor: "#d13438",
+                logo: "🏭"
+            },
+            bern: {
+                name: "KSH Bern Büro",
+                adresse: "Bundesplatz 789\n3001 Bern\nSchweiz",
+                telefon: "+41 31 555 44 33", 
+                email: "bern@ksh-gruppe.ch",
+                web: "www.ksh-bern.ch",
+                iban: "CH76 0076 2011 6238 5295 9",
+                uid: "CHE-555.444.333",
+                headerColor: "#28a745",
+                logo: "🏛️"
+            }
+        };
+
         // Office.js Initialisierung
         Office.onReady((info) => {
             if (info.host === Office.HostType.Word) {
                 console.log('Word Add-In ist bereit');
                 document.getElementById('briefForm').addEventListener('submit', erstelleBrief);
+                document.getElementById('standort').addEventListener('change', showStandortPreview);
             } else {
                 showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
             }
         });
+
+        // Standort-Vorschau anzeigen
+        function showStandortPreview() {
+            const standort = document.getElementById('standort').value;
+            const previewDiv = document.getElementById('standortPreview');
+            
+            if (standort && standortConfig[standort]) {
+                const config = standortConfig[standort];
+                previewDiv.innerHTML = `
+                    <strong>${config.logo} ${config.name}</strong><br>
+                    <small>${config.adresse.split('\n').join(', ')}<br>
+                    Tel: ${config.telefon} | E-Mail: ${config.email}</small>
+                `;
+                previewDiv.style.display = 'block';
+            } else {
+                previewDiv.style.display = 'none';
+            }
+        }
 
         // Status anzeigen
         function showStatus(message, type) {
@@ -215,10 +280,8 @@
                 
                 // Formulardaten sammeln
                 const formData = {
+                    standort: document.getElementById('standort').value,
                     absenderName: document.getElementById('absenderName').value,
-                    absenderFirma: document.getElementById('absenderFirma').value,
-                    absenderStrasse: document.getElementById('absenderStrasse').value,
-                    absenderOrt: document.getElementById('absenderOrt').value,
                     empfaengerName: document.getElementById('empfaengerName').value,
                     empfaengerFirma: document.getElementById('empfaengerFirma').value,
                     empfaengerStrasse: document.getElementById('empfaengerStrasse').value,
@@ -230,42 +293,67 @@
                 };
 
                 // Validation
-                if (!formData.absenderName || !formData.empfaengerName || !formData.betreff || !formData.brieftext) {
+                if (!formData.standort || !formData.absenderName || !formData.empfaengerName || !formData.betreff || !formData.brieftext) {
                     showStatus('Bitte füllen Sie alle Pflichtfelder (*) aus', 'error');
                     return;
                 }
+
+                const config = standortConfig[formData.standort];
 
                 // Word-Dokument erstellen
                 await Word.run(async (context) => {
                     // Dokument leeren
                     context.document.body.clear();
                     
-                    // Datum (rechtsbündig)
+                    // === HEADER ERSTELLEN ===
+                    const headerRange = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
+                    headerRange.clear();
+                    
+                    // Header-Tabelle für Layout
+                    const headerTable = headerRange.insertTable(2, 2, Word.InsertLocation.start);
+                    headerTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                    
+                    // Firmenlogo und Name (große Zelle oben links)
+                    const logoCell = headerTable.getCell(0, 0);
+                    const logoParagraph = logoCell.body.insertParagraph(`${config.logo} ${config.name}`, Word.InsertLocation.start);
+                    logoParagraph.font.size = 20;
+                    logoParagraph.font.bold = true;
+                    logoParagraph.font.color = config.headerColor;
+                    
+                    // Kontakt-Info (oben rechts)
+                    const kontaktCell = headerTable.getCell(0, 1);
+                    const kontaktText = `Tel: ${config.telefon}\nE-Mail: ${config.email}\nWeb: ${config.web}`;
+                    const kontaktParagraph = kontaktCell.body.insertParagraph(kontaktText, Word.InsertLocation.start);
+                    kontaktParagraph.font.size = 10;
+                    kontaktParagraph.alignment = Word.Alignment.right;
+                    
+                    // Adresse (unten links)
+                    const adressCell = headerTable.getCell(1, 0);
+                    const adressParagraph = adressCell.body.insertParagraph(config.adresse, Word.InsertLocation.start);
+                    adressParagraph.font.size = 10;
+                    
+                    // Leere Zelle unten rechts für Layout
+                    const emptyCell = headerTable.getCell(1, 1);
+                    emptyCell.body.insertParagraph("", Word.InsertLocation.start);
+                    
+                    // Header-Abstand
+                    headerRange.insertParagraph("", Word.InsertLocation.end);
+                    
+                    // === BRIEF-INHALT ===
+                    
+                    // Datum mit Standort (rechtsbündig)
                     const datumParagraph = context.document.body.insertParagraph(
-                        new Date().toLocaleDateString('de-DE', { 
+                        `${config.name.split(' ')[1]}, ${new Date().toLocaleDateString('de-CH', { 
                             year: 'numeric', 
                             month: 'long', 
                             day: 'numeric' 
-                        }), 
+                        })}`, 
                         Word.InsertLocation.end
                     );
                     datumParagraph.alignment = Word.Alignment.right;
-                    datumParagraph.spaceAfter = 24;
+                    datumParagraph.spaceAfter = 36;
 
-                    // Absender
-                    if (formData.absenderName) {
-                        const absenderText = [
-                            formData.absenderName,
-                            formData.absenderFirma,
-                            formData.absenderStrasse,
-                            formData.absenderOrt
-                        ].filter(line => line && line.trim()).join('\n');
-                        
-                        const absenderParagraph = context.document.body.insertParagraph(absenderText, Word.InsertLocation.end);
-                        absenderParagraph.spaceAfter = 24;
-                    }
-
-                    // Empfänger
+                    // Empfänger-Adresse
                     const empfaengerText = [
                         formData.empfaengerName,
                         formData.empfaengerFirma,
@@ -274,17 +362,17 @@
                     ].filter(line => line && line.trim()).join('\n');
                     
                     const empfaengerParagraph = context.document.body.insertParagraph(empfaengerText, Word.InsertLocation.end);
-                    empfaengerParagraph.spaceAfter = 24;
+                    empfaengerParagraph.spaceAfter = 36;
 
-                    // Betreff
+                    // Betreff (fett und mit Farbe)
                     const betreffParagraph = context.document.body.insertParagraph(`Betreff: ${formData.betreff}`, Word.InsertLocation.end);
                     betreffParagraph.font.bold = true;
+                    betreffParagraph.font.color = config.headerColor;
                     betreffParagraph.spaceAfter = 24;
 
                     // Anrede
                     let anredeText = formData.anrede;
                     if (formData.anrede.includes('Frau') || formData.anrede.includes('Herr') || formData.anrede.includes('Liebe') || formData.anrede.includes('Lieber')) {
-                        // Wenn Name benötigt wird, nehmen wir den Empfängernamen
                         const vorname = formData.empfaengerName.split(' ')[0];
                         anredeText += ` ${vorname}`;
                     }
@@ -293,9 +381,10 @@
                     const anredeParagraph = context.document.body.insertParagraph(anredeText, Word.InsertLocation.end);
                     anredeParagraph.spaceAfter = 12;
 
-                    // Brieftext
+                    // Brieftext (mit Blocksatz)
                     const brieftextParagraph = context.document.body.insertParagraph(formData.brieftext, Word.InsertLocation.end);
                     brieftextParagraph.spaceAfter = 24;
+                    brieftextParagraph.alignment = Word.Alignment.justified;
 
                     // Grußformel
                     const grussParagraph = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
@@ -303,15 +392,43 @@
 
                     // Unterschriftszeile
                     const unterschriftParagraph = context.document.body.insertParagraph(formData.absenderName, Word.InsertLocation.end);
+                    unterschriftParagraph.spaceAfter = 24;
+                    
+                    // === FOOTER ERSTELLEN ===
+                    const footerRange = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
+                    footerRange.clear();
+                    
+                    // Footer-Linie (mit Farbe)
+                    const footerLine = footerRange.insertParagraph("────────────────────────────────────────────────────────────────────────", Word.InsertLocation.start);
+                    footerLine.font.color = config.headerColor;
+                    footerLine.font.size = 8;
+                    
+                    // Footer-Tabelle für Firmeninformationen
+                    const footerTable = footerRange.insertTable(1, 3, Word.InsertLocation.end);
+                    footerTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                    
+                    // Adress-Spalte
+                    const footerAdressCell = footerTable.getCell(0, 0);
+                    const footerAdressParagraph = footerAdressCell.body.insertParagraph(`Adresse:\n${config.adresse}`, Word.InsertLocation.start);
+                    footerAdressParagraph.font.size = 8;
+                    
+                    // Kontakt-Spalte  
+                    const footerKontaktCell = footerTable.getCell(0, 1);
+                    const footerKontaktText = `Kontakt:\nTel: ${config.telefon}\nE-Mail: ${config.email}\nWeb: ${config.web}`;
+                    const footerKontaktParagraph = footerKontaktCell.body.insertParagraph(footerKontaktText, Word.InsertLocation.start);
+                    footerKontaktParagraph.font.size = 8;
+                    
+                    // Banking-Spalte
+                    const footerBankingCell = footerTable.getCell(0, 2);
+                    const footerBankingText = `Banking:\nIBAN: ${config.iban}\nUID: ${config.uid}`;
+                    const footerBankingParagraph = footerBankingCell.body.insertParagraph(footerBankingText, Word.InsertLocation.start);
+                    footerBankingParagraph.font.size = 8;
 
                     // Änderungen synchronisieren
                     await context.sync();
                 });
 
-                showStatus('Brief wurde erfolgreich erstellt!', 'success');
-                
-                // Formular zurücksetzen (optional)
-                // document.getElementById('briefForm').reset();
+                showStatus('Professioneller Brief wurde erfolgreich erstellt!', 'success');
                 
             } catch (error) {
                 console.error('Fehler beim Erstellen des Briefes:', error);
