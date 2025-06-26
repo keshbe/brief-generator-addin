@@ -455,11 +455,12 @@
             it: 'Les Fils Dreyfus & Cie SA, Banquiers'
         };
 
+        // KORRIGIERT: Footer-Taglines für alle Sprachen
         const footerTaglines = {
             de: 'Einzigartig aufgehoben.',
-            en: '', // Kein Tagline im englischen Dokument
-            fr: '', // Kein Tagline im französischen Dokument
-            it: ''  // Kein Tagline im italienischen Dokument
+            en: 'In trusted hands.',
+            fr: 'En de bonnes mains.',
+            it: 'En de bonnes mains.'
         };
 
         // Office.js Initialisierung
@@ -979,16 +980,17 @@
                                 footerParagraph.lineSpacing = 1.0;
                             });
                             
-                            // Tagline nur für Deutsch
-                            if (sprachCode === 'de') {
-                                // Leere Zeile vor "Einzigartig aufgehoben."
+                            // KORRIGIERT: Tagline für alle Sprachen
+                            const tagline = footerTaglines[sprachCode];
+                            if (tagline) {
+                                // Leere Zeile vor dem Tagline
                                 const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
                                 emptyParagraph.spaceAfter = 0;
                                 emptyParagraph.spaceBefore = 0;
                                 emptyParagraph.font.size = 8;
                                 
-                                // Füge "Einzigartig aufgehoben." ein
-                                const taglineParagraph = footer.insertParagraph('Einzigartig aufgehoben.', Word.InsertLocation.end);
+                                // Füge den sprachspezifischen Tagline ein
+                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.size = 8;
                                 taglineParagraph.font.color = '#7a7a7a';
                                 taglineParagraph.alignment = Word.Alignment.center;
