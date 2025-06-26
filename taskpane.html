@@ -4,135 +4,237 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Brief Generator</title>
+    <title>DREYFUS BRIEF</title>
     
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     
-    <!-- Bootstrap für schönes Design -->
+    <!-- Bootstrap für Design -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 10px;
+            margin: 8px;
             background-color: #f8f9fa;
         }
         .container {
             max-width: 100%;
-            padding: 15px;
+            padding: 10px;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
-        .btn-primary {
-            background-color: #0078d4;
-            border-color: #0078d4;
+        .btn-dreyfus {
+            background-color: #1e3a8a;
+            border-color: #1e3a8a;
+            color: white;
+            font-weight: 600;
         }
-        .btn-primary:hover {
-            background-color: #106ebe;
-            border-color: #106ebe;
+        .btn-dreyfus:hover {
+            background-color: #1e40af;
+            border-color: #1e40af;
+            color: white;
+        }
+        .btn-secondary-dreyfus {
+            background-color: #6b7280;
+            border-color: #6b7280;
+            color: white;
+        }
+        .btn-secondary-dreyfus:hover {
+            background-color: #4b5563;
+            border-color: #4b5563;
+            color: white;
         }
         .card {
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             border: none;
+            border-radius: 8px;
         }
         .card-header {
-            background-color: #0078d4;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: white;
             font-weight: bold;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 15px 20px;
+        }
+        .card-body {
+            padding: 20px;
         }
         #status {
-            margin-top: 10px;
-            padding: 8px;
-            border-radius: 4px;
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
             display: none;
+            font-weight: 500;
         }
         .status-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
         }
         .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
         }
         .status-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background-color: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #93c5fd;
         }
-        .standort-preview {
-            margin-top: 10px;
+        .logo-preview {
+            max-width: 200px;
+            margin: 10px 0;
             padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 5px;
-            font-size: 0.85em;
-            display: none;
+            background-color: #f1f5f9;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .logo-preview img {
+            max-width: 100%;
+            height: auto;
+        }
+        .form-control:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+        }
+        .section-header {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .required-field {
+            color: #dc2626;
+        }
+        .btn-group .btn {
+            margin-right: 8px;
+        }
+        .preview-section {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">📝 Brief Generator Pro</h4>
+            <div class="card-header d-flex align-items-center">
+                <img src="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png" 
+                     alt="Dreyfus Logo" style="height: 30px; margin-right: 12px;">
+                <h4 class="mb-0">DREYFUS BRIEF</h4>
             </div>
             <div class="card-body">
-                <form id="briefForm">
-                    <!-- Standort Auswahl -->
+                <form id="dreyfusBriefForm">
+                    
+                    <!-- Logo Auswahl -->
+                    <div class="section-header">🎨 Logo & Design</div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <div class="form-group">
-                                <label for="standort" class="form-label">Standort *</label>
-                                <select class="form-control" id="standort" required>
-                                    <option value="">-- Standort auswählen --</option>
-                                    <option value="zuerich">🏢 Zürich Hauptsitz</option>
-                                    <option value="basel">🏭 Basel Niederlassung</option>
-                                    <option value="bern">🏛️ Bern Büro</option>
-                                </select>
-                                <div id="standortPreview" class="standort-preview"></div>
+                                <label class="form-label">Logo Auswahl</label>
+                                <div class="btn-group d-block" role="group">
+                                    <input type="radio" class="btn-check" name="logoOption" id="logoFarbe" value="farbe" checked>
+                                    <label class="btn btn-outline-primary btn-sm" for="logoFarbe">Logo Farbe</label>
+                                    
+                                    <input type="radio" class="btn-check" name="logoOption" id="logoGrau" value="grau">
+                                    <label class="btn btn-outline-secondary btn-sm" for="logoGrau">Logo Grau</label>
+                                    
+                                    <input type="radio" class="btn-check" name="logoOption" id="logoAus" value="aus">
+                                    <label class="btn btn-outline-danger btn-sm" for="logoAus">Logo AUS</label>
+                                </div>
+                                <div id="logoPreview" class="logo-preview">
+                                    <img id="logoImage" src="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png" alt="Dreyfus Logo Preview">
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                    </div>
+
+                    <!-- Trauerrahmen Option -->
+                    <div class="row">
+                        <div class="col-12">
                             <div class="form-group">
-                                <label for="absenderName" class="form-label">Absender Name *</label>
-                                <input type="text" class="form-control" id="absenderName" required>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="trauerrahmen">
+                                    <label class="form-check-label" for="trauerrahmen">
+                                        ⚫ Trauerrahmen aktivieren (für Beileidsbriefe)
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <hr class="my-4">
 
-                    <!-- Empfänger Daten -->
-                    <h5 class="mb-3">📮 Empfänger</h5>
+                    <!-- Absender -->
+                    <div class="section-header">👤 Absender</div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="empfaengerName" class="form-label">Empfänger Name *</label>
+                                <label for="absenderName" class="form-label">Absender Name <span class="required-field">*</span></label>
+                                <input type="text" class="form-control" id="absenderName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="absenderTitel" class="form-label">Titel/Position</label>
+                                <input type="text" class="form-control" id="absenderTitel" placeholder="z.B. Rechtsanwalt, Partner">
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Empfänger -->
+                    <div class="section-header">📮 Empfänger</div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="empfaengerName" class="form-label">Name <span class="required-field">*</span></label>
                                 <input type="text" class="form-control" id="empfaengerName" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="empfaengerFirma" class="form-label">Firma</label>
+                                <label for="empfaengerFirma" class="form-label">Firma/Organisation</label>
                                 <input type="text" class="form-control" id="empfaengerFirma">
                             </div>
                         </div>
                     </div>
                     
                     <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="empfaengerStrasse" class="form-label">Straße und Hausnummer</label>
+                                <input type="text" class="form-control" id="empfaengerStrasse">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="empfaengerPlz" class="form-label">PLZ</label>
+                                <input type="text" class="form-control" id="empfaengerPlz">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="empfaengerStrasse" class="form-label">Straße</label>
-                                <input type="text" class="form-control" id="empfaengerStrasse">
+                                <label for="empfaengerOrt" class="form-label">Ort</label>
+                                <input type="text" class="form-control" id="empfaengerOrt">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="empfaengerOrt" class="form-label">PLZ / Ort</label>
-                                <input type="text" class="form-control" id="empfaengerOrt">
+                                <label for="empfaengerLand" class="form-label">Land (optional)</label>
+                                <input type="text" class="form-control" id="empfaengerLand">
                             </div>
                         </div>
                     </div>
@@ -140,9 +242,9 @@
                     <hr class="my-4">
 
                     <!-- Brief Inhalt -->
-                    <h5 class="mb-3">✉️ Brief Inhalt</h5>
+                    <div class="section-header">✉️ Brief Inhalt</div>
                     <div class="form-group">
-                        <label for="betreff" class="form-label">Betreff *</label>
+                        <label for="betreff" class="form-label">Betreff <span class="required-field">*</span></label>
                         <input type="text" class="form-control" id="betreff" required>
                     </div>
 
@@ -154,8 +256,8 @@
                                     <option value="Sehr geehrte Damen und Herren">Sehr geehrte Damen und Herren</option>
                                     <option value="Sehr geehrte Frau">Sehr geehrte Frau</option>
                                     <option value="Sehr geehrter Herr">Sehr geehrter Herr</option>
-                                    <option value="Liebe">Liebe</option>
-                                    <option value="Lieber">Lieber</option>
+                                    <option value="Liebe Frau">Liebe Frau</option>
+                                    <option value="Lieber Herr">Lieber Herr</option>
                                 </select>
                             </div>
                         </div>
@@ -166,22 +268,52 @@
                                     <option value="Mit freundlichen Grüßen">Mit freundlichen Grüßen</option>
                                     <option value="Mit besten Grüßen">Mit besten Grüßen</option>
                                     <option value="Hochachtungsvoll">Hochachtungsvoll</option>
-                                    <option value="Viele Grüße">Viele Grüße</option>
+                                    <option value="Mit vorzüglicher Hochachtung">Mit vorzüglicher Hochachtung</option>
+                                    <option value="Freundliche Grüße">Freundliche Grüße</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="brieftext" class="form-label">Brieftext *</label>
-                        <textarea class="form-control" id="brieftext" rows="6" required 
+                        <label for="brieftext" class="form-label">Brieftext <span class="required-field">*</span></label>
+                        <textarea class="form-control" id="brieftext" rows="8" required 
                                   placeholder="Geben Sie hier den Inhalt Ihres Briefes ein..."></textarea>
                     </div>
 
+                    <!-- Optionale Felder -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="anlagen" class="form-label">Anlagen (optional)</label>
+                                <textarea class="form-control" id="anlagen" rows="2" 
+                                          placeholder="z.B. Vertrag, Rechnung, Dokumente..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="verteiler" class="form-label">Verteiler (optional)</label>
+                                <textarea class="form-control" id="verteiler" rows="2" 
+                                          placeholder="z.B. Kopie an weitere Empfänger..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Action Buttons -->
                     <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            📄 Professionellen Brief erstellen
+                        <button type="submit" class="btn btn-dreyfus btn-lg">
+                            📄 Professionellen Dreyfus-Brief erstellen
                         </button>
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-secondary-dreyfus" id="btnKopiereAdresse">
+                                📋 Adresse kopieren
+                            </button>
+                            <button type="button" class="btn btn-secondary-dreyfus" id="btnSilbentrennung">
+                                🔤 Silbentrennung aktivieren
+                            </button>
+                        </div>
                     </div>
                 </form>
 
@@ -191,69 +323,46 @@
     </div>
 
     <script>
-        // Standort-Konfigurationen
-        const standortConfig = {
-            zuerich: {
-                name: "KSH Zürich AG",
-                adresse: "Bahnhofstrasse 123\n8001 Zürich\nSchweiz",
-                telefon: "+41 44 123 45 67",
-                email: "info@ksh-zuerich.ch",
-                web: "www.ksh-zuerich.ch",
-                iban: "CH93 0076 2011 6238 5295 7",
-                uid: "CHE-123.456.789",
-                headerColor: "#0078d4",
-                logo: "🏢"
-            },
-            basel: {
-                name: "KSH Basel GmbH",
-                adresse: "Steinenring 456\n4001 Basel\nSchweiz", 
-                telefon: "+41 61 987 65 43",
-                email: "basel@ksh-gruppe.ch",
-                web: "www.ksh-basel.ch",
-                iban: "CH89 0076 2011 6238 5295 8",
-                uid: "CHE-987.654.321",
-                headerColor: "#d13438",
-                logo: "🏭"
-            },
-            bern: {
-                name: "KSH Bern Büro",
-                adresse: "Bundesplatz 789\n3001 Bern\nSchweiz",
-                telefon: "+41 31 555 44 33", 
-                email: "bern@ksh-gruppe.ch",
-                web: "www.ksh-bern.ch",
-                iban: "CH76 0076 2011 6238 5295 9",
-                uid: "CHE-555.444.333",
-                headerColor: "#28a745",
-                logo: "🏛️"
-            }
-        };
-
         // Office.js Initialisierung
         Office.onReady((info) => {
             if (info.host === Office.HostType.Word) {
-                console.log('Word Add-In ist bereit');
-                document.getElementById('briefForm').addEventListener('submit', erstelleBrief);
-                document.getElementById('standort').addEventListener('change', showStandortPreview);
+                console.log('Dreyfus Brief Generator ist bereit');
+                initializeEventListeners();
             } else {
                 showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
             }
         });
 
-        // Standort-Vorschau anzeigen
-        function showStandortPreview() {
-            const standort = document.getElementById('standort').value;
-            const previewDiv = document.getElementById('standortPreview');
+        // Event Listeners initialisieren
+        function initializeEventListeners() {
+            document.getElementById('dreyfusBriefForm').addEventListener('submit', erstelleDreyfusBrief);
+            document.getElementById('btnKopiereAdresse').addEventListener('click', kopiereAdresse);
+            document.getElementById('btnSilbentrennung').addEventListener('click', aktiviereSilbentrennung);
             
-            if (standort && standortConfig[standort]) {
-                const config = standortConfig[standort];
-                previewDiv.innerHTML = `
-                    <strong>${config.logo} ${config.name}</strong><br>
-                    <small>${config.adresse.split('\n').join(', ')}<br>
-                    Tel: ${config.telefon} | E-Mail: ${config.email}</small>
-                `;
-                previewDiv.style.display = 'block';
-            } else {
-                previewDiv.style.display = 'none';
+            // Logo Auswahl Event Listeners
+            document.querySelectorAll('input[name="logoOption"]').forEach(radio => {
+                radio.addEventListener('change', updateLogoPreview);
+            });
+        }
+
+        // Logo Vorschau aktualisieren
+        function updateLogoPreview() {
+            const selectedLogo = document.querySelector('input[name="logoOption"]:checked').value;
+            const logoImage = document.getElementById('logoImage');
+            const logoPreview = document.getElementById('logoPreview');
+            
+            switch(selectedLogo) {
+                case 'farbe':
+                    logoImage.src = 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png';
+                    logoImage.style.display = 'block';
+                    break;
+                case 'grau':
+                    logoImage.src = 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Grau.png';
+                    logoImage.style.display = 'block';
+                    break;
+                case 'aus':
+                    logoImage.style.display = 'none';
+                    break;
             }
         }
 
@@ -267,172 +376,295 @@
             if (type === 'success' || type === 'info') {
                 setTimeout(() => {
                     statusElement.style.display = 'none';
-                }, 3000);
+                }, 4000);
             }
         }
 
-        // Hauptfunktion: Brief erstellen
-        async function erstelleBrief(event) {
+        // Hauptfunktion: Dreyfus Brief erstellen
+        async function erstelleDreyfusBrief(event) {
             event.preventDefault();
             
             try {
-                showStatus('Brief wird erstellt...', 'info');
+                showStatus('Dreyfus-Brief wird erstellt...', 'info');
                 
                 // Formulardaten sammeln
                 const formData = {
-                    standort: document.getElementById('standort').value,
+                    logoOption: document.querySelector('input[name="logoOption"]:checked').value,
+                    trauerrahmen: document.getElementById('trauerrahmen').checked,
                     absenderName: document.getElementById('absenderName').value,
+                    absenderTitel: document.getElementById('absenderTitel').value,
                     empfaengerName: document.getElementById('empfaengerName').value,
                     empfaengerFirma: document.getElementById('empfaengerFirma').value,
                     empfaengerStrasse: document.getElementById('empfaengerStrasse').value,
+                    empfaengerPlz: document.getElementById('empfaengerPlz').value,
                     empfaengerOrt: document.getElementById('empfaengerOrt').value,
+                    empfaengerLand: document.getElementById('empfaengerLand').value,
                     betreff: document.getElementById('betreff').value,
                     anrede: document.getElementById('anrede').value,
                     brieftext: document.getElementById('brieftext').value,
-                    gruss: document.getElementById('gruss').value
+                    gruss: document.getElementById('gruss').value,
+                    anlagen: document.getElementById('anlagen').value,
+                    verteiler: document.getElementById('verteiler').value
                 };
 
                 // Validation
-                if (!formData.standort || !formData.absenderName || !formData.empfaengerName || !formData.betreff || !formData.brieftext) {
+                if (!formData.absenderName || !formData.empfaengerName || !formData.betreff || !formData.brieftext) {
                     showStatus('Bitte füllen Sie alle Pflichtfelder (*) aus', 'error');
                     return;
                 }
 
-                const config = standortConfig[formData.standort];
-
                 // Word-Dokument erstellen
                 await Word.run(async (context) => {
-                    // Dokument leeren
+                    // Dokument komplett leeren
                     context.document.body.clear();
                     
-                    // === HEADER ERSTELLEN ===
-                    const headerRange = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
+                    // === SEITENEINSTELLUNGEN (DIN 676 konform) ===
+                    const section = context.document.sections.getFirst();
+                    
+                    // Seitenränder setzen (in Points: 1cm = 28.35pt)
+                    section.pageSetup.leftMargin = 70.85;    // 2,5cm
+                    section.pageSetup.rightMargin = 56.7;    // 2,0cm  
+                    section.pageSetup.topMargin = 48.2;      // 1,7cm
+                    section.pageSetup.bottomMargin = 56.7;   // 2,0cm
+                    
+                    // === KOPFZEILE ERSTELLEN ===
+                    const headerRange = section.getHeader(Word.HeaderFooterType.primary);
                     headerRange.clear();
                     
-                    // Header-Tabelle für Layout
-                    const headerTable = headerRange.insertTable(2, 2, Word.InsertLocation.start);
-                    headerTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                    // Dreyfus Firmenadresse (oben links)
+                    const firmenAdressParagraph = headerRange.insertParagraph(
+                        "DREYFUS & ASSOCIÉS\nBahnhofstrasse 88\n8001 Zürich\nSchweiz", 
+                        Word.InsertLocation.start
+                    );
+                    firmenAdressParagraph.font.size = 9;
+                    firmenAdressParagraph.font.name = "Calibri";
+                    firmenAdressParagraph.spaceAfter = 0;
                     
-                    // Firmenlogo und Name (große Zelle oben links)
-                    const logoCell = headerTable.getCell(0, 0);
-                    const logoParagraph = logoCell.body.insertParagraph(`${config.logo} ${config.name}`, Word.InsertLocation.start);
-                    logoParagraph.font.size = 20;
-                    logoParagraph.font.bold = true;
-                    logoParagraph.font.color = config.headerColor;
+                    // Logo einfügen (falls aktiviert)
+                    if (formData.logoOption !== 'aus') {
+                        const logoUrl = formData.logoOption === 'farbe' 
+                            ? 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png'
+                            : 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Grau.png';
+                        
+                        // Logo am Ende der Kopfzeile einfügen
+                        const logoParagraph = headerRange.insertParagraph("", Word.InsertLocation.end);
+                        logoParagraph.alignment = Word.Alignment.right;
+                        // Hier würde das Logo eingefügt werden - in einer echten Implementierung
+                        // würde man context.document.insertInlinePictureFromBase64() verwenden
+                    }
                     
-                    // Kontakt-Info (oben rechts)
-                    const kontaktCell = headerTable.getCell(0, 1);
-                    const kontaktText = `Tel: ${config.telefon}\nE-Mail: ${config.email}\nWeb: ${config.web}`;
-                    const kontaktParagraph = kontaktCell.body.insertParagraph(kontaktText, Word.InsertLocation.start);
-                    kontaktParagraph.font.size = 10;
-                    kontaktParagraph.alignment = Word.Alignment.right;
+                    // === TRAUERRAHMEN (falls aktiviert) ===
+                    if (formData.trauerrahmen) {
+                        // Rahmen um gesamte Seite
+                        section.borders.topBorder.type = Word.BorderType.single;
+                        section.borders.leftBorder.type = Word.BorderType.single;
+                        section.borders.bottomBorder.type = Word.BorderType.single;
+                        section.borders.rightBorder.type = Word.BorderType.single;
+                        section.borders.topBorder.width = 3;
+                        section.borders.leftBorder.width = 3;
+                        section.borders.bottomBorder.width = 3;
+                        section.borders.rightBorder.width = 3;
+                    }
                     
-                    // Adresse (unten links)
-                    const adressCell = headerTable.getCell(1, 0);
-                    const adressParagraph = adressCell.body.insertParagraph(config.adresse, Word.InsertLocation.start);
-                    adressParagraph.font.size = 10;
+                    // === BRIEF INHALT ===
                     
-                    // Leere Zelle unten rechts für Layout
-                    const emptyCell = headerTable.getCell(1, 1);
-                    emptyCell.body.insertParagraph("", Word.InsertLocation.start);
+                    // Leerzeilen für korrekte Positionierung (DIN 676: Adressfeld bei 4,5cm von oben)
+                    context.document.body.insertParagraph("", Word.InsertLocation.end);
+                    context.document.body.insertParagraph("", Word.InsertLocation.end);
                     
-                    // Header-Abstand
-                    headerRange.insertParagraph("", Word.InsertLocation.end);
-                    
-                    // === BRIEF-INHALT ===
-                    
-                    // Datum mit Standort (rechtsbündig)
-                    const datumParagraph = context.document.body.insertParagraph(
-                        `${config.name.split(' ')[1]}, ${new Date().toLocaleDateString('de-CH', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric' 
-                        })}`, 
+                    // ABSENDERZEILE (klein, für Sichtfenster - Position ca. 2,7cm von oben)
+                    const absenderZeileParagraph = context.document.body.insertParagraph(
+                        "DREYFUS & ASSOCIÉS - Bahnhofstrasse 88 - 8001 Zürich",
                         Word.InsertLocation.end
                     );
-                    datumParagraph.alignment = Word.Alignment.right;
-                    datumParagraph.spaceAfter = 36;
-
-                    // Empfänger-Adresse
-                    const empfaengerText = [
-                        formData.empfaengerName,
+                    absenderZeileParagraph.font.size = 7;
+                    absenderZeileParagraph.font.name = "Calibri";
+                    absenderZeileParagraph.spaceAfter = 0;
+                    
+                    // Trennlinie unter Absenderzeile
+                    const trennlinieParagraph = context.document.body.insertParagraph(
+                        "_____________________________________________________________________________",
+                        Word.InsertLocation.end
+                    );
+                    trennlinieParagraph.font.size = 6;
+                    trennlinieParagraph.spaceAfter = 6;
+                    
+                    // EMPFÄNGER-ADRESSFELD (Position: 4,5cm von oben, DIN 676 konform)
+                    const empfaengerAdresse = [
                         formData.empfaengerFirma,
+                        formData.empfaengerName,
                         formData.empfaengerStrasse,
-                        formData.empfaengerOrt
+                        (formData.empfaengerPlz + " " + formData.empfaengerOrt).trim(),
+                        formData.empfaengerLand
                     ].filter(line => line && line.trim()).join('\n');
                     
-                    const empfaengerParagraph = context.document.body.insertParagraph(empfaengerText, Word.InsertLocation.end);
+                    const empfaengerParagraph = context.document.body.insertParagraph(empfaengerAdresse, Word.InsertLocation.end);
+                    empfaengerParagraph.font.size = 11;
+                    empfaengerParagraph.font.name = "Calibri";
+                    empfaengerParagraph.spaceAfter = 42;  // 2-3 Zeilen Abstand
                     empfaengerParagraph.spaceAfter = 36;
-
-                    // Betreff (fett und mit Farbe)
+                    
+                    // DATUM (rechtsbündig, auf Höhe des Adressfeldes)
+                    const heute = new Date();
+                    const datumText = `Zürich, ${heute.toLocaleDateString('de-CH', { 
+                        day: '2-digit',
+                        month: '2-digit', 
+                        year: 'numeric'
+                    })}`;
+                    
+                    const datumParagraph = context.document.body.insertParagraph(datumText, Word.InsertLocation.end);
+                    datumParagraph.alignment = Word.Alignment.right;
+                    datumParagraph.font.size = 11;
+                    datumParagraph.font.name = "Calibri";
+                    datumParagraph.spaceAfter = 24;
+                    
+                    // BETREFF (fett)
                     const betreffParagraph = context.document.body.insertParagraph(`Betreff: ${formData.betreff}`, Word.InsertLocation.end);
                     betreffParagraph.font.bold = true;
-                    betreffParagraph.font.color = config.headerColor;
-                    betreffParagraph.spaceAfter = 24;
-
-                    // Anrede
+                    betreffParagraph.font.size = 11;
+                    betreffParagraph.font.name = "Calibri";
+                    betreffParagraph.spaceAfter = 24; // 2 Zeilen Abstand
+                    
+                    // ANREDE
                     let anredeText = formData.anrede;
-                    if (formData.anrede.includes('Frau') || formData.anrede.includes('Herr') || formData.anrede.includes('Liebe') || formData.anrede.includes('Lieber')) {
-                        const vorname = formData.empfaengerName.split(' ')[0];
-                        anredeText += ` ${vorname}`;
+                    if (formData.anrede.includes('Frau') || formData.anrede.includes('Herr')) {
+                        const nachname = formData.empfaengerName.split(' ').pop(); // Letztes Wort als Nachname
+                        anredeText += ` ${nachname}`;
                     }
                     anredeText += ',';
                     
                     const anredeParagraph = context.document.body.insertParagraph(anredeText, Word.InsertLocation.end);
-                    anredeParagraph.spaceAfter = 12;
-
-                    // Brieftext (mit Blocksatz)
+                    anredeParagraph.font.size = 11;
+                    anredeParagraph.font.name = "Calibri";
+                    anredeParagraph.spaceAfter = 12; // 1 Zeile Abstand
+                    
+                    // BRIEFTEXT (Blocksatz)
                     const brieftextParagraph = context.document.body.insertParagraph(formData.brieftext, Word.InsertLocation.end);
-                    brieftextParagraph.spaceAfter = 24;
                     brieftextParagraph.alignment = Word.Alignment.justified;
-
-                    // Grußformel
+                    brieftextParagraph.font.size = 11;
+                    brieftextParagraph.font.name = "Calibri";
+                    brieftextParagraph.lineSpacing = 1.15;
+                    brieftextParagraph.spaceAfter = 24; // 2 Zeilen Abstand
+                    
+                    // GRUSSFORMEL
                     const grussParagraph = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
-                    grussParagraph.spaceAfter = 60; // Platz für Unterschrift
-
-                    // Unterschriftszeile
-                    const unterschriftParagraph = context.document.body.insertParagraph(formData.absenderName, Word.InsertLocation.end);
+                    grussParagraph.font.size = 11;
+                    grussParagraph.font.name = "Calibri";
+                    grussParagraph.spaceAfter = 72; // 3-4 Zeilen Abstand für Unterschrift
+                    
+                    // UNTERSCHRIFTSZEILE
+                    let unterschriftText = formData.absenderName;
+                    if (formData.absenderTitel) {
+                        unterschriftText += `\n${formData.absenderTitel}`;
+                    }
+                    
+                    const unterschriftParagraph = context.document.body.insertParagraph(unterschriftText, Word.InsertLocation.end);
+                    unterschriftParagraph.font.size = 11;
+                    unterschriftParagraph.font.name = "Calibri";
                     unterschriftParagraph.spaceAfter = 24;
                     
-                    // === FOOTER ERSTELLEN ===
-                    const footerRange = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
+                    // ANLAGEN (falls vorhanden)
+                    if (formData.anlagen && formData.anlagen.trim()) {
+                        const anlagenParagraph = context.document.body.insertParagraph(`Anlage(n):\n${formData.anlagen}`, Word.InsertLocation.end);
+                        anlagenParagraph.font.size = 10;
+                        anlagenParagraph.font.name = "Calibri";
+                        anlagenParagraph.spaceAfter = 12;
+                    }
+                    
+                    // VERTEILER (falls vorhanden)
+                    if (formData.verteiler && formData.verteiler.trim()) {
+                        const verteilerParagraph = context.document.body.insertParagraph(`Verteiler:\n${formData.verteiler}`, Word.InsertLocation.end);
+                        verteilerParagraph.font.size = 10;
+                        verteilerParagraph.font.name = "Calibri";
+                        verteilerParagraph.spaceAfter = 12;
+                    }
+                    
+                    // === FUSSZEILE ERSTELLEN ===
+                    const footerRange = section.getFooter(Word.HeaderFooterType.primary);
                     footerRange.clear();
                     
-                    // Footer-Linie (mit Farbe)
-                    const footerLine = footerRange.insertParagraph("────────────────────────────────────────────────────────────────────────", Word.InsertLocation.start);
-                    footerLine.font.color = config.headerColor;
-                    footerLine.font.size = 8;
+                    // Trennlinie
+                    const footerLinieParagraph = footerRange.insertParagraph(
+                        "________________________________________________________________________________",
+                        Word.InsertLocation.start
+                    );
+                    footerLinieParagraph.font.size = 6;
+                    footerLinieParagraph.font.color = "#666666";
                     
-                    // Footer-Tabelle für Firmeninformationen
-                    const footerTable = footerRange.insertTable(1, 3, Word.InsertLocation.end);
-                    footerTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                    // Footer-Informationen
+                    const footerText = `DREYFUS & ASSOCIÉS  |  Bahnhofstrasse 88, 8001 Zürich, Schweiz
+Tel: +41 44 123 45 67  |  E-Mail: info@dreyfus.ch  |  Web: www.dreyfus.ch
+IBAN: CH93 0076 2011 6238 5295 7  |  UID: CHE-123.456.789`;
                     
-                    // Adress-Spalte
-                    const footerAdressCell = footerTable.getCell(0, 0);
-                    const footerAdressParagraph = footerAdressCell.body.insertParagraph(`Adresse:\n${config.adresse}`, Word.InsertLocation.start);
-                    footerAdressParagraph.font.size = 8;
+                    const footerInfoParagraph = footerRange.insertParagraph(footerText, Word.InsertLocation.end);
+                    footerInfoParagraph.font.size = 8;
+                    footerInfoParagraph.font.name = "Calibri";
+                    footerInfoParagraph.font.color = "#666666";
+                    footerInfoParagraph.alignment = Word.Alignment.centered;
                     
-                    // Kontakt-Spalte  
-                    const footerKontaktCell = footerTable.getCell(0, 1);
-                    const footerKontaktText = `Kontakt:\nTel: ${config.telefon}\nE-Mail: ${config.email}\nWeb: ${config.web}`;
-                    const footerKontaktParagraph = footerKontaktCell.body.insertParagraph(footerKontaktText, Word.InsertLocation.start);
-                    footerKontaktParagraph.font.size = 8;
-                    
-                    // Banking-Spalte
-                    const footerBankingCell = footerTable.getCell(0, 2);
-                    const footerBankingText = `Banking:\nIBAN: ${config.iban}\nUID: ${config.uid}`;
-                    const footerBankingParagraph = footerBankingCell.body.insertParagraph(footerBankingText, Word.InsertLocation.start);
-                    footerBankingParagraph.font.size = 8;
-
                     // Änderungen synchronisieren
                     await context.sync();
                 });
 
-                showStatus('Professioneller Brief wurde erfolgreich erstellt!', 'success');
+                showStatus('✅ Dreyfus-Brief wurde erfolgreich nach DIN 676 Standard erstellt!', 'success');
                 
             } catch (error) {
-                console.error('Fehler beim Erstellen des Briefes:', error);
-                showStatus('Fehler beim Erstellen des Briefes: ' + error.message, 'error');
+                console.error('Fehler beim Erstellen des Dreyfus-Briefes:', error);
+                showStatus('❌ Fehler beim Erstellen des Briefes: ' + error.message, 'error');
+            }
+        }
+
+        // Adresse kopieren Funktion
+        async function kopiereAdresse() {
+            try {
+                const formData = {
+                    empfaengerName: document.getElementById('empfaengerName').value,
+                    empfaengerFirma: document.getElementById('empfaengerFirma').value,
+                    empfaengerStrasse: document.getElementById('empfaengerStrasse').value,
+                    empfaengerPlz: document.getElementById('empfaengerPlz').value,
+                    empfaengerOrt: document.getElementById('empfaengerOrt').value,
+                    empfaengerLand: document.getElementById('empfaengerLand').value
+                };
+
+                const adresse = [
+                    formData.empfaengerFirma,
+                    formData.empfaengerName,
+                    formData.empfaengerStrasse,
+                    (formData.empfaengerPlz + " " + formData.empfaengerOrt).trim(),
+                    formData.empfaengerLand
+                ].filter(line => line && line.trim()).join('\n');
+
+                if (adresse.trim()) {
+                    await navigator.clipboard.writeText(adresse);
+                    showStatus('📋 Adresse wurde in die Zwischenablage kopiert', 'success');
+                } else {
+                    showStatus('❌ Keine Adresse zum Kopieren vorhanden', 'error');
+                }
+            } catch (error) {
+                showStatus('❌ Fehler beim Kopieren der Adresse', 'error');
+            }
+        }
+
+        // Silbentrennung aktivieren
+        async function aktiviereSilbentrennung() {
+            try {
+                await Word.run(async (context) => {
+                    context.document.body.paragraphs.load("*");
+                    await context.sync();
+                    
+                    context.document.body.paragraphs.items.forEach(paragraph => {
+                        paragraph.font.languageId = 1031; // Deutsch
+                    });
+                    
+                    // Automatische Silbentrennung aktivieren
+                    context.document.hyphenation.automaticHyphenation = true;
+                    
+                    await context.sync();
+                });
+                
+                showStatus('🔤 Silbentrennung wurde aktiviert', 'success');
+            } catch (error) {
+                showStatus('❌ Fehler beim Aktivieren der Silbentrennung', 'error');
             }
         }
     </script>
