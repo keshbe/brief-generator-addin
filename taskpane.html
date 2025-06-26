@@ -723,14 +723,16 @@
                                 if (base64Logo) {
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
                                     
-                                    // Logo-Größe je nach Variante (pt zu Pixel Konvertierung)
-                                    // 30pt = 40 Pixel, 42pt = 56 Pixel
+                                    // Logo-Größe basierend auf VBA-Vorlage (30pt und 42pt Höhe)
+                                    // Typische Briefkopf-Logo-Größen: klein aber gut lesbar
                                     if (logoVariante.startsWith('30')) {
-                                        logo.width = 40;  // 30pt
-                                        logo.height = 15; // Proportional
+                                        // 30pt Höhe = kleine Variante
+                                        logo.width = 60;   // Kleine Breite
+                                        logo.height = 30;  // 30pt ≈ 30px bei Web-Auflösung
                                     } else { // 42pt
-                                        logo.width = 56;  // 42pt
-                                        logo.height = 21; // Proportional
+                                        // 42pt Höhe = Standard-Variante
+                                        logo.width = 84;   // Proportionale Breite (2:1 Verhältnis)
+                                        logo.height = 42;  // 42pt ≈ 42px bei Web-Auflösung
                                     }
                                     
                                     // Abstand nach dem Header erhöhen
