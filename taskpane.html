@@ -759,10 +759,10 @@
                     
                     // === HAUPTINHALT ===
                     
-                    // Empfängeradresse (LINKSBÜNDIG)
+                    // Empfängeradresse (RECHTSBÜNDIG - unter dem Logo)
                     if (formData.adresse) {
                         const adresseParagraph = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
-                        adresseParagraph.alignment = Word.Alignment.left;
+                        adresseParagraph.alignment = Word.Alignment.right;
                         adresseParagraph.spaceAfter = 72; // Größerer Abstand nach Adresse
                     }
                     
