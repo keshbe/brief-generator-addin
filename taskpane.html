@@ -443,8 +443,8 @@
 
         const grussformeln = {
             de: 'Mit freundlichen Grüssen',
-            en: 'Yours sincerely,',
-            fr: 'Avec nos salutations les meilleures',
+            en: 'Yours sincerely,', // Mit Komma!
+            fr: 'Avec nos salutations les meilleures', 
             it: 'Cordiali saluti'
         };
 
@@ -457,9 +457,9 @@
 
         const footerTaglines = {
             de: 'Einzigartig aufgehoben.',
-            en: '',  // Kein Tagline auf Englisch
-            fr: '',  // Kein Tagline auf Französisch
-            it: ''   // Kein Tagline auf Italienisch
+            en: '', // Kein Tagline im englischen Dokument
+            fr: '', // Kein Tagline im französischen Dokument
+            it: ''  // Kein Tagline im italienischen Dokument
         };
 
         // Office.js Initialisierung
@@ -531,6 +531,18 @@
             // Grussformel anpassen
             document.getElementById('gruss').value = grussformeln[sprachCode] || grussformeln.de;
 
+            // Ort anpassen basierend auf Sprache
+            const absenderId = document.getElementById('absender').value;
+            if (absenderId && absenderId !== '4') { // Nicht für Lugano
+                let ort = absenderData[absenderId].standort;
+                if (sprachCode === 'fr') {
+                    ort = 'Delémont';
+                } else if (sprachCode === 'en') {
+                    ort = 'Basel';
+                }
+                document.getElementById('ort').value = ort;
+            }
+
             // Abteilungen und Beilagen aktualisieren
             updateSelectOptions('abteilung1', abteilungen[sprachCode] || []);
             updateSelectOptions('abteilung2', abteilungen[sprachCode] || []);
@@ -544,6 +556,7 @@
             if (!absenderId) return;
 
             const absender = absenderData[absenderId];
+            const spracheId = document.getElementById('sprache').value;
             
             // Anonym-Option aktivieren/deaktivieren
             const anonymCheckbox = document.getElementById('anonym');
@@ -553,8 +566,20 @@
                 onAnonymChange(); // Trigger anonym change
             }
 
-            // Ort setzen
-            document.getElementById('ort').value = absender.standort;
+            // Ort setzen - abhängig von Sprache und Absender
+            let ort = absender.standort;
+            
+            // Spezielle Orte je nach Sprache
+            if (spracheId) {
+                const sprachCode = sprachen[spracheId].code.split('-')[0];
+                if (sprachCode === 'fr' && absenderId !== '4') {
+                    ort = 'Delémont'; // Französisch zeigt Delémont
+                } else if (sprachCode === 'en' && absenderId !== '4') {
+                    ort = 'Basel'; // Englisch zeigt Basel
+                }
+            }
+            
+            document.getElementById('ort').value = ort;
         }
 
         function onAnonymChange() {
@@ -697,13 +722,14 @@
                                 if (base64Logo) {
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
                                     
-                                    // Logo-Größe je nach Variante (angepasst an das Original)
+                                    // Logo-Größe je nach Variante (pt zu Pixel Konvertierung)
+                                    // 30pt = 40 Pixel, 42pt = 56 Pixel
                                     if (logoVariante.startsWith('30')) {
-                                        logo.width = 100;
-                                        logo.height = 37.5;
+                                        logo.width = 40;  // 30pt
+                                        logo.height = 15; // Proportional
                                     } else { // 42pt
-                                        logo.width = 140;
-                                        logo.height = 52.5;
+                                        logo.width = 56;  // 42pt
+                                        logo.height = 21; // Proportional
                                     }
                                     
                                     // Abstand nach dem Header erhöhen
@@ -954,16 +980,15 @@
                             });
                             
                             // Tagline nur für Deutsch
-                            const tagline = footerTaglines[sprachCode];
-                            if (tagline) {
+                            if (sprachCode === 'de') {
                                 // Leere Zeile vor "Einzigartig aufgehoben."
                                 const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
                                 emptyParagraph.spaceAfter = 0;
                                 emptyParagraph.spaceBefore = 0;
                                 emptyParagraph.font.size = 8;
                                 
-                                // Füge Tagline ein
-                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
+                                // Füge "Einzigartig aufgehoben." ein
+                                const taglineParagraph = footer.insertParagraph('Einzigartig aufgehoben.', Word.InsertLocation.end);
                                 taglineParagraph.font.size = 8;
                                 taglineParagraph.font.color = '#7a7a7a';
                                 taglineParagraph.alignment = Word.Alignment.center;
