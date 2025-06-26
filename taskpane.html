@@ -457,9 +457,9 @@
 
         const footerTaglines = {
             de: 'Einzigartig aufgehoben.',
-            en: '', // Kein Tagline im englischen Dokument
-            fr: '', // Kein Tagline im französischen Dokument
-            it: ''  // Kein Tagline im italienischen Dokument
+            en: 'In trusted hands.',
+            fr: 'En de bonnes mains.',
+            it: 'En de bonnes mains.'
         };
 
         // Office.js Initialisierung
@@ -700,11 +700,28 @@
                         section.rightMargin = 72;  // 2.54 cm
                     }
                     
-                    // === HEADER MIT LOGO ===
+                    // === HEADER MIT LOGO UND ADRESSE ===
                     const header = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
                     header.clear();
                     
-                    // Logo in Header einfügen (abhängig von Anonym-Option und Absender)
+                    // Erstelle eine unsichtbare Tabelle im Header für Logo links und Adresse rechts
+                    const headerTable = header.insertTable(1, 2, Word.InsertLocation.start);
+                    
+                    // Entferne alle Rahmen
+                    const allBorders = ['InsideHorizontal', 'InsideVertical', 'Left', 'Right', 'Top', 'Bottom'];
+                    allBorders.forEach(border => {
+                        headerTable.borders.getItem(border).type = Word.BorderType.none;
+                    });
+                    
+                    // Setze Spaltenbreiten (30% für Logo, 70% für Adresse)
+                    headerTable.columns.getFirst().width = 150;
+                    headerTable.columns.getLast().width = 350;
+                    
+                    // Linke Zelle: Logo
+                    const logoCell = headerTable.rows.getFirst().cells.getFirst();
+                    logoCell.body.clear();
+                    logoCell.verticalAlignment = Word.VerticalAlignment.top;
+                    
                     // Logo nur bei Dreyfus-Absendern (1-4), nicht bei Neutral (9)
                     if (!formData.anonym && formData.absender !== '9' && formData.absender !== '') {
                         try {
@@ -712,39 +729,30 @@
                             const logoVariante = formData.logoVariante || '42_Farbe';
                             const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
                             
-                            // Logo-Paragraph erstellen
-                            const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
-                            logoParagraph.alignment = Word.Alignment.left;
-                            
                             // Versuche echtes Logo zu laden
                             try {
                                 const base64Logo = await getImageAsBase64(logoUrl);
                                 if (base64Logo) {
+                                    const logoParagraph = logoCell.body.insertParagraph('', Word.InsertLocation.start);
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
                                     
-                                    // Logo-Größe je nach Variante (pt zu Pixel Konvertierung)
-                                    // 30pt = 40 Pixel, 42pt = 56 Pixel
+                                    // Logo-Größe korrekt setzen (exakt wie im VBA)
                                     if (logoVariante.startsWith('30')) {
-                                        logo.width = 40;  // 30pt
-                                        logo.height = 15; // Proportional
+                                        logo.width = 80;  // 30pt Logo Breite
+                                        logo.height = 30; // 30pt Logo Höhe
                                     } else { // 42pt
-                                        logo.width = 56;  // 42pt
-                                        logo.height = 21; // Proportional
+                                        logo.width = 112; // 42pt Logo Breite
+                                        logo.height = 42; // 42pt Logo Höhe
                                     }
-                                    
-                                    // Abstand nach dem Header erhöhen
-                                    logoParagraph.spaceAfter = 36;
-                                    
-                                    // Slogan wird im Original nicht angezeigt, also entfernen wir das
                                 } else {
                                     // Fallback: Text-Platzhalter
-                                    logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
+                                    const logoParagraph = logoCell.body.insertParagraph('[DREYFUS LOGO]', Word.InsertLocation.start);
                                     logoParagraph.font.color = '#666666';
                                     logoParagraph.font.size = 14;
                                 }
                             } catch (imgError) {
                                 // Fallback: Text-Platzhalter
-                                logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
+                                const logoParagraph = logoCell.body.insertParagraph('[DREYFUS LOGO]', Word.InsertLocation.start);
                                 logoParagraph.font.color = '#666666';
                                 logoParagraph.font.size = 14;
                                 console.log('Logo als Platzhalter eingefügt:', imgError);
@@ -754,14 +762,29 @@
                         }
                     }
                     
+                    // Rechte Zelle: Adresse
+                    const addressCell = headerTable.rows.getFirst().cells.getLast();
+                    addressCell.body.clear();
+                    addressCell.verticalAlignment = Word.VerticalAlignment.top;
+                    
+                    if (formData.adresse && !formData.anonym) {
+                        const adresseParagraph = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
+                        adresseParagraph.alignment = Word.Alignment.left;
+                        adresseParagraph.font.size = 11;
+                        adresseParagraph.font.name = 'Dreyfus Sans';
+                        adresseParagraph.spaceBefore = 0;
+                        adresseParagraph.spaceAfter = 0;
+                    }
+                    
+                    // Abstand nach Header nur wenn Logo oder Adresse vorhanden
+                    if (!formData.anonym && (formData.absender !== '9' || formData.adresse)) {
+                        const spacerAfterHeader = header.insertParagraph('', Word.InsertLocation.end);
+                        spacerAfterHeader.spaceAfter = 36;
+                    }
+                    
                     // === HAUPTINHALT ===
                     
-                    // Empfängeradresse (LINKSBÜNDIG)
-                    if (formData.adresse) {
-                        const adresseParagraph = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
-                        adresseParagraph.alignment = Word.Alignment.left;
-                        adresseParagraph.spaceAfter = 72; // Größerer Abstand nach Adresse
-                    }
+                    // Ort, Datum und Absenderkürzel (RECHTSBÜNDIG) - direkt im Body, nicht mehr Adresse
                     
                     // Ort, Datum und Absenderkürzel (RECHTSBÜNDIG)
                     let ortDatumText = '';
@@ -979,16 +1002,17 @@
                                 footerParagraph.lineSpacing = 1.0;
                             });
                             
-                            // Tagline nur für Deutsch
-                            if (sprachCode === 'de') {
-                                // Leere Zeile vor "Einzigartig aufgehoben."
+                            // Tagline für alle Sprachen
+                            const tagline = footerTaglines[sprachCode];
+                            if (tagline) {
+                                // Leere Zeile vor Tagline
                                 const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
                                 emptyParagraph.spaceAfter = 0;
                                 emptyParagraph.spaceBefore = 0;
                                 emptyParagraph.font.size = 8;
                                 
-                                // Füge "Einzigartig aufgehoben." ein
-                                const taglineParagraph = footer.insertParagraph('Einzigartig aufgehoben.', Word.InsertLocation.end);
+                                // Füge Tagline ein
+                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.size = 8;
                                 taglineParagraph.font.color = '#7a7a7a';
                                 taglineParagraph.alignment = Word.Alignment.center;
