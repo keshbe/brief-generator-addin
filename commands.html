@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>Dreyfus Brief Commands</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+</head>
+<body>
+    <script>
+        // Office.js Initialisierung
+        Office.onReady(() => {
+            console.log('Dreyfus Commands geladen');
+        });
+
+        // === FUNKTIONEN AUS DEN VBA MAKROS ===
+
+        // Empfängeradresse kopieren
+        async function kopierenEmpfaengeradresse(event) {
+            try {
+                await Word.run(async (context) => {
+                    // Suche nach der Adresse im Dokument
+                    const searchResults = context.document.body.search('*', { matchWildcards: false });
+                    searchResults.load('items');
+                    
+                    await context.sync();
+                    
+                    // Hier würde normalerweise die Adresse gefunden und kopiert werden
+                    // Da wir keine Bookmarks haben, nehmen wir den ersten Absatz als Beispiel
+                    const paragraphs = context.document.body.paragraphs;
+                    paragraphs.load('text');
+                    
+                    await context.sync();
+                    
+                    if (paragraphs.items.length > 0) {
+                        // Kopiere den Text in die Zwischenablage
+                        await navigator.clipboard.writeText(paragraphs.items[0].text);
+                        showNotification('Adresse kopiert', 'Die Empfängeradresse wurde in die Zwischenablage kopiert.');
+                    }
+                });
+            } catch (error) {
+                console.error('Fehler beim Kopieren der Adresse:', error);
+                showNotification('Fehler', 'Die Adresse konnte nicht kopiert werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Standard-Formatvorlage anwenden
+        async function applyStandardStyle(event) {
+            try {
+                await Word.run(async (context) => {
+                    const selection = context.document.getSelection();
+                    selection.style = 'Normal';
+                    selection.font.name = 'Dreyfus Sans';
+                    selection.font.size = 11;
+                    selection.paragraphFormat.spaceAfter = 6;
+                    
+                    await context.sync();
+                });
+                
+                showNotification('Formatierung angewendet', 'DSC-Standard wurde angewendet.');
+            } catch (error) {
+                console.error('Fehler bei der Formatierung:', error);
+                showNotification('Fehler', 'Die Formatierung konnte nicht angewendet werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Aufzählung 1 anwenden
+        async function applyAufzaehlung1(event) {
+            try {
+                await Word.run(async (context) => {
+                    const selection = context.document.getSelection();
+                    const paragraph = selection.paragraphs.getFirst();
+                    
+                    // Bullet list mit • Symbol
+                    paragraph.startNewList();
+                    paragraph.listItem.level = 0;
+                    
+                    await context.sync();
+                });
+                
+                showNotification('Formatierung angewendet', 'DSC-Aufzählung 1 wurde angewendet.');
+            } catch (error) {
+                console.error('Fehler bei der Aufzählung:', error);
+                showNotification('Fehler', 'Die Aufzählung konnte nicht angewendet werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Aufzählung 2 anwenden (eingerückt)
+        async function applyAufzaehlung2(event) {
+            try {
+                await Word.run(async (context) => {
+                    const selection = context.document.getSelection();
+                    const paragraph = selection.paragraphs.getFirst();
+                    
+                    // Bullet list mit - Symbol, eingerückt
+                    paragraph.startNewList();
+                    paragraph.listItem.level = 1;
+                    
+                    await context.sync();
+                });
+                
+                showNotification('Formatierung angewendet', 'DSC-Aufzählung 2 wurde angewendet.');
+            } catch (error) {
+                console.error('Fehler bei der Aufzählung:', error);
+                showNotification('Fehler', 'Die Aufzählung konnte nicht angewendet werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Silbentrennung
+        async function silbentrennung(event) {
+            try {
+                // In Word Web Add-ins gibt es keine direkte Silbentrennung API
+                // Wir können nur eine Meldung anzeigen
+                showNotification('Silbentrennung', 
+                    'Die automatische Silbentrennung ist in Web Add-ins nicht verfügbar. ' +
+                    'Bitte verwenden Sie die Word-Desktop-Funktion unter Layout > Silbentrennung.');
+            } catch (error) {
+                console.error('Fehler bei der Silbentrennung:', error);
+                showNotification('Fehler', 'Die Silbentrennung konnte nicht gestartet werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Logo einblenden
+        async function logoPrintEin(event) {
+            try {
+                await Word.run(async (context) => {
+                    // Suche nach dem ersten Bild im Dokument (sollte das Logo sein)
+                    const pictures = context.document.body.inlinePictures;
+                    pictures.load('altTextTitle');
+                    
+                    await context.sync();
+                    
+                    if (pictures.items.length === 0) {
+                        // Füge Logo ein
+                        const firstParagraph = context.document.body.paragraphs.getFirst();
+                        const logoUrl = 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png';
+                        
+                        // Logo als Base64 laden und einfügen
+                        const base64 = await getImageAsBase64(logoUrl);
+                        firstParagraph.insertInlinePictureFromBase64(base64, Word.InsertLocation.before);
+                        firstParagraph.alignment = Word.Alignment.left;
+                        
+                        showNotification('Logo eingefügt', 'Das Dreyfus Logo wurde eingefügt.');
+                    } else {
+                        showNotification('Logo vorhanden', 'Das Logo ist bereits im Dokument vorhanden.');
+                    }
+                    
+                    await context.sync();
+                });
+            } catch (error) {
+                console.error('Fehler beim Einfügen des Logos:', error);
+                showNotification('Fehler', 'Das Logo konnte nicht eingefügt werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Logo ausblenden
+        async function logoPrintAus(event) {
+            try {
+                await Word.run(async (context) => {
+                    // Suche und entferne alle Bilder (Logos)
+                    const pictures = context.document.body.inlinePictures;
+                    pictures.load();
+                    
+                    await context.sync();
+                    
+                    // Entferne alle Bilder
+                    for (let i = 0; i < pictures.items.length; i++) {
+                        pictures.items[i].delete();
+                    }
+                    
+                    await context.sync();
+                    
+                    showNotification('Logo entfernt', 'Das Logo wurde ausgeblendet.');
+                });
+            } catch (error) {
+                console.error('Fehler beim Ausblenden des Logos:', error);
+                showNotification('Fehler', 'Das Logo konnte nicht ausgeblendet werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Leidbrief-Rahmen einblenden
+        async function leidbriefEin(event) {
+            try {
+                await Word.run(async (context) => {
+                    // Setze einen schwarzen Rahmen um die erste Seite
+                    const sections = context.document.sections;
+                    sections.load();
+                    
+                    await context.sync();
+                    
+                    if (sections.items.length > 0) {
+                        const firstSection = sections.items[0];
+                        
+                        // In Web Add-ins können wir keine Seitenrahmen direkt setzen
+                        // Wir fügen stattdessen einen Hinweis ein
+                        const body = context.document.body;
+                        const firstParagraph = body.paragraphs.getFirst();
+                        firstParagraph.insertText('[LEIDBRIEF-RAHMEN AKTIVIERT]', Word.InsertLocation.before);
+                        firstParagraph.font.color = 'black';
+                        firstParagraph.font.bold = true;
+                        
+                        showNotification('Leidbrief-Rahmen', 
+                            'Der Leidbrief-Rahmen wurde markiert. In der Desktop-Version wird ein schwarzer Rahmen angezeigt.');
+                    }
+                    
+                    await context.sync();
+                });
+            } catch (error) {
+                console.error('Fehler beim Setzen des Leidbrief-Rahmens:', error);
+                showNotification('Fehler', 'Der Leidbrief-Rahmen konnte nicht gesetzt werden.');
+            }
+            
+            event.completed();
+        }
+
+        // Leidbrief-Rahmen ausblenden
+        async function leidbriefAus(event) {
+            try {
+                await Word.run(async (context) => {
+                    // Entferne den Leidbrief-Marker
+                    const searchResults = context.document.body.search('[LEIDBRIEF-RAHMEN AKTIVIERT]');
+                    searchResults.load();
+                    
+                    await context.sync();
+                    
+                    for (let i = 0; i < searchResults.items.length; i++) {
+                        searchResults.items[i].delete();
+                    }
+                    
+                    await context.sync();
+                    
+                    showNotification('Leidbrief-Rahmen entfernt', 'Der Leidbrief-Rahmen wurde deaktiviert.');
+                });
+            } catch (error) {
+                console.error('Fehler beim Entfernen des Leidbrief-Rahmens:', error);
+                showNotification('Fehler', 'Der Leidbrief-Rahmen konnte nicht entfernt werden.');
+            }
+            
+            event.completed();
+        }
+
+        // === HILFSFUNKTIONEN ===
+
+        // Benachrichtigung anzeigen
+        function showNotification(title, message) {
+            if (Office.context.ui.displayDialogAsync) {
+                console.log(`${title}: ${message}`);
+            }
+        }
+
+        // Bild als Base64 laden
+        async function getImageAsBase64(url) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const base64data = reader.result.split(',')[1];
+                        resolve(base64data);
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (error) {
+                console.error('Fehler beim Laden des Bildes:', error);
+                return '';
+            }
+        }
+
+        // === GLOBALE FUNKTIONEN REGISTRIEREN ===
+        // Diese müssen global verfügbar sein, damit das Manifest sie aufrufen kann
+        window.kopierenEmpfaengeradresse = kopierenEmpfaengeradresse;
+        window.applyStandardStyle = applyStandardStyle;
+        window.applyAufzaehlung1 = applyAufzaehlung1;
+        window.applyAufzaehlung2 = applyAufzaehlung2;
+        window.silbentrennung = silbentrennung;
+        window.logoPrintEin = logoPrintEin;
+        window.logoPrintAus = logoPrintAus;
+        window.leidbriefEin = leidbriefEin;
+        window.leidbriefAus = leidbriefAus;
+    </script>
+</body>
+</html>
