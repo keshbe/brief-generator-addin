@@ -7,16 +7,16 @@
 
   <Id>12345678-1234-1234-1234-123456789abc</Id>
   <Version>1.0.0.1</Version>
-  <ProviderName>KSH</ProviderName>
+  <ProviderName>Dreyfus</ProviderName>
   <DefaultLocale>de-DE</DefaultLocale>
-  <DisplayName DefaultValue="Brief Generator" />
-  <Description DefaultValue="Automatische Erstellung von Briefen nach deutscher Vorlage" />
+  <DisplayName DefaultValue="DREYFUS BRIEF" />
+  <Description DefaultValue="Professionelle Brieferstellung nach DIN 676 Standard mit Dreyfus Corporate Design" />
   
-  <!-- KESHBE GITHUB PAGES URLs: -->
-  <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-  <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-80.png"/>
+  <!-- DREYFUS LOGO ICONS -->
+  <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
+  <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
   
-  <!-- GITHUB PAGES DOMAIN: -->
+  <!-- GITHUB PAGES DOMAIN -->
   <AppDomains>
     <AppDomain>https://keshbe.github.io</AppDomain>
   </AppDomains>
@@ -26,7 +26,7 @@
   </Hosts>
   
   <DefaultSettings>
-    <!-- KESHBE TASKPANE URL: -->
+    <!-- DREYFUS TASKPANE URL -->
     <SourceLocation DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html"/>
   </DefaultSettings>
   
@@ -39,20 +39,20 @@
           <FunctionFile resid="Commands.Url" />
 
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
-            <CustomTab id="MeinReiter">
-              <Group id="BriefGroup">
-                <Label resid="BriefGroup.Label" />
+            <CustomTab id="DreyfusTab">
+              <Group id="DreyfusBriefGroup">
+                <Label resid="DreyfusBriefGroup.Label" />
                 <Icon>
                   <bt:Image size="16" resid="Icon.16x16"/>
                   <bt:Image size="32" resid="Icon.32x32"/>
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
-                <Control xsi:type="Button" id="BriefErstellen">
-                  <Label resid="BriefErstellen.Label" />
+                <Control xsi:type="Button" id="DreyfusBriefErstellen">
+                  <Label resid="DreyfusBriefErstellen.Label" />
                   <Supertip>
-                    <Title resid="BriefErstellen.Label" />
-                    <Description resid="BriefErstellen.Tooltip" />
+                    <Title resid="DreyfusBriefErstellen.Label" />
+                    <Description resid="DreyfusBriefErstellen.Tooltip" />
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -61,12 +61,30 @@
                   </Icon>
 
                   <Action xsi:type="ShowTaskpane">
-                    <TaskpaneId>ButtonId1</TaskpaneId>
+                    <TaskpaneId>DreyfusBriefId</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+
+                <Control xsi:type="Button" id="DreyfusAdresse">
+                  <Label resid="DreyfusAdresse.Label" />
+                  <Supertip>
+                    <Title resid="DreyfusAdresse.Label" />
+                    <Description resid="DreyfusAdresse.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
+                  </Icon>
+
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>DreyfusAdresseId</TaskpaneId>
                     <SourceLocation resid="Taskpane.Url"/>
                   </Action>
                 </Control>
               </Group>
-              <Label resid="CustomTab.Label" />
+              <Label resid="DreyfusTab.Label" />
             </CustomTab>
           </ExtensionPoint>
         </DesktopFormFactor>
@@ -75,23 +93,25 @@
 
     <Resources>
       <bt:Images>
-        <!-- KESHBE GITHUB PAGES ICON URLs: -->
-        <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-80.png"/>
+        <!-- DREYFUS LOGO URLS -->
+        <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
+        <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
+        <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
       </bt:Images>
       <bt:Urls>
-        <!-- KESHBE GITHUB PAGES HTML URLs: -->
+        <!-- DREYFUS HTML URLs -->
         <bt:Url id="Commands.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/commands.html" />
         <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="CustomTab.Label" DefaultValue="Mein Reiter" />
-        <bt:String id="BriefGroup.Label" DefaultValue="Brief Funktionen" />
-        <bt:String id="BriefErstellen.Label" DefaultValue="Brief erstellen" />
+        <bt:String id="DreyfusTab.Label" DefaultValue="DREYFUS BRIEF" />
+        <bt:String id="DreyfusBriefGroup.Label" DefaultValue="BRIEF" />
+        <bt:String id="DreyfusBriefErstellen.Label" DefaultValue="Eingabemaske anzeigen" />
+        <bt:String id="DreyfusAdresse.Label" DefaultValue="Adresse kopieren" />
       </bt:ShortStrings>
       <bt:LongStrings>
-        <bt:String id="BriefErstellen.Tooltip" DefaultValue="Öffnet das Formular zur automatischen Brieferstellung" />
+        <bt:String id="DreyfusBriefErstellen.Tooltip" DefaultValue="Zeigt die Eingabemaske für die automatische Brieferstellung nach DIN 676 Standard" />
+        <bt:String id="DreyfusAdresse.Tooltip" DefaultValue="Kopiert die Adresse des aktuellen Briefes in die Zwischenablage" />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
