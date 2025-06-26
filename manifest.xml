@@ -5,14 +5,15 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
            xsi:type="TaskPaneApp">
 
-  <Id>a1b2c3d4-5e6f-7g8h-9i0j-k1l2m3n4o5p6</Id>
-  <Version>1.0.0.1</Version>
+  <!-- Ihre eindeutige GUID -->
+  <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
+  <Version>1.0.0.2</Version>
   <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
   <DefaultLocale>de-DE</DefaultLocale>
   <DisplayName DefaultValue="Dreyfus Brief Generator" />
   <Description DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage" />
   
-  <!-- Dreyfus Icons -->
+  <!-- Dreyfus Icons - KORRIGIERT: Existierende Icons verwenden -->
   <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
   <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
   
@@ -31,6 +32,7 @@
   
   <Permissions>ReadWriteDocument</Permissions>
 
+  <!-- KORRIGIERT: Schema-Version und Namespace -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
     <Hosts>
       <Host xsi:type="Document">
@@ -76,8 +78,9 @@
                     <Description resid="BtnAdresse.Tooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Copy.16x16"/>
-                    <bt:Image size="32" resid="Copy.32x32"/>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
                   </Icon>
                   <Action xsi:type="ExecuteFunction">
                     <FunctionName>kopierenEmpfaengeradresse</FunctionName>
@@ -89,8 +92,9 @@
               <Group id="grpFormat">
                 <Label resid="FormatGroup.Label" />
                 <Icon>
-                  <bt:Image size="16" resid="Format.16x16"/>
-                  <bt:Image size="32" resid="Format.32x32"/>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
                 <!-- Dropdown: Standard/Aufzählung -->
@@ -101,8 +105,9 @@
                     <Description resid="MnuAufzaehlung.Tooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="List.16x16"/>
-                    <bt:Image size="32" resid="List.32x32"/>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
                   </Icon>
                   <Items>
                     <Item id="btnStandard">
@@ -112,7 +117,7 @@
                         <Description resid="BtnStandard.Tooltip" />
                       </Supertip>
                       <Icon>
-                        <bt:Image size="16" resid="Text.16x16"/>
+                        <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>applyStandardStyle</FunctionName>
@@ -121,7 +126,7 @@
                     <Item id="btnAufzaehlung1">
                       <Label resid="BtnAufzaehlung1.Label" />
                       <Icon>
-                        <bt:Image size="16" resid="Bullet.16x16"/>
+                        <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>applyAufzaehlung1</FunctionName>
@@ -130,7 +135,7 @@
                     <Item id="btnAufzaehlung2">
                       <Label resid="BtnAufzaehlung2.Label" />
                       <Icon>
-                        <bt:Image size="16" resid="Bullet.16x16"/>
+                        <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>applyAufzaehlung2</FunctionName>
@@ -147,8 +152,9 @@
                     <Description resid="BtnSilben.Tooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Hyphen.16x16"/>
-                    <bt:Image size="32" resid="Hyphen.32x32"/>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
                   </Icon>
                   <Action xsi:type="ExecuteFunction">
                     <FunctionName>silbentrennung</FunctionName>
@@ -160,8 +166,9 @@
               <Group id="grpSpezial">
                 <Label resid="SpezialGroup.Label" />
                 <Icon>
-                  <bt:Image size="16" resid="Settings.16x16"/>
-                  <bt:Image size="32" resid="Settings.32x32"/>
+                  <bt:Image size="16" resid="Icon.16x16"/>
+                  <bt:Image size="32" resid="Icon.32x32"/>
+                  <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
                 <!-- SplitButton: Logo -->
@@ -174,6 +181,7 @@
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
                     <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
                   </Icon>
                   <Items>
                     <Item id="btnLogoEin">
@@ -205,14 +213,15 @@
                     <Description resid="BtnLeid.Tooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Border.16x16"/>
-                    <bt:Image size="32" resid="Border.32x32"/>
+                    <bt:Image size="16" resid="Icon.16x16"/>
+                    <bt:Image size="32" resid="Icon.32x32"/>
+                    <bt:Image size="80" resid="Icon.80x80"/>
                   </Icon>
                   <Items>
                     <Item id="btnLeidEin">
                       <Label resid="BtnLeidEin.Label" />
                       <Icon>
-                        <bt:Image size="16" resid="Border.16x16"/>
+                        <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>leidbriefEin</FunctionName>
@@ -221,7 +230,7 @@
                     <Item id="btnLeidAus">
                       <Label resid="BtnLeidAus.Label" />
                       <Icon>
-                        <bt:Image size="16" resid="BorderNone.16x16"/>
+                        <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>leidbriefAus</FunctionName>
@@ -238,28 +247,11 @@
 
     <Resources>
       <bt:Images>
-        <!-- Dreyfus Logos -->
+        <!-- KORRIGIERT: Nur existierende Icons verwenden -->
         <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
         <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
         <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
         <bt:Image id="IconGray.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Grau.png"/>
-        
-        <!-- Generic Icons (müssen durch echte Icons ersetzt werden) -->
-        <bt:Image id="Copy.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Copy.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="Format.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Format.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="List.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="List.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="Text.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Bullet.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Hyphen.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Hyphen.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="Settings.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Settings.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="Border.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
-        <bt:Image id="Border.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-32.png"/>
-        <bt:Image id="BorderNone.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/icon-16.png"/>
       </bt:Images>
       
       <bt:Urls>
