@@ -5,13 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dreyfus Brief Generator</title>
-
+    
     <!-- Office JavaScript API -->
     <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-
+    
     <!-- Bootstrap für schönes Design -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-
+    
     <style>
         /* Dreyfus Schriftarten laden */
         @font-face {
@@ -20,35 +20,34 @@
             font-weight: normal;
             font-style: normal;
         }
-
+        
         @font-face {
             font-family: 'Dreyfus Sans';
             src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSans-Bold.ttf') format('truetype');
             font-weight: bold;
             font-style: normal;
         }
-
+        
         @font-face {
             font-family: 'Dreyfus Sans';
             src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSans-Italic.ttf') format('truetype');
             font-weight: normal;
             font-style: italic;
         }
-
+        
         @font-face {
             font-family: 'Dreyfus Serif';
             src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSerif-Regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
         }
-
+        
         body {
             font-family: 'Dreyfus Sans';
             margin: 0;
             padding: 0;
             background-color: #f8f2d9; /* RGB(248, 242, 217) */
         }
-
         .header-bar {
             background-color: #7c7c7c; /* RGB(124, 124, 124) */
             color: white;
@@ -56,50 +55,41 @@
             margin: 0;
             font-family: 'Dreyfus Sans';
         }
-
         .sub-header {
             background-color: #fdfbf2; /* RGB(253, 251, 242) */
             padding: 5px 15px;
             border-bottom: 1px solid #ddd;
             font-family: 'Dreyfus Sans';
         }
-
         .container {
             padding: 15px;
             font-family: 'Dreyfus Sans';
         }
-
         .form-group {
             margin-bottom: 12px;
         }
-
         .form-label {
             font-weight: 600;
             font-size: 0.9rem;
             margin-bottom: 4px;
         }
-
         .form-control, .form-select {
             font-size: 0.9rem;
             padding: 5px 8px;
         }
-
         textarea.form-control {
             resize: vertical;
         }
-
         .btn-primary {
             background-color: #0078d4;
             border-color: #0078d4;
             padding: 8px 20px;
         }
-
         .btn-secondary {
             background-color: #6c757d;
             border-color: #6c757d;
             padding: 8px 20px;
         }
-
         .section-title {
             font-weight: bold;
             color: #333;
@@ -109,7 +99,6 @@
             border-bottom: 1px solid #ddd;
             padding-bottom: 5px;
         }
-
         #status {
             margin-top: 10px;
             padding: 8px;
@@ -117,35 +106,29 @@
             display: none;
             font-size: 0.85rem;
         }
-
         .status-success {
             background-color: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
-
         .status-error {
             background-color: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-
         .status-info {
             background-color: #d1ecf1;
             color: #0c5460;
             border: 1px solid #bee5eb;
         }
-
         .row {
             margin-left: -5px;
             margin-right: -5px;
         }
-
         .col-md-6 {
             padding-left: 5px;
             padding-right: 5px;
         }
-
         .anonym-warning {
             background-color: #fff3cd;
             border: 1px solid #ffeaa7;
@@ -156,14 +139,12 @@
             margin-top: 5px;
             display: none;
         }
-
         .logo-options {
             background-color: #f0f0f0;
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 15px;
         }
-
         .copy-btn {
             background-color: #28a745;
             border-color: #28a745;
@@ -172,19 +153,38 @@
             font-size: 0.85rem;
             margin-left: 10px;
         }
-
-        /* Debug-Info für Entwicklung */
-        .debug-info {
-            background-color: #e9ecef;
-            padding: 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-top: 10px;
-            display: none;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0078d4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
     <div class="header-bar">
         <h5 class="mb-0">Dreyfus Söhne & Cie AG, Banquiers</h5>
     </div>
@@ -201,10 +201,6 @@
                         <label for="sprache" class="form-label">Sprache</label>
                         <select class="form-select" id="sprache" required>
                             <option value="">-- Bitte wählen --</option>
-                            <option value="1">Deutsch</option>
-                            <option value="2">English</option>
-                            <option value="3">Français</option>
-                            <option value="4">Italiano</option>
                         </select>
                     </div>
                 </div>
@@ -213,11 +209,6 @@
                         <label for="absender" class="form-label">Absender</label>
                         <select class="form-select" id="absender" required>
                             <option value="">-- Bitte wählen --</option>
-                            <option value="1">Dreyfus Banquiers</option>
-                            <option value="2">Büro Basel</option>
-                            <option value="3">Büro Zürich</option>
-                            <option value="4">Büro Lugano</option>
-                            <option value="9">Neutral</option>
                         </select>
                     </div>
                 </div>
@@ -233,18 +224,15 @@
                     NICHT für Briefe mit vorgedruckten Dreyfus-Papier!
                 </div>
             </div>
-
-            <!-- Logo-Variante TEST - IMMER SICHTBAR -->
+            
+            <!-- Logo-Variante -->
             <div class="section-title">Logo-Optionen</div>
             <div class="row mb-3">
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="logoVariante" class="form-label">Logo-Variante</label>
                         <select class="form-select" id="logoVariante">
-                            <option value="42_Farbe" selected>Standard (42pt, Farbe)</option>
-                            <option value="42_Grau">Standard (42pt, Grau)</option>
-                            <option value="30_Farbe">Klein (30pt, Farbe)</option>
-                            <option value="30_Grau">Klein (30pt, Grau)</option>
+                            <!-- Wird dynamisch gefüllt -->
                         </select>
                         <small class="text-muted">Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern</small>
                     </div>
@@ -252,7 +240,7 @@
             </div>
 
             <div class="section-title">Adresse</div>
-
+            
             <!-- Adresse -->
             <div class="form-group">
                 <label for="adresse" class="form-label">
@@ -389,197 +377,87 @@
         </form>
 
         <div id="status"></div>
-
-        <!-- Debug-Info (nur in Entwicklung sichtbar) -->
-        <div id="debugInfo" class="debug-info">
-            <strong>Debug Info:</strong> <span id="debugText"></span>
-        </div>
     </div>
 
     <script>
-        // === ADAPTIVE SIZING SYSTEM für identische Druckausgabe ===
-        const ADAPTIVE_SIZING = {
-            // Umgebungserkennung
-            detectEnvironment: () => {
-                const isWeb = Office.context.platform === Office.PlatformType.OfficeOnline;
-                console.log('Umgebung erkannt:', isWeb ? 'Web Word' : 'Desktop Word');
-                return isWeb;
-            },
-
-            // Logo-Größen für identische Druckausgabe
-            getLogo: (variant = '42') => {
-                const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-
-                if (variant.startsWith('30')) {
-                    return isWeb
-                        ? { width: 34, height: 13 }  // Web: 85% kleiner
-                        : { width: 40, height: 15 }; // Desktop: Referenz
-                } else { // 42pt
-                    return isWeb
-                        ? { width: 47, height: 18 }  // Web: 84% kleiner
-                        : { width: 56, height: 21 }; // Desktop: Referenz
-                }
-            },
-
-            // Footer-Größen für identische Druckausgabe
-            getFooter: () => {
-                const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-                return isWeb
-                    ? { fontSize: 6, lineSpacing: 0.8 }   // Web: Kleiner
-                    : { fontSize: 7, lineSpacing: 0.9 };  // Desktop: Standard
-            },
-
-            // Abstände für identische Druckausgabe
-            getSpacing: (type) => {
-                const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-                const webFactor = 0.85; // Web: 15% kleiner
-
-                const baseSpacing = {
-                    logoAfter: 30,        // Abstand nach Logo
-                    addressAfter: 60,     // Abstand nach Adresse
-                    greetingAfter: 40,    // Abstand nach Anrede
-                    textAfter: 60,        // Abstand nach Textbereich
-                    signatureAfter: 60,   // Abstand nach Gruss
-                    emptyBefore: 20       // Abstand vor Beilagen
-                };
-
-                return Math.round(isWeb ? baseSpacing[type] * webFactor : baseSpacing[type]);
-            }
-        };
-
-        // Datenbank-Simulationen (in der echten Implementierung würden diese aus einer Datenbank kommen)
-        const sprachen = {
-            1: { name: 'Deutsch', code: 'de-DE', dateFormat: 'dd.mm.yyyy' },
-            2: { name: 'English', code: 'en-US', dateFormat: 'mm-dd-yyyy' },
-            3: { name: 'Français', code: 'fr-FR', dateFormat: 'dd.mm.yyyy' },
-            4: { name: 'Italiano', code: 'it-IT', dateFormat: 'dd.mm.yyyy' }
-        };
-
-        const absenderData = {
-            1: { name: 'Dreyfus Banquiers', standort: 'Basel', anonymMoeglich: true, slogan: true, nurBasel: false },
-            2: { name: 'Büro Basel', standort: 'Basel', anonymMoeglich: false, slogan: false, nurBasel: true },
-            3: { name: 'Büro Zürich', standort: 'Zürich', anonymMoeglich: false, slogan: false, nurBasel: false },
-            4: { name: 'Büro Lugano', standort: 'Lugano', anonymMoeglich: true, slogan: false, nurBasel: false },
-            9: { name: 'Neutral', standort: '', anonymMoeglich: true, slogan: false, nurBasel: false }
-        };
-
-        const abteilungen = {
-            de: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Vermögensverwaltung' },
-                { id: 3, name: 'Anlageberatung' },
-                { id: 4, name: 'Portfoliomanagement' },
-                { id: 5, name: 'Sekretariat' },
-                { id: 6, name: 'Buchhaltung' },
-                { id: 7, name: 'IT-Abteilung' }
-            ],
-            en: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Wealth Management' },
-                { id: 3, name: 'Investment Advisory' },
-                { id: 4, name: 'Portfolio Management' },
-                { id: 5, name: 'Secretariat' },
-                { id: 6, name: 'Accounting' },
-                { id: 7, name: 'IT Department' }
-            ],
-            fr: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Gestion de fortune' },
-                { id: 3, name: 'Conseil en placement' },
-                { id: 4, name: 'Gestion de portefeuille' },
-                { id: 5, name: 'Secrétariat' },
-                { id: 6, name: 'Comptabilité' },
-                { id: 7, name: 'Service informatique' }
-            ],
-            it: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Gestione patrimoniale' },
-                { id: 3, name: 'Consulenza agli investimenti' },
-                { id: 4, name: 'Gestione del portafoglio' },
-                { id: 5, name: 'Segretariato' },
-                { id: 6, name: 'Contabilità' },
-                { id: 7, name: 'Reparto IT' }
-            ]
-        };
-
-        const beilagen = {
-            de: [
-                { id: 1, name: 'Informationsblatt' },
-                { id: 2, name: 'Vollmacht' },
-                { id: 3, name: 'Vertragsdokumente' }
-            ],
-            en: [
-                { id: 1, name: 'Information Sheet' },
-                { id: 2, name: 'Power of Attorney' },
-                { id: 3, name: 'Contract Documents' }
-            ],
-            fr: [
-                { id: 1, name: 'Feuille d\'information' },
-                { id: 2, name: 'Procuration' },
-                { id: 3, name: 'Documents contractuels' }
-            ],
-            it: [
-                { id: 1, name: 'Scheda informativa' },
-                { id: 2, name: 'Procura' },
-                { id: 3, name: 'Documenti contrattuali' }
-            ]
-        };
-
-        const grussformeln = {
-            de: 'Mit freundlichen Grüssen',
-            en: 'Yours sincerely,', // Mit Komma!
-            fr: 'Avec nos salutations les meilleures',
-            it: 'Cordiali saluti'
-        };
-
-        const firmenNamen = {
-            de: 'Dreyfus Söhne & Cie AG, Banquiers',
-            en: 'Dreyfus Sons & Co Ltd, Banquiers',
-            fr: 'Les Fils Dreyfus & Cie SA, Banquiers',
-            it: 'Les Fils Dreyfus & Cie SA, Banquiers'
-        };
-
-        // Footer-Taglines für alle Sprachen
-        const footerTaglines = {
-            de: 'Einzigartig aufgehoben.',
-            en: 'In trusted hands.',
-            fr: 'En de bonnes mains.',
-            it: 'En de bonnes mains.'
-        };
+        // Globale Variablen für die geladenen Daten
+        let appData = null;
+        const DATA_URL = 'https://keshbe.github.io/brief-generator-addin/data.json';
 
         // Office.js Initialisierung
-        Office.onReady((info) => {
+        Office.onReady(async (info) => {
             if (info.host === Office.HostType.Word) {
                 console.log('Dreyfus Brief Add-In ist bereit');
-
-                // Debug-Info anzeigen
-                logEnvironmentInfo();
-
-                initializeEventHandlers();
-                setDefaultValues();
+                
+                // Lade Daten und initialisiere dann
+                await loadData();
+                
+                if (appData) {
+                    initializeEventHandlers();
+                    initializeForm();
+                    setDefaultValues();
+                } else {
+                    showStatus('Fehler beim Laden der Daten. Bitte aktualisieren Sie die Seite.', 'error');
+                }
             } else {
                 showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
             }
         });
 
-        function logEnvironmentInfo() {
-            const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-            const logoSize = ADAPTIVE_SIZING.getLogo('42');
-            const footerSize = ADAPTIVE_SIZING.getFooter();
+        // Lade Daten von JSON
+        async function loadData() {
+            try {
+                const response = await fetch(DATA_URL);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                appData = await response.json();
+                console.log('Daten erfolgreich geladen:', appData);
+                
+                // Verstecke Loading Overlay
+                document.getElementById('loadingOverlay').style.display = 'none';
+            } catch (error) {
+                console.error('Fehler beim Laden der Daten:', error);
+                document.getElementById('loadingOverlay').style.display = 'none';
+                showStatus('Fehler beim Laden der Daten: ' + error.message, 'error');
+            }
+        }
 
-            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt`;
-            document.getElementById('debugText').textContent = debugText;
+        // Initialisiere das Formular mit den geladenen Daten
+        function initializeForm() {
+            // Sprachen
+            const spracheSelect = document.getElementById('sprache');
+            Object.entries(appData.sprachen).forEach(([id, sprache]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = sprache.name;
+                spracheSelect.appendChild(option);
+            });
 
-            console.log('=== ADAPTIVE SIZING INFO ===');
-            console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
-            console.log('Logo 42pt:', logoSize);
-            console.log('Footer:', footerSize);
-            console.log('=============================');
+            // Absender
+            const absenderSelect = document.getElementById('absender');
+            Object.entries(appData.absenderData).forEach(([id, absender]) => {
+                const option = document.createElement('option');
+                option.value = id;
+                option.textContent = absender.name;
+                absenderSelect.appendChild(option);
+            });
+
+            // Logo-Varianten
+            const logoVarianteSelect = document.getElementById('logoVariante');
+            appData.logoVarianten.forEach((variante, index) => {
+                const option = document.createElement('option');
+                option.value = variante.value;
+                option.textContent = variante.text;
+                if (index === 0) option.selected = true; // Standard auswählen
+                logoVarianteSelect.appendChild(option);
+            });
         }
 
         function initializeEventHandlers() {
             document.getElementById('briefForm').addEventListener('submit', erstelleBrief);
             document.getElementById('cancelBtn').addEventListener('click', () => {
+                // Nichts tun - Formular bleibt offen mit allen Daten
                 showStatus('Aktion abgebrochen. Ihre Eingaben bleiben erhalten.', 'info');
             });
             document.getElementById('sprache').addEventListener('change', onSpracheChange);
@@ -589,8 +467,11 @@
         }
 
         function setDefaultValues() {
+            // Immer das aktuelle Datum setzen
             const heute = new Date();
             const datumField = document.getElementById('datum');
+            
+            // Standard auf Deutsch
             datumField.value = formatDate(heute, 'de');
         }
 
@@ -598,35 +479,41 @@
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
-
+            
             switch (sprache) {
                 case 'en':
+                    // MM-DD-YYYY für Englisch
                     return `${month}-${day}-${year}`;
                 case 'fr':
+                    // le DD.MM.YYYY für Französisch
                     return `le ${day}.${month}.${year}`;
                 case 'de':
                 case 'it':
                 default:
+                    // DD.MM.YYYY für Deutsch und Italienisch
                     return `${day}.${month}.${year}`;
             }
         }
 
         function onSpracheChange() {
             const spracheId = document.getElementById('sprache').value;
-            if (!spracheId) return;
+            if (!spracheId || !appData) return;
 
-            const sprache = sprachen[spracheId];
+            const sprache = appData.sprachen[spracheId];
             const sprachCode = sprache.code.split('-')[0];
 
+            // Datum format anpassen - immer mit aktuellem Datum
             const datumField = document.getElementById('datum');
             const heute = new Date();
             datumField.value = formatDate(heute, sprachCode);
 
-            document.getElementById('gruss').value = grussformeln[sprachCode] || grussformeln.de;
+            // Grussformel anpassen
+            document.getElementById('gruss').value = appData.grussformeln[sprachCode] || appData.grussformeln.de;
 
+            // Ort anpassen basierend auf Sprache
             const absenderId = document.getElementById('absender').value;
-            if (absenderId && absenderId !== '4') {
-                let ort = absenderData[absenderId].standort;
+            if (absenderId && absenderId !== '4') { // Nicht für Lugano
+                let ort = appData.absenderData[absenderId].standort;
                 if (sprachCode === 'fr') {
                     ort = 'Delémont';
                 } else if (sprachCode === 'en') {
@@ -635,53 +522,62 @@
                 document.getElementById('ort').value = ort;
             }
 
-            updateSelectOptions('abteilung1', abteilungen[sprachCode] || []);
-            updateSelectOptions('abteilung2', abteilungen[sprachCode] || []);
-            updateSelectOptions('beilage', beilagen[sprachCode] || []);
+            // Abteilungen und Beilagen aktualisieren
+            updateSelectOptions('abteilung1', appData.abteilungen[sprachCode] || []);
+            updateSelectOptions('abteilung2', appData.abteilungen[sprachCode] || []);
+            updateSelectOptions('beilage', appData.beilagen[sprachCode] || []);
         }
 
         function onAbsenderChange() {
             const absenderId = document.getElementById('absender').value;
-            if (!absenderId) return;
+            console.log('Absender gewählt:', absenderId);
+            
+            if (!absenderId || !appData) return;
 
-            const absender = absenderData[absenderId];
+            const absender = appData.absenderData[absenderId];
             const spracheId = document.getElementById('sprache').value;
-
+            
+            // Anonym-Option aktivieren/deaktivieren
             const anonymCheckbox = document.getElementById('anonym');
             anonymCheckbox.disabled = !absender.anonymMoeglich;
             if (!absender.anonymMoeglich) {
                 anonymCheckbox.checked = false;
-                onAnonymChange();
+                onAnonymChange(); // Trigger anonym change
             }
 
+            // Ort setzen - abhängig von Sprache und Absender
             let ort = absender.standort;
-
-            if (spracheId) {
-                const sprachCode = sprachen[spracheId].code.split('-')[0];
+            
+            // Spezielle Orte je nach Sprache
+            if (spracheId && appData.sprachen[spracheId]) {
+                const sprachCode = appData.sprachen[spracheId].code.split('-')[0];
                 if (sprachCode === 'fr' && absenderId !== '4') {
-                    ort = 'Delémont';
+                    ort = 'Delémont'; // Französisch zeigt Delémont
                 } else if (sprachCode === 'en' && absenderId !== '4') {
-                    ort = 'Basel';
+                    ort = 'Basel'; // Englisch zeigt Basel
                 }
             }
-
+            
             document.getElementById('ort').value = ort;
         }
 
         function onAnonymChange() {
             const isAnonym = document.getElementById('anonym').checked;
-
+            
+            // Warnung anzeigen/verstecken
             document.getElementById('anonymWarning').style.display = isAnonym ? 'block' : 'none';
+            
+            // Bei Anonym nur eine Unterschrift
             document.getElementById('unterschrift2Row').style.display = isAnonym ? 'none' : 'block';
             document.getElementById('abteilung2Row').style.display = isAnonym ? 'none' : 'block';
-
+            
             if (isAnonym) {
                 document.getElementById('unterschrift2').value = '';
                 document.getElementById('funktion2').value = '';
                 document.getElementById('abteilung2').value = '';
             }
         }
-
+        
         function updateSelectOptions(selectId, options) {
             const select = document.getElementById(selectId);
             select.innerHTML = '<option value="">-- Keine --</option>';
@@ -695,15 +591,17 @@
 
         async function pasteFromClipboard() {
             try {
+                // Prüfe ob Clipboard API verfügbar ist
                 if (!navigator.clipboard || !navigator.clipboard.readText) {
                     showStatus('Zwischenablage ist in dieser Umgebung nicht verfügbar.', 'error');
                     return;
                 }
-
+                
                 const text = await navigator.clipboard.readText();
                 document.getElementById('adresse').value = text;
                 showStatus('Adresse eingefügt', 'success');
             } catch (err) {
+                // Fallback für ältere Browser oder wenn Berechtigung verweigert wurde
                 showStatus('Bitte fügen Sie die Adresse manuell mit Strg+V ein.', 'info');
             }
         }
@@ -713,7 +611,7 @@
             statusElement.textContent = message;
             statusElement.className = `status-${type}`;
             statusElement.style.display = 'block';
-
+            
             if (type === 'success' || type === 'info') {
                 setTimeout(() => {
                     statusElement.style.display = 'none';
@@ -723,24 +621,15 @@
 
         async function erstelleBrief(event) {
             event.preventDefault();
-
+            
+            if (!appData) {
+                showStatus('Daten noch nicht geladen. Bitte warten Sie einen Moment.', 'error');
+                return;
+            }
+            
             try {
                 showStatus('Brief wird erstellt...', 'info');
-
-                // === ADAPTIVE SIZING ERMITTELN ===
-                const logoSize = ADAPTIVE_SIZING.getLogo(document.getElementById('logoVariante').value);
-                const footerSize = ADAPTIVE_SIZING.getFooter();
-                const spacing = {
-                    logoAfter: ADAPTIVE_SIZING.getSpacing('logoAfter'),
-                    addressAfter: ADAPTIVE_SIZING.getSpacing('addressAfter'),
-                    greetingAfter: ADAPTIVE_SIZING.getSpacing('greetingAfter'),
-                    textAfter: ADAPTIVE_SIZING.getSpacing('textAfter'),
-                    signatureAfter: ADAPTIVE_SIZING.getSpacing('signatureAfter'),
-                    emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
-                };
-
-                console.log('Adaptive Sizing verwendet:', { logoSize, footerSize, spacing });
-
+                
                 const formData = {
                     sprache: document.getElementById('sprache').value,
                     absender: document.getElementById('absender').value,
@@ -776,17 +665,17 @@
                 await Word.run(async (context) => {
                     // Dokument leeren
                     context.document.body.clear();
-
-                    // Standard-Schriftart setzen
+                    
+                    // Standard-Schriftart setzen - nur Dreyfus Sans
                     context.document.body.font.name = 'Dreyfus Sans';
                     context.document.body.font.size = 11;
-
-                    // Seitenränder einstellen
+                    
+                    // Seitenränder einstellen (ähnlich wie im Original)
                     const sections = context.document.sections;
                     sections.load('items');
-
+                    
                     await context.sync();
-
+                    
                     if (sections.items.length > 0) {
                         const section = sections.items[0];
                         section.topMargin = 72;    // 2.54 cm
@@ -794,59 +683,65 @@
                         section.leftMargin = 72;   // 2.54 cm
                         section.rightMargin = 72;  // 2.54 cm
                     }
-
-                    // === HEADER MIT ADAPTIVEM LOGO ===
+                    
+                    // === HEADER MIT LOGO ===
                     const header = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
                     header.clear();
-
+                    
+                    // Logo in Header einfügen (abhängig von Anonym-Option und Absender)
+                    // Logo nur bei Dreyfus-Absendern (1-4), nicht bei Neutral (9)
                     if (!formData.anonym && formData.absender !== '9' && formData.absender !== '') {
                         try {
-                            const logoVariante = formData.logoVariante || '42_Farbe';
-                            const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
-
-                            const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
-                            logoParagraph.alignment = Word.Alignment.left;
-
-                            try {
-                                const base64Logo = await getImageAsBase64(logoUrl);
-                                if (base64Logo) {
-                                    const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
-
-                                    // === ADAPTIVE LOGO-GRÖSSE ===
-                                    logo.width = logoSize.width;
-                                    logo.height = logoSize.height;
-
-                                    // Adaptive Abstände
-                                    logoParagraph.spaceAfter = spacing.logoAfter;
-
-                                    console.log(`Logo eingefügt: ${logoSize.width}x${logoSize.height}px, Abstand: ${spacing.logoAfter}pt`);
-                                } else {
+                            // Logo-Details aus appData holen
+                            const logoVariante = appData.logoVarianten.find(v => v.value === formData.logoVariante);
+                            if (logoVariante) {
+                                const logoUrl = `https://keshbe.github.io/brief-generator-addin/${logoVariante.filename}`;
+                                
+                                // Logo-Paragraph erstellen
+                                const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
+                                logoParagraph.alignment = Word.Alignment.left;
+                                
+                                // Versuche echtes Logo zu laden
+                                try {
+                                    const base64Logo = await getImageAsBase64(logoUrl);
+                                    if (base64Logo) {
+                                        const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
+                                        
+                                        // Logo-Größe aus Daten verwenden
+                                        logo.width = logoVariante.width;
+                                        logo.height = logoVariante.height;
+                                        
+                                        // Abstand nach dem Header erhöhen
+                                        logoParagraph.spaceAfter = 36;
+                                    } else {
+                                        // Fallback: Text-Platzhalter
+                                        logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
+                                        logoParagraph.font.color = '#666666';
+                                        logoParagraph.font.size = 14;
+                                    }
+                                } catch (imgError) {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
                                     logoParagraph.font.color = '#666666';
                                     logoParagraph.font.size = 14;
+                                    console.log('Logo als Platzhalter eingefügt:', imgError);
                                 }
-                            } catch (imgError) {
-                                logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
-                                logoParagraph.font.color = '#666666';
-                                logoParagraph.font.size = 14;
-                                console.log('Logo als Platzhalter eingefügt:', imgError);
                             }
                         } catch (logoError) {
                             console.error('Logo konnte nicht eingefügt werden:', logoError);
                         }
                     }
-
-                    // === HAUPTINHALT MIT ADAPTIVEN ABSTÄNDEN ===
-
-                    // Empfängeradresse
+                    
+                    // === HAUPTINHALT ===
+                    
+                    // Empfängeradresse (LINKSBÜNDIG)
                     if (formData.adresse) {
                         const adresseParagraph = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
                         adresseParagraph.alignment = Word.Alignment.left;
-                        adresseParagraph.spaceAfter = spacing.addressAfter;
+                        adresseParagraph.spaceAfter = 72; // Größerer Abstand nach Adresse
                     }
-
-                    // Ort, Datum und Absenderkürzel
+                    
+                    // Ort, Datum und Absenderkürzel (RECHTSBÜNDIG)
                     let ortDatumText = '';
                     if (formData.ort) {
                         ortDatumText = formData.ort;
@@ -857,57 +752,60 @@
                     if (formData.absenderKuerzel) {
                         ortDatumText += ' ' + formData.absenderKuerzel;
                     }
-
+                    
                     if (ortDatumText) {
                         const ortDatumParagraph = context.document.body.insertParagraph(ortDatumText, Word.InsertLocation.end);
                         ortDatumParagraph.alignment = Word.Alignment.right;
-                        ortDatumParagraph.spaceAfter = 40;
+                        ortDatumParagraph.spaceAfter = 48; // Angepasster Abstand
                     }
-
-                    // Betreff
+                    
+                    // Betreff (LINKSBÜNDIG, fett)
                     if (formData.betreff) {
                         const betreffParagraph = context.document.body.insertParagraph(formData.betreff, Word.InsertLocation.end);
                         betreffParagraph.font.bold = true;
                         betreffParagraph.alignment = Word.Alignment.left;
-                        betreffParagraph.spaceAfter = 12;
+                        betreffParagraph.spaceAfter = 12; // Kleinerer Abstand nach Betreff
                     }
-
-                    // Anrede
+                    
+                    // Anrede (LINKSBÜNDIG)
                     if (formData.anrede) {
                         const anredeParagraph = context.document.body.insertParagraph(formData.anrede, Word.InsertLocation.end);
                         anredeParagraph.alignment = Word.Alignment.left;
-                        anredeParagraph.spaceAfter = spacing.greetingAfter;
+                        anredeParagraph.spaceAfter = 48; // Größerer Abstand nach Anrede
                     }
-
-                    // Leerer Absatz für Brieftext
+                    
+                    // Leerer Absatz für Brieftext - Cursor wird hier positioniert
                     const textParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                     textParagraph.alignment = Word.Alignment.left;
-                    textParagraph.spaceAfter = spacing.textAfter;
-
-                    // Grussformel
+                    textParagraph.spaceAfter = 72; // Größerer Abstand nach Textbereich
+                    
+                    // Grussformel (LINKSBÜNDIG)
                     if (formData.gruss) {
                         const grussParagraph = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
                         grussParagraph.alignment = Word.Alignment.left;
-                        grussParagraph.spaceAfter = 6;
-
-                        // Dreyfus Name (nur wenn nicht anonym)
+                        grussParagraph.spaceAfter = 6; // Kleiner Abstand zur nächsten Zeile
+                        
+                        // Dreyfus Name (nur wenn nicht anonym) - sprachabhängig
                         if (!formData.anonym) {
-                            const sprachCode = sprachen[formData.sprache].code.split('-')[0];
-                            const firmenName = firmenNamen[sprachCode] || firmenNamen.de;
-
+                            const sprachCode = appData.sprachen[formData.sprache].code.split('-')[0];
+                            const firmenName = appData.firmenNamen[sprachCode] || appData.firmenNamen.de;
+                            
                             const dreyfusParagraph = context.document.body.insertParagraph(firmenName, Word.InsertLocation.end);
                             dreyfusParagraph.alignment = Word.Alignment.left;
-                            dreyfusParagraph.spaceAfter = spacing.signatureAfter;
+                            dreyfusParagraph.spaceAfter = 72; // Großer Abstand zu Unterschriften
                         } else {
-                            grussParagraph.spaceAfter = spacing.signatureAfter;
+                            // Bei Anonym mehr Abstand
+                            grussParagraph.spaceAfter = 72;
                         }
                     }
-
+                    
+                    // Unterschriften, Funktionen und Abteilungen (mit Tabs für saubere Ausrichtung)
+                    
                     // Unterschriften
                     if (formData.unterschrift1 || formData.unterschrift2) {
                         const unterschriftenParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                         unterschriftenParagraph.alignment = Word.Alignment.left;
-
+                        
                         let unterschriftenText = '';
                         if (formData.unterschrift1) {
                             unterschriftenText = formData.unterschrift1;
@@ -915,22 +813,27 @@
                         if (formData.unterschrift2 && !formData.anonym) {
                             unterschriftenText += '\t\t\t' + formData.unterschrift2;
                         }
-
+                        
                         unterschriftenParagraph.insertText(unterschriftenText, Word.InsertLocation.start);
-
+                        
+                        // Prüfe ob Funktionen oder Abteilungen folgen
                         const hasFunktionen = formData.funktion1 || formData.funktion2;
-                        const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
-                            (formData.abteilung2 && formData.abteilung2 !== '1');
-
-                        unterschriftenParagraph.spaceAfter = (hasFunktionen || hasAbteilungen) ? 2 : 30;
+                        const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') || 
+                                              (formData.abteilung2 && formData.abteilung2 !== '1');
+                        
+                        if (hasFunktionen || hasAbteilungen) {
+                            unterschriftenParagraph.spaceAfter = 2;
+                        } else {
+                            unterschriftenParagraph.spaceAfter = 36;
+                        }
                     }
-
+                    
                     // Funktionen
                     if (formData.funktion1 || formData.funktion2) {
                         const funktionenParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                         funktionenParagraph.font.size = 10;
                         funktionenParagraph.alignment = Word.Alignment.left;
-
+                        
                         let funktionenText = '';
                         if (formData.funktion1) {
                             funktionenText = formData.funktion1;
@@ -938,21 +841,22 @@
                         if (formData.funktion2 && !formData.anonym) {
                             funktionenText += '\t\t\t' + formData.funktion2;
                         }
-
+                        
                         funktionenParagraph.insertText(funktionenText, Word.InsertLocation.start);
-
-                        const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
-                            (formData.abteilung2 && formData.abteilung2 !== '1');
-                        funktionenParagraph.spaceAfter = hasAbteilungen ? 2 : 30;
+                        
+                        // Prüfe ob Abteilungen folgen
+                        const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') || 
+                                              (formData.abteilung2 && formData.abteilung2 !== '1');
+                        funktionenParagraph.spaceAfter = hasAbteilungen ? 2 : 36;
                     }
-
+                    
                     // Abteilungen
-                    if ((formData.abteilung1 && formData.abteilung1 !== '1') ||
+                    if ((formData.abteilung1 && formData.abteilung1 !== '1') || 
                         (formData.abteilung2 && formData.abteilung2 !== '1')) {
                         const abteilungenParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                         abteilungenParagraph.font.size = 10;
                         abteilungenParagraph.alignment = Word.Alignment.left;
-
+                        
                         let abteilungenText = '';
                         if (formData.abteilung1 && formData.abteilung1 !== '1') {
                             const abt1Text = document.getElementById('abteilung1').selectedOptions[0].text;
@@ -960,7 +864,7 @@
                                 abteilungenText = abt1Text;
                             }
                         }
-
+                        
                         if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
                             const abt2Text = document.getElementById('abteilung2').selectedOptions[0].text;
                             if (abt2Text !== '--') {
@@ -971,16 +875,16 @@
                                 }
                             }
                         }
-
+                        
                         abteilungenParagraph.insertText(abteilungenText, Word.InsertLocation.start);
-                        abteilungenParagraph.spaceAfter = 30;
+                        abteilungenParagraph.spaceAfter = 36;
                     }
-
-                    // Beilagen
+                    
+                    // Beilagen (LINKSBÜNDIG)
                     if (formData.beilage || formData.anlagen) {
                         let beilagenText = '';
                         let hasBeilage = false;
-
+                        
                         if (formData.beilage) {
                             const beilage = document.getElementById('beilage').selectedOptions[0].text;
                             if (beilage !== '-- Keine --') {
@@ -995,90 +899,100 @@
                             beilagenText += formData.anlagen;
                             hasBeilage = true;
                         }
-
+                        
                         if (hasBeilage) {
+                            // Leerer Absatz vor Beilagen
                             const emptyParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                            emptyParagraph.spaceAfter = spacing.emptyBefore;
-
+                            emptyParagraph.spaceAfter = 24;
+                            
+                            // Beilagen-Inhalt
                             const beilagenContent = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
                             beilagenContent.font.size = 10;
                             beilagenContent.alignment = Word.Alignment.left;
                         }
                     }
-
-                    // === FOOTER MIT ADAPTIVER FORMATIERUNG ===
+                    
+                    // === FOOTER ===
                     const footer = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
                     footer.clear();
-
+                    
+                    // Fusszeile mit Adressinformationen basierend auf Absender
                     if (!formData.anonym) {
-                        const sprachCode = sprachen[formData.sprache].code.split('-')[0];
-                        const firmenName = firmenNamen[sprachCode] || firmenNamen.de;
+                        const sprachCode = appData.sprachen[formData.sprache].code.split('-')[0];
+                        const firmenName = appData.firmenNamen[sprachCode] || appData.firmenNamen.de;
                         let footerLines = [];
-
+                        
+                        // Bestimme welche Footer-Info zu verwenden ist
+                        let footerKey = 'zuerich'; // Default
                         switch (formData.absender) {
-                            case '1':
-                            case '2':
-                            case '3':
-                                footerLines = [
-                                    firmenName,
-                                    'Büro Zürich',
-                                    'St. Petersstrasse 1 | 8001 Zürich | Schweiz',
-                                    'Telefon +41 44 225 88 66',
-                                    'contact@dreyfusbank.ch | www.dreyfusbank.ch'
-                                ];
+                            case '1': // Dreyfus Banquiers
+                            case '2': // Büro Basel
+                                footerKey = 'basel';
                                 break;
-                            case '4':
-                                footerLines = [
-                                    firmenName,
-                                    'Ufficio Lugano',
-                                    'Via Pessina 7 | 6900 Lugano | Svizzera',
-                                    'Telefono +41 91 910 71 71',
-                                    'lugano@dreyfusbank.ch | www.dreyfusbank.ch'
-                                ];
+                            case '3': // Büro Zürich
+                                footerKey = 'zuerich';
+                                break;
+                            case '4': // Büro Lugano
+                                footerKey = 'lugano';
                                 break;
                         }
-
+                        
+                        if (appData.footerInfo[footerKey] && appData.footerInfo[footerKey][sprachCode]) {
+                            const footerData = appData.footerInfo[footerKey][sprachCode];
+                            footerLines = [
+                                firmenName,
+                                footerData.buero,
+                                footerData.adresse,
+                                footerData.telefon,
+                                footerData.email
+                            ];
+                        }
+                        
                         if (footerLines.length > 0) {
-                            // === ADAPTIVE FOOTER-FORMATIERUNG ===
+                            // Füge jede Zeile einzeln ein für perfekte Kontrolle
                             footerLines.forEach((line, index) => {
                                 const footerParagraph = footer.insertParagraph(line, Word.InsertLocation.end);
-                                footerParagraph.font.name = 'Dreyfus Sans';  // WICHTIG: Schriftart setzen
-                                footerParagraph.font.size = footerSize.fontSize;
-                                footerParagraph.font.color = '#7a7a7a';
+                                footerParagraph.font.size = 8;
+                                footerParagraph.font.color = '#7a7a7a'; // Grauer Text wie im Original
                                 footerParagraph.alignment = Word.Alignment.center;
                                 footerParagraph.spaceAfter = 0;
                                 footerParagraph.spaceBefore = 0;
-                                footerParagraph.lineSpacing = footerSize.lineSpacing;
+                                footerParagraph.lineSpacing = 1.0;
                             });
-
-                            // Tagline mit adaptiver Formatierung
-                            const tagline = footerTaglines[sprachCode];
+                            
+                            // Tagline für alle Sprachen
+                            const tagline = appData.footerTaglines[sprachCode];
                             if (tagline) {
+                                // Leere Zeile vor dem Tagline
                                 const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
-                                emptyParagraph.font.size = 4;
-
+                                emptyParagraph.spaceAfter = 0;
+                                emptyParagraph.spaceBefore = 0;
+                                emptyParagraph.font.size = 8;
+                                
+                                // Füge den sprachspezifischen Tagline ein
                                 const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
-                                taglineParagraph.font.name = 'Dreyfus Sans';  // WICHTIG: Schriftart setzen
-                                taglineParagraph.font.size = footerSize.fontSize;
+                                taglineParagraph.font.size = 8;
                                 taglineParagraph.font.color = '#7a7a7a';
                                 taglineParagraph.alignment = Word.Alignment.center;
-                                taglineParagraph.lineSpacing = footerSize.lineSpacing;
                                 taglineParagraph.spaceAfter = 0;
-                                taglineParagraph.spaceBefore = 2;
+                                taglineParagraph.spaceBefore = 0;
                             }
-
-                            console.log(`Footer formatiert: ${footerSize.fontSize}pt, Spacing: ${footerSize.lineSpacing}`);
                         }
                     }
-
-                    // Cursor positionieren
+                    
+                    // Dokumentschutz simulieren (Felder schützen)
+                    // In Word Web Add-ins ist echter Dokumentschutz begrenzt
+                    
+                    // Positioniere den Cursor für die Texteingabe
                     textParagraph.getRange().select();
-
+                    
                     await context.sync();
                 });
 
                 showStatus('Brief wurde erfolgreich erstellt!', 'success');
-
+                
+                // Formular NICHT zurücksetzen - Daten bleiben erhalten für Updates
+                
             } catch (error) {
                 console.error('Fehler beim Erstellen des Briefes:', error);
                 showStatus('Fehler beim Erstellen des Briefes: ' + error.message, 'error');
