@@ -5,50 +5,68 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
            xsi:type="TaskPaneApp">
 
+  <!-- Basis-Manifest-Elemente in korrekter Reihenfolge -->
   <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Dreyfus Soehne und Cie AG</ProviderName>
   <DefaultLocale>de-DE</DefaultLocale>
+  
+  <!-- Display-Informationen -->
   <DisplayName DefaultValue="Dreyfus Brief Generator" />
   <Description DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage" />
   
-  <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
-  <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
+  <!-- Icons -->
+  <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png" />
+  <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png" />
   
+  <!-- Support URL -->
   <SupportUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/" />
   
+  <!-- AppDomains -->
   <AppDomains>
     <AppDomain>https://keshbe.github.io</AppDomain>
   </AppDomains>
   
+  <!-- Hosts -->
   <Hosts>
     <Host Name="Document" />
   </Hosts>
   
+  <!-- Requirements -->
   <Requirements>
     <Sets DefaultMinVersion="1.1">
       <Set Name="WordApi" MinVersion="1.1" />
     </Sets>
   </Requirements>
   
+  <!-- DefaultSettings -->
   <DefaultSettings>
-    <SourceLocation DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html"/>
+    <SourceLocation DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
   </DefaultSettings>
   
+  <!-- Permissions -->
   <Permissions>ReadWriteDocument</Permissions>
 
+  <!-- VersionOverrides -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Description resid="residDescription" />
+    
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.1">
+        <bt:Set Name="WordApi" MinVersion="1.1" />
+      </bt:Sets>
+    </Requirements>
+    
     <Hosts>
       <Host xsi:type="Document">
-        <DesktopFormFactor>
-          <GetStarted>
-            <Title resid="GetStarted.Title"/>
-            <Description resid="GetStarted.Description"/>
-            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
-          </GetStarted>
-          
+        <!-- Gemeinsame Elemente -->
+        <Runtimes>
+          <Runtime resid="Taskpane.Runtime.Url" lifetime="long" />
+        </Runtimes>
+        
+        <AllFormFactors>
           <FunctionFile resid="Commands.Url" />
-
+          
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <CustomTab id="DreyfusTab">
               <Label resid="TabBrief.Label" />
@@ -62,6 +80,7 @@
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
+                <!-- Button: Eingabe -->
                 <Control xsi:type="Button" id="TaskpaneButton">
                   <Label resid="BtnEingabe.Label" />
                   <Supertip>
@@ -79,6 +98,7 @@
                   </Action>
                 </Control>
 
+                <!-- Button: Adresse kopieren -->
                 <Control xsi:type="Button" id="AddressButton">
                   <Label resid="BtnAdresse.Label" />
                   <Supertip>
@@ -105,6 +125,7 @@
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
+                <!-- Dropdown: Standard/Aufzaehlung -->
                 <Control xsi:type="Menu" id="FormatMenu">
                   <Label resid="MnuAufzaehlung.Label" />
                   <Supertip>
@@ -151,6 +172,7 @@
                   </Items>
                 </Control>
 
+                <!-- Button: Silbentrennung -->
                 <Control xsi:type="Button" id="SilbenButton">
                   <Label resid="BtnSilben.Label" />
                   <Supertip>
@@ -177,6 +199,7 @@
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
+                <!-- Menu: Logo -->
                 <Control xsi:type="Menu" id="LogoMenu">
                   <Label resid="BtnLogo.Label" />
                   <Supertip>
@@ -210,6 +233,7 @@
                   </Items>
                 </Control>
 
+                <!-- Menu: Leidbrief -->
                 <Control xsi:type="Menu" id="LeidMenu">
                   <Label resid="BtnLeid.Label" />
                   <Supertip>
@@ -245,10 +269,19 @@
               </Group>
             </CustomTab>
           </ExtensionPoint>
+        </AllFormFactors>
+        
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GetStarted.Title"/>
+            <Description resid="GetStarted.Description"/>
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
+          </GetStarted>
         </DesktopFormFactor>
       </Host>
     </Hosts>
 
+    <!-- Resources -->
     <Resources>
       <bt:Images>
         <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
@@ -260,10 +293,12 @@
       <bt:Urls>
         <bt:Url id="Commands.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/commands.html" />
         <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
+        <bt:Url id="Taskpane.Runtime.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
         <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://keshbe.github.io/brief-generator-addin/" />
       </bt:Urls>
       
       <bt:ShortStrings>
+        <bt:String id="residDescription" DefaultValue="Dreyfus Brief Generator Add-In" />
         <bt:String id="GetStarted.Title" DefaultValue="Dreyfus Brief Generator" />
         <bt:String id="TabBrief.Label" DefaultValue="BRIEF" />
         <bt:String id="BriefGroup.Label" DefaultValue="Brief" />
