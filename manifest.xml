@@ -5,24 +5,24 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
            xsi:type="TaskPaneApp">
 
-  <!-- Basis-Manifest-Elemente in korrekter Reihenfolge -->
+  <!-- Pflicht-Elemente gemäß Schema-Reihenfolge -->
   <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
   <Version>1.0.0.0</Version>
   <ProviderName>Dreyfus Soehne und Cie AG</ProviderName>
   <DefaultLocale>de-DE</DefaultLocale>
   
-  <!-- Display-Informationen -->
+  <!-- Anzeigeinformationen (Policy 100.1) -->
   <DisplayName DefaultValue="Dreyfus Brief Generator" />
-  <Description DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage" />
+  <Description DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage mit professionellen Formatierungsoptionen" />
   
-  <!-- Icons -->
+  <!-- Icons (Policy 100.3, 1120.1) -->
   <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png" />
   <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png" />
   
-  <!-- Support URL -->
-  <SupportUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/" />
+  <!-- Support URL (Policy 100.5, 1120.1) -->
+  <SupportUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/support.html" />
   
-  <!-- AppDomains -->
+  <!-- AppDomains (Policy 100.4) -->
   <AppDomains>
     <AppDomain>https://keshbe.github.io</AppDomain>
   </AppDomains>
@@ -32,7 +32,7 @@
     <Host Name="Document" />
   </Hosts>
   
-  <!-- Requirements -->
+  <!-- Requirements (Policy 1120.3) -->
   <Requirements>
     <Sets DefaultMinVersion="1.1">
       <Set Name="WordApi" MinVersion="1.1" />
@@ -47,50 +47,58 @@
   <!-- Permissions -->
   <Permissions>ReadWriteDocument</Permissions>
 
-  <!-- VersionOverrides -->
+  <!-- VersionOverrides für moderne UI -->
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
-    <Description resid="residDescription" />
+    <!-- Description -->
+    <Description resid="LongDescription" />
     
+    <!-- Requirements innerhalb VersionOverrides -->
     <Requirements>
       <bt:Sets DefaultMinVersion="1.1">
         <bt:Set Name="WordApi" MinVersion="1.1" />
       </bt:Sets>
     </Requirements>
     
+    <!-- Hosts -->
     <Hosts>
       <Host xsi:type="Document">
-        <!-- Gemeinsame Elemente -->
-        <Runtimes>
-          <Runtime resid="Taskpane.Runtime.Url" lifetime="long" />
-        </Runtimes>
-        
-        <AllFormFactors>
-          <FunctionFile resid="Commands.Url" />
+        <!-- DesktopFormFactor -->
+        <DesktopFormFactor>
+          <!-- GetStarted -->
+          <GetStarted>
+            <Title resid="GetStarted.Title"/>
+            <Description resid="GetStarted.Description"/>
+            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
+          </GetStarted>
           
+          <!-- FunctionFile -->
+          <FunctionFile resid="Commands.Url" />
+
+          <!-- ExtensionPoint -->
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <CustomTab id="DreyfusTab">
-              <Label resid="TabBrief.Label" />
+              <Label resid="TabLabel" />
               
               <!-- Gruppe: Brief -->
               <Group id="BriefGroup">
-                <Label resid="BriefGroup.Label" />
+                <Label resid="BriefGroupLabel" />
                 <Icon>
-                  <bt:Image size="16" resid="Icon.16x16"/>
-                  <bt:Image size="32" resid="Icon.32x32"/>
-                  <bt:Image size="80" resid="Icon.80x80"/>
+                  <bt:Image size="16" resid="Icon16"/>
+                  <bt:Image size="32" resid="Icon32"/>
+                  <bt:Image size="80" resid="Icon80"/>
                 </Icon>
 
                 <!-- Button: Eingabe -->
                 <Control xsi:type="Button" id="TaskpaneButton">
-                  <Label resid="BtnEingabe.Label" />
+                  <Label resid="TaskpaneButtonLabel" />
                   <Supertip>
-                    <Title resid="BtnEingabe.Label" />
-                    <Description resid="BtnEingabe.Tooltip" />
+                    <Title resid="TaskpaneButtonLabel" />
+                    <Description resid="TaskpaneButtonTooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
                   </Icon>
                   <Action xsi:type="ShowTaskpane">
                     <TaskpaneId>ButtonId1</TaskpaneId>
@@ -98,17 +106,17 @@
                   </Action>
                 </Control>
 
-                <!-- Button: Adresse kopieren -->
+                <!-- Button: Adresse -->
                 <Control xsi:type="Button" id="AddressButton">
-                  <Label resid="BtnAdresse.Label" />
+                  <Label resid="AddressButtonLabel" />
                   <Supertip>
-                    <Title resid="BtnAdresse.Label" />
-                    <Description resid="BtnAdresse.Tooltip" />
+                    <Title resid="AddressButtonLabel" />
+                    <Description resid="AddressButtonTooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
                   </Icon>
                   <Action xsi:type="ExecuteFunction">
                     <FunctionName>kopierenEmpfaengeradresse</FunctionName>
@@ -118,52 +126,52 @@
 
               <!-- Gruppe: Formatierung -->
               <Group id="FormatGroup">
-                <Label resid="FormatGroup.Label" />
+                <Label resid="FormatGroupLabel" />
                 <Icon>
-                  <bt:Image size="16" resid="Icon.16x16"/>
-                  <bt:Image size="32" resid="Icon.32x32"/>
-                  <bt:Image size="80" resid="Icon.80x80"/>
+                  <bt:Image size="16" resid="Icon16"/>
+                  <bt:Image size="32" resid="Icon32"/>
+                  <bt:Image size="80" resid="Icon80"/>
                 </Icon>
 
-                <!-- Dropdown: Standard/Aufzaehlung -->
+                <!-- Menu: Standard/Aufzaehlung -->
                 <Control xsi:type="Menu" id="FormatMenu">
-                  <Label resid="MnuAufzaehlung.Label" />
+                  <Label resid="FormatMenuLabel" />
                   <Supertip>
-                    <Title resid="MnuAufzaehlung.Label" />
-                    <Description resid="MnuAufzaehlung.Tooltip" />
+                    <Title resid="FormatMenuLabel" />
+                    <Description resid="FormatMenuTooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
                   </Icon>
                   <Items>
                     <Item id="StandardItem">
-                      <Label resid="BtnStandard.Label" />
+                      <Label resid="StandardLabel" />
                       <Supertip>
-                        <Title resid="BtnStandard.Label" />
-                        <Description resid="BtnStandard.Tooltip" />
+                        <Title resid="StandardLabel" />
+                        <Description resid="StandardTooltip" />
                       </Supertip>
                       <Icon>
-                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="16" resid="Icon16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>applyStandardStyle</FunctionName>
                       </Action>
                     </Item>
-                    <Item id="Aufzaehlung1Item">
-                      <Label resid="BtnAufzaehlung1.Label" />
+                    <Item id="BulletItem1">
+                      <Label resid="Bullet1Label" />
                       <Icon>
-                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="16" resid="Icon16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>applyAufzaehlung1</FunctionName>
                       </Action>
                     </Item>
-                    <Item id="Aufzaehlung2Item">
-                      <Label resid="BtnAufzaehlung2.Label" />
+                    <Item id="BulletItem2">
+                      <Label resid="Bullet2Label" />
                       <Icon>
-                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="16" resid="Icon16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>applyAufzaehlung2</FunctionName>
@@ -173,16 +181,16 @@
                 </Control>
 
                 <!-- Button: Silbentrennung -->
-                <Control xsi:type="Button" id="SilbenButton">
-                  <Label resid="BtnSilben.Label" />
+                <Control xsi:type="Button" id="HyphenButton">
+                  <Label resid="HyphenButtonLabel" />
                   <Supertip>
-                    <Title resid="BtnSilben.Label" />
-                    <Description resid="BtnSilben.Tooltip" />
+                    <Title resid="HyphenButtonLabel" />
+                    <Description resid="HyphenButtonTooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
                   </Icon>
                   <Action xsi:type="ExecuteFunction">
                     <FunctionName>silbentrennung</FunctionName>
@@ -190,41 +198,41 @@
                 </Control>
               </Group>
 
-              <!-- Gruppe: Logo/Leidbrief -->
+              <!-- Gruppe: Spezial -->
               <Group id="SpecialGroup">
-                <Label resid="SpezialGroup.Label" />
+                <Label resid="SpecialGroupLabel" />
                 <Icon>
-                  <bt:Image size="16" resid="Icon.16x16"/>
-                  <bt:Image size="32" resid="Icon.32x32"/>
-                  <bt:Image size="80" resid="Icon.80x80"/>
+                  <bt:Image size="16" resid="Icon16"/>
+                  <bt:Image size="32" resid="Icon32"/>
+                  <bt:Image size="80" resid="Icon80"/>
                 </Icon>
 
                 <!-- Menu: Logo -->
                 <Control xsi:type="Menu" id="LogoMenu">
-                  <Label resid="BtnLogo.Label" />
+                  <Label resid="LogoMenuLabel" />
                   <Supertip>
-                    <Title resid="BtnLogo.Label" />
-                    <Description resid="BtnLogo.Tooltip" />
+                    <Title resid="LogoMenuLabel" />
+                    <Description resid="LogoMenuTooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
                   </Icon>
                   <Items>
                     <Item id="LogoOnItem">
-                      <Label resid="BtnLogoEin.Label" />
+                      <Label resid="LogoOnLabel" />
                       <Icon>
-                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="16" resid="Icon16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>logoPrintEin</FunctionName>
                       </Action>
                     </Item>
                     <Item id="LogoOffItem">
-                      <Label resid="BtnLogoAus.Label" />
+                      <Label resid="LogoOffLabel" />
                       <Icon>
-                        <bt:Image size="16" resid="IconGray.16x16"/>
+                        <bt:Image size="16" resid="IconGray16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>logoPrintAus</FunctionName>
@@ -234,31 +242,31 @@
                 </Control>
 
                 <!-- Menu: Leidbrief -->
-                <Control xsi:type="Menu" id="LeidMenu">
-                  <Label resid="BtnLeid.Label" />
+                <Control xsi:type="Menu" id="CondolenceMenu">
+                  <Label resid="CondolenceMenuLabel" />
                   <Supertip>
-                    <Title resid="BtnLeid.Label" />
-                    <Description resid="BtnLeid.Tooltip" />
+                    <Title resid="CondolenceMenuLabel" />
+                    <Description resid="CondolenceMenuTooltip" />
                   </Supertip>
                   <Icon>
-                    <bt:Image size="16" resid="Icon.16x16"/>
-                    <bt:Image size="32" resid="Icon.32x32"/>
-                    <bt:Image size="80" resid="Icon.80x80"/>
+                    <bt:Image size="16" resid="Icon16"/>
+                    <bt:Image size="32" resid="Icon32"/>
+                    <bt:Image size="80" resid="Icon80"/>
                   </Icon>
                   <Items>
-                    <Item id="LeidOnItem">
-                      <Label resid="BtnLeidEin.Label" />
+                    <Item id="CondolenceOnItem">
+                      <Label resid="CondolenceOnLabel" />
                       <Icon>
-                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="16" resid="Icon16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>leidbriefEin</FunctionName>
                       </Action>
                     </Item>
-                    <Item id="LeidOffItem">
-                      <Label resid="BtnLeidAus.Label" />
+                    <Item id="CondolenceOffItem">
+                      <Label resid="CondolenceOffLabel" />
                       <Icon>
-                        <bt:Image size="16" resid="Icon.16x16"/>
+                        <bt:Image size="16" resid="Icon16"/>
                       </Icon>
                       <Action xsi:type="ExecuteFunction">
                         <FunctionName>leidbriefAus</FunctionName>
@@ -269,14 +277,6 @@
               </Group>
             </CustomTab>
           </ExtensionPoint>
-        </AllFormFactors>
-        
-        <DesktopFormFactor>
-          <GetStarted>
-            <Title resid="GetStarted.Title"/>
-            <Description resid="GetStarted.Description"/>
-            <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
-          </GetStarted>
         </DesktopFormFactor>
       </Host>
     </Hosts>
@@ -284,50 +284,49 @@
     <!-- Resources -->
     <Resources>
       <bt:Images>
-        <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
-        <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
-        <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
-        <bt:Image id="IconGray.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Grau.png"/>
+        <bt:Image id="Icon16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
+        <bt:Image id="Icon32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
+        <bt:Image id="Icon80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
+        <bt:Image id="IconGray16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Grau.png"/>
       </bt:Images>
       
       <bt:Urls>
         <bt:Url id="Commands.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/commands.html" />
         <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
-        <bt:Url id="Taskpane.Runtime.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://keshbe.github.io/brief-generator-addin/" />
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://keshbe.github.io/brief-generator-addin/learnmore.html" />
       </bt:Urls>
       
       <bt:ShortStrings>
-        <bt:String id="residDescription" DefaultValue="Dreyfus Brief Generator Add-In" />
-        <bt:String id="GetStarted.Title" DefaultValue="Dreyfus Brief Generator" />
-        <bt:String id="TabBrief.Label" DefaultValue="BRIEF" />
-        <bt:String id="BriefGroup.Label" DefaultValue="Brief" />
-        <bt:String id="BtnEingabe.Label" DefaultValue="Eingabe" />
-        <bt:String id="BtnAdresse.Label" DefaultValue="Adresse" />
-        <bt:String id="FormatGroup.Label" DefaultValue="Formatieren" />
-        <bt:String id="MnuAufzaehlung.Label" DefaultValue="Standard/Aufzaehlung" />
-        <bt:String id="BtnStandard.Label" DefaultValue="Standard" />
-        <bt:String id="BtnAufzaehlung1.Label" DefaultValue="Aufzaehlung 1" />
-        <bt:String id="BtnAufzaehlung2.Label" DefaultValue="Aufzaehlung 2" />
-        <bt:String id="BtnSilben.Label" DefaultValue="Silbentrennung" />
-        <bt:String id="SpezialGroup.Label" DefaultValue="Spezial" />
-        <bt:String id="BtnLogo.Label" DefaultValue="Logo" />
-        <bt:String id="BtnLogoEin.Label" DefaultValue="Logo einblenden" />
-        <bt:String id="BtnLogoAus.Label" DefaultValue="Logo ausblenden" />
-        <bt:String id="BtnLeid.Label" DefaultValue="Leidbrief" />
-        <bt:String id="BtnLeidEin.Label" DefaultValue="Rahmen ein" />
-        <bt:String id="BtnLeidAus.Label" DefaultValue="Rahmen aus" />
+        <bt:String id="GetStarted.Title" DefaultValue="Willkommen beim Dreyfus Brief Generator" />
+        <bt:String id="TabLabel" DefaultValue="BRIEF" />
+        <bt:String id="BriefGroupLabel" DefaultValue="Brief" />
+        <bt:String id="TaskpaneButtonLabel" DefaultValue="Eingabe" />
+        <bt:String id="AddressButtonLabel" DefaultValue="Adresse" />
+        <bt:String id="FormatGroupLabel" DefaultValue="Formatieren" />
+        <bt:String id="FormatMenuLabel" DefaultValue="Standard/Aufzaehlung" />
+        <bt:String id="StandardLabel" DefaultValue="Standard" />
+        <bt:String id="Bullet1Label" DefaultValue="Aufzaehlung 1" />
+        <bt:String id="Bullet2Label" DefaultValue="Aufzaehlung 2" />
+        <bt:String id="HyphenButtonLabel" DefaultValue="Silbentrennung" />
+        <bt:String id="SpecialGroupLabel" DefaultValue="Spezial" />
+        <bt:String id="LogoMenuLabel" DefaultValue="Logo" />
+        <bt:String id="LogoOnLabel" DefaultValue="Logo einblenden" />
+        <bt:String id="LogoOffLabel" DefaultValue="Logo ausblenden" />
+        <bt:String id="CondolenceMenuLabel" DefaultValue="Leidbrief" />
+        <bt:String id="CondolenceOnLabel" DefaultValue="Rahmen ein" />
+        <bt:String id="CondolenceOffLabel" DefaultValue="Rahmen aus" />
       </bt:ShortStrings>
       
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage" />
-        <bt:String id="BtnEingabe.Tooltip" DefaultValue="Oeffnet das Formular zur Eingabe der Briefdaten" />
-        <bt:String id="BtnAdresse.Tooltip" DefaultValue="Kopiert die Empfaengeradresse in die Zwischenablage" />
-        <bt:String id="MnuAufzaehlung.Tooltip" DefaultValue="Waehlen Sie zwischen Standard und verschiedenen Aufzaehlungsformaten" />
-        <bt:String id="BtnStandard.Tooltip" DefaultValue="Wendet das Standard-Format an" />
-        <bt:String id="BtnSilben.Tooltip" DefaultValue="Startet die manuelle Silbentrennung" />
-        <bt:String id="BtnLogo.Tooltip" DefaultValue="Logo ein- oder ausblenden" />
-        <bt:String id="BtnLeid.Tooltip" DefaultValue="Leidbrief-Rahmen ein- oder ausblenden" />
+        <bt:String id="LongDescription" DefaultValue="Der Dreyfus Brief Generator automatisiert die Erstellung professioneller Geschaeftsbriefe mit vordefinierten Formatvorlagen und Layouts." />
+        <bt:String id="GetStarted.Description" DefaultValue="Erste Schritte mit dem Dreyfus Brief Generator. Erstellen Sie professionelle Briefe mit nur wenigen Klicks." />
+        <bt:String id="TaskpaneButtonTooltip" DefaultValue="Oeffnet das Eingabeformular zur Erstellung eines neuen Briefes" />
+        <bt:String id="AddressButtonTooltip" DefaultValue="Kopiert die Empfaengeradresse in die Zwischenablage" />
+        <bt:String id="FormatMenuTooltip" DefaultValue="Waehlen Sie zwischen Standard-Textformat und verschiedenen Aufzaehlungsformaten" />
+        <bt:String id="StandardTooltip" DefaultValue="Wendet das Standard-Textformat ohne Aufzaehlung an" />
+        <bt:String id="HyphenButtonTooltip" DefaultValue="Startet die manuelle Silbentrennung fuer den ausgewaehlten Text" />
+        <bt:String id="LogoMenuTooltip" DefaultValue="Blendet das Firmenlogo im Briefkopf ein oder aus" />
+        <bt:String id="CondolenceMenuTooltip" DefaultValue="Aktiviert oder deaktiviert den schwarzen Rahmen fuer Kondolenzbriefe" />
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
