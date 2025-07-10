@@ -1,71 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" 
-           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" 
-           xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides" 
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
            xsi:type="TaskPaneApp">
 
   <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
   <Version>1.0.0.3</Version>
   <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
   <DefaultLocale>de-DE</DefaultLocale>
-  <DisplayName DefaultValue="Dreyfus Brief Generator" />
-  <Description DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage" />
+  <DisplayName DefaultValue="Dreyfus Brief Generator"/>
+  <Description DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage"/>
   
-  <!-- Dreyfus Icons -->
   <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
   <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
   
-  <!-- GITHUB PAGES DOMAIN -->
   <AppDomains>
     <AppDomain>https://keshbe.github.io</AppDomain>
+    <AppDomain>https://keshbe.github.io/brief-generator-addin</AppDomain>
   </AppDomains>
-  
+
   <Hosts>
     <Host Name="Document" />
   </Hosts>
-  
+
   <DefaultSettings>
     <SourceLocation DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html"/>
   </DefaultSettings>
-  
+
   <Permissions>ReadWriteDocument</Permissions>
 
-  <!-- VersionOverrides für moderne Funktionen -->
-  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
-    
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+                    xsi:type="VersionOverridesV1_1">
+
+    <Requirements>
+      <Sets DefaultMinVersion="1.1">
+        <Set Name="WordApi" MinVersion="1.1"/>
+      </Sets>
+    </Requirements>
+
     <Hosts>
       <Host xsi:type="Document">
-        
+        <Runtimes>
+          <Runtime resid="Taskpane.Url" lifetime="long" />
+        </Runtimes>
+
         <DesktopFormFactor>
           <GetStarted>
             <Title resid="GetStarted.Title"/>
             <Description resid="GetStarted.Description"/>
             <LearnMoreUrl resid="GetStarted.LearnMoreUrl"/>
           </GetStarted>
-          
-          <!-- FunctionFile für ExecuteFunction Actions -->
-          <FunctionFile resid="Commands.Url" />
+
+          <FunctionFile resid="Commands.Url"/>
 
           <ExtensionPoint xsi:type="PrimaryCommandSurface">
             <CustomTab id="tabBrief">
-              <Label resid="TabBrief.Label" />
-              
-              <!-- Gruppe: Brief -->
+              <Label resid="TabBrief.Label"/>
               <Group id="grpBrief">
-                <Label resid="BriefGroup.Label" />
+                <Label resid="BriefGroup.Label"/>
                 <Icon>
                   <bt:Image size="16" resid="Icon.16x16"/>
                   <bt:Image size="32" resid="Icon.32x32"/>
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
-
-                <!-- Button: Eingabe -->
                 <Control xsi:type="Button" id="btnEingabe">
-                  <Label resid="BtnEingabe.Label" />
+                  <Label resid="BtnEingabe.Label"/>
                   <Supertip>
-                    <Title resid="BtnEingabe.Label" />
-                    <Description resid="BtnEingabe.Tooltip" />
+                    <Title resid="BtnEingabe.Label"/>
+                    <Description resid="BtnEingabe.Tooltip"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -78,12 +80,11 @@
                   </Action>
                 </Control>
 
-                <!-- Button: Adresse kopieren -->
                 <Control xsi:type="Button" id="btnAdresse">
-                  <Label resid="BtnAdresse.Label" />
+                  <Label resid="BtnAdresse.Label"/>
                   <Supertip>
-                    <Title resid="BtnAdresse.Label" />
-                    <Description resid="BtnAdresse.Tooltip" />
+                    <Title resid="BtnAdresse.Label"/>
+                    <Description resid="BtnAdresse.Tooltip"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -96,21 +97,18 @@
                 </Control>
               </Group>
 
-              <!-- Gruppe: Formatierung -->
               <Group id="grpFormat">
-                <Label resid="FormatGroup.Label" />
+                <Label resid="FormatGroup.Label"/>
                 <Icon>
                   <bt:Image size="16" resid="Icon.16x16"/>
                   <bt:Image size="32" resid="Icon.32x32"/>
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
-
-                <!-- Dropdown: Standard/Aufzählung -->
                 <Control xsi:type="Menu" id="mnuStandardAufzaehlung">
-                  <Label resid="MnuAufzaehlung.Label" />
+                  <Label resid="MnuAufzaehlung.Label"/>
                   <Supertip>
-                    <Title resid="MnuAufzaehlung.Label" />
-                    <Description resid="MnuAufzaehlung.Tooltip" />
+                    <Title resid="MnuAufzaehlung.Label"/>
+                    <Description resid="MnuAufzaehlung.Tooltip"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -119,10 +117,10 @@
                   </Icon>
                   <Items>
                     <Item id="btnStandard">
-                      <Label resid="BtnStandard.Label" />
+                      <Label resid="BtnStandard.Label"/>
                       <Supertip>
-                        <Title resid="BtnStandard.Label" />
-                        <Description resid="BtnStandard.Tooltip" />
+                        <Title resid="BtnStandard.Label"/>
+                        <Description resid="BtnStandard.Tooltip"/>
                       </Supertip>
                       <Icon>
                         <bt:Image size="16" resid="Icon.16x16"/>
@@ -132,7 +130,7 @@
                       </Action>
                     </Item>
                     <Item id="btnAufzaehlung1">
-                      <Label resid="BtnAufzaehlung1.Label" />
+                      <Label resid="BtnAufzaehlung1.Label"/>
                       <Icon>
                         <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
@@ -141,7 +139,7 @@
                       </Action>
                     </Item>
                     <Item id="btnAufzaehlung2">
-                      <Label resid="BtnAufzaehlung2.Label" />
+                      <Label resid="BtnAufzaehlung2.Label"/>
                       <Icon>
                         <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
@@ -152,12 +150,11 @@
                   </Items>
                 </Control>
 
-                <!-- Button: Silbentrennung -->
                 <Control xsi:type="Button" id="btnSilbentrennung">
-                  <Label resid="BtnSilben.Label" />
+                  <Label resid="BtnSilben.Label"/>
                   <Supertip>
-                    <Title resid="BtnSilben.Label" />
-                    <Description resid="BtnSilben.Tooltip" />
+                    <Title resid="BtnSilben.Label"/>
+                    <Description resid="BtnSilben.Tooltip"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -170,21 +167,19 @@
                 </Control>
               </Group>
 
-              <!-- Gruppe: Logo/Leidbrief -->
               <Group id="grpSpezial">
-                <Label resid="SpezialGroup.Label" />
+                <Label resid="SpezialGroup.Label"/>
                 <Icon>
                   <bt:Image size="16" resid="Icon.16x16"/>
                   <bt:Image size="32" resid="Icon.32x32"/>
                   <bt:Image size="80" resid="Icon.80x80"/>
                 </Icon>
 
-                <!-- SplitButton: Logo -->
                 <Control xsi:type="Menu" id="btn_sbtLogo">
-                  <Label resid="BtnLogo.Label" />
+                  <Label resid="BtnLogo.Label"/>
                   <Supertip>
-                    <Title resid="BtnLogo.Label" />
-                    <Description resid="BtnLogo.Tooltip" />
+                    <Title resid="BtnLogo.Label"/>
+                    <Description resid="BtnLogo.Tooltip"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -193,7 +188,7 @@
                   </Icon>
                   <Items>
                     <Item id="btnLogoEin">
-                      <Label resid="BtnLogoEin.Label" />
+                      <Label resid="BtnLogoEin.Label"/>
                       <Icon>
                         <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
@@ -202,7 +197,7 @@
                       </Action>
                     </Item>
                     <Item id="btnLogoAus">
-                      <Label resid="BtnLogoAus.Label" />
+                      <Label resid="BtnLogoAus.Label"/>
                       <Icon>
                         <bt:Image size="16" resid="IconGray.16x16"/>
                       </Icon>
@@ -213,12 +208,11 @@
                   </Items>
                 </Control>
 
-                <!-- SplitButton: Leidbrief -->
                 <Control xsi:type="Menu" id="btn_sbtLeid">
-                  <Label resid="BtnLeid.Label" />
+                  <Label resid="BtnLeid.Label"/>
                   <Supertip>
-                    <Title resid="BtnLeid.Label" />
-                    <Description resid="BtnLeid.Tooltip" />
+                    <Title resid="BtnLeid.Label"/>
+                    <Description resid="BtnLeid.Tooltip"/>
                   </Supertip>
                   <Icon>
                     <bt:Image size="16" resid="Icon.16x16"/>
@@ -227,7 +221,7 @@
                   </Icon>
                   <Items>
                     <Item id="btnLeidEin">
-                      <Label resid="BtnLeidEin.Label" />
+                      <Label resid="BtnLeidEin.Label"/>
                       <Icon>
                         <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
@@ -236,7 +230,7 @@
                       </Action>
                     </Item>
                     <Item id="btnLeidAus">
-                      <Label resid="BtnLeidAus.Label" />
+                      <Label resid="BtnLeidAus.Label"/>
                       <Icon>
                         <bt:Image size="16" resid="Icon.16x16"/>
                       </Icon>
@@ -255,49 +249,48 @@
 
     <Resources>
       <bt:Images>
-        <!-- Dreyfus Logos -->
         <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
         <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
         <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
         <bt:Image id="IconGray.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Grau.png"/>
       </bt:Images>
-      
+
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/commands.html" />
-        <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
-        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://keshbe.github.io/brief-generator-addin/" />
+        <bt:Url id="Commands.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html"/>
+        <bt:Url id="GetStarted.LearnMoreUrl" DefaultValue="https://keshbe.github.io/brief-generator-addin/"/>
       </bt:Urls>
-      
+
       <bt:ShortStrings>
-        <bt:String id="GetStarted.Title" DefaultValue="Dreyfus Brief Generator" />
-        <bt:String id="TabBrief.Label" DefaultValue="BRIEF" />
-        <bt:String id="BriefGroup.Label" DefaultValue="Brief" />
-        <bt:String id="BtnEingabe.Label" DefaultValue="Eingabe" />
-        <bt:String id="BtnAdresse.Label" DefaultValue="Adresse" />
-        <bt:String id="FormatGroup.Label" DefaultValue="Formatieren" />
-        <bt:String id="MnuAufzaehlung.Label" DefaultValue="Standard/Aufzählung" />
-        <bt:String id="BtnStandard.Label" DefaultValue="Standard" />
-        <bt:String id="BtnAufzaehlung1.Label" DefaultValue="Aufzählung 1" />
-        <bt:String id="BtnAufzaehlung2.Label" DefaultValue="Aufzählung 2" />
-        <bt:String id="BtnSilben.Label" DefaultValue="Silbentrennung" />
-        <bt:String id="SpezialGroup.Label" DefaultValue="Spezial" />
-        <bt:String id="BtnLogo.Label" DefaultValue="Logo" />
-        <bt:String id="BtnLogoEin.Label" DefaultValue="Logo einblenden" />
-        <bt:String id="BtnLogoAus.Label" DefaultValue="Logo ausblenden" />
-        <bt:String id="BtnLeid.Label" DefaultValue="Leidbrief" />
-        <bt:String id="BtnLeidEin.Label" DefaultValue="Rahmen ein" />
-        <bt:String id="BtnLeidAus.Label" DefaultValue="Rahmen aus" />
+        <bt:String id="GetStarted.Title" DefaultValue="Dreyfus Brief Generator"/>
+        <bt:String id="TabBrief.Label" DefaultValue="BRIEF"/>
+        <bt:String id="BriefGroup.Label" DefaultValue="Brief"/>
+        <bt:String id="BtnEingabe.Label" DefaultValue="Eingabe"/>
+        <bt:String id="BtnAdresse.Label" DefaultValue="Adresse"/>
+        <bt:String id="FormatGroup.Label" DefaultValue="Formatieren"/>
+        <bt:String id="MnuAufzaehlung.Label" DefaultValue="Standard/Aufzählung"/>
+        <bt:String id="BtnStandard.Label" DefaultValue="Standard"/>
+        <bt:String id="BtnAufzaehlung1.Label" DefaultValue="Aufzählung 1"/>
+        <bt:String id="BtnAufzaehlung2.Label" DefaultValue="Aufzählung 2"/>
+        <bt:String id="BtnSilben.Label" DefaultValue="Silbentrennung"/>
+        <bt:String id="SpezialGroup.Label" DefaultValue="Spezial"/>
+        <bt:String id="BtnLogo.Label" DefaultValue="Logo"/>
+        <bt:String id="BtnLogoEin.Label" DefaultValue="Logo einblenden"/>
+        <bt:String id="BtnLogoAus.Label" DefaultValue="Logo ausblenden"/>
+        <bt:String id="BtnLeid.Label" DefaultValue="Leidbrief"/>
+        <bt:String id="BtnLeidEin.Label" DefaultValue="Rahmen ein"/>
+        <bt:String id="BtnLeidAus.Label" DefaultValue="Rahmen aus"/>
       </bt:ShortStrings>
-      
+
       <bt:LongStrings>
-        <bt:String id="GetStarted.Description" DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage" />
-        <bt:String id="BtnEingabe.Tooltip" DefaultValue="Öffnet das Formular zur Eingabe der Briefdaten" />
-        <bt:String id="BtnAdresse.Tooltip" DefaultValue="Kopiert die Empfängeradresse in die Zwischenablage" />
-        <bt:String id="MnuAufzaehlung.Tooltip" DefaultValue="Wählen Sie zwischen Standard und verschiedenen Aufzählungsformaten" />
-        <bt:String id="BtnStandard.Tooltip" DefaultValue="Wendet das Standard-Format an" />
-        <bt:String id="BtnSilben.Tooltip" DefaultValue="Startet die manuelle Silbentrennung" />
-        <bt:String id="BtnLogo.Tooltip" DefaultValue="Logo ein- oder ausblenden" />
-        <bt:String id="BtnLeid.Tooltip" DefaultValue="Leidbrief-Rahmen ein- oder ausblenden" />
+        <bt:String id="GetStarted.Description" DefaultValue="Automatische Erstellung von Dreyfus-Briefen nach Vorlage"/>
+        <bt:String id="BtnEingabe.Tooltip" DefaultValue="Öffnet das Formular zur Eingabe der Briefdaten"/>
+        <bt:String id="BtnAdresse.Tooltip" DefaultValue="Kopiert die Empfängeradresse in die Zwischenablage"/>
+        <bt:String id="MnuAufzaehlung.Tooltip" DefaultValue="Wählen Sie zwischen Standard und verschiedenen Aufzählungsformaten"/>
+        <bt:String id="BtnStandard.Tooltip" DefaultValue="Wendet das Standard-Format an"/>
+        <bt:String id="BtnSilben.Tooltip" DefaultValue="Startet die manuelle Silbentrennung"/>
+        <bt:String id="BtnLogo.Tooltip" DefaultValue="Logo ein- oder ausblenden"/>
+        <bt:String id="BtnLeid.Tooltip" DefaultValue="Leidbrief-Rahmen ein- oder ausblenden"/>
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
