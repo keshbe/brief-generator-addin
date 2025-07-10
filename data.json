@@ -1,0 +1,179 @@
+{
+  "sprachen": {
+    "1": { "name": "Deutsch", "code": "de-DE", "dateFormat": "dd.mm.yyyy" },
+    "2": { "name": "English", "code": "en-US", "dateFormat": "mm-dd-yyyy" },
+    "3": { "name": "Français", "code": "fr-FR", "dateFormat": "dd.mm.yyyy" },
+    "4": { "name": "Italiano", "code": "it-IT", "dateFormat": "dd.mm.yyyy" }
+  },
+  "absenderData": {
+    "1": { "name": "Dreyfus Banquiers", "standort": "Basel", "anonymMoeglich": true, "slogan": true, "nurBasel": false },
+    "2": { "name": "Büro Basel", "standort": "Basel", "anonymMoeglich": false, "slogan": false, "nurBasel": true },
+    "3": { "name": "Büro Zürich", "standort": "Zürich", "anonymMoeglich": false, "slogan": false, "nurBasel": false },
+    "4": { "name": "Büro Lugano", "standort": "Lugano", "anonymMoeglich": true, "slogan": false, "nurBasel": false },
+    "9": { "name": "Neutral", "standort": "", "anonymMoeglich": true, "slogan": false, "nurBasel": false }
+  },
+  "abteilungen": {
+    "de": [
+      { "id": 1, "name": "--" },
+      { "id": 2, "name": "Vermögensverwaltung" },
+      { "id": 3, "name": "Anlageberatung" },
+      { "id": 4, "name": "Portfoliomanagement" },
+      { "id": 5, "name": "Sekretariat" },
+      { "id": 6, "name": "Buchhaltung" },
+      { "id": 7, "name": "IT-Abteilung" }
+    ],
+    "en": [
+      { "id": 1, "name": "--" },
+      { "id": 2, "name": "Wealth Management" },
+      { "id": 3, "name": "Investment Advisory" },
+      { "id": 4, "name": "Portfolio Management" },
+      { "id": 5, "name": "Secretariat" },
+      { "id": 6, "name": "Accounting" },
+      { "id": 7, "name": "IT Department" }
+    ],
+    "fr": [
+      { "id": 1, "name": "--" },
+      { "id": 2, "name": "Gestion de fortune" },
+      { "id": 3, "name": "Conseil en placement" },
+      { "id": 4, "name": "Gestion de portefeuille" },
+      { "id": 5, "name": "Secrétariat" },
+      { "id": 6, "name": "Comptabilité" },
+      { "id": 7, "name": "Service informatique" }
+    ],
+    "it": [
+      { "id": 1, "name": "--" },
+      { "id": 2, "name": "Gestione patrimoniale" },
+      { "id": 3, "name": "Consulenza agli investimenti" },
+      { "id": 4, "name": "Gestione del portafoglio" },
+      { "id": 5, "name": "Segretariato" },
+      { "id": 6, "name": "Contabilità" },
+      { "id": 7, "name": "Reparto IT" }
+    ]
+  },
+  "beilagen": {
+    "de": [
+      { "id": 1, "name": "Informationsblatt" },
+      { "id": 2, "name": "Vollmacht" },
+      { "id": 3, "name": "Vertragsdokumente" }
+    ],
+    "en": [
+      { "id": 1, "name": "Information Sheet" },
+      { "id": 2, "name": "Power of Attorney" },
+      { "id": 3, "name": "Contract Documents" }
+    ],
+    "fr": [
+      { "id": 1, "name": "Feuille d'information" },
+      { "id": 2, "name": "Procuration" },
+      { "id": 3, "name": "Documents contractuels" }
+    ],
+    "it": [
+      { "id": 1, "name": "Scheda informativa" },
+      { "id": 2, "name": "Procura" },
+      { "id": 3, "name": "Documenti contrattuali" }
+    ]
+  },
+  "grussformeln": {
+    "de": "Mit freundlichen Grüssen",
+    "en": "Yours sincerely,",
+    "fr": "Avec nos salutations les meilleures",
+    "it": "Cordiali saluti"
+  },
+  "firmenNamen": {
+    "de": "Dreyfus Söhne & Cie AG, Banquiers",
+    "en": "Dreyfus Sons & Co Ltd, Banquiers",
+    "fr": "Les Fils Dreyfus & Cie SA, Banquiers",
+    "it": "Les Fils Dreyfus & Cie SA, Banquiers"
+  },
+  "footerTaglines": {
+    "de": "Einzigartig aufgehoben.",
+    "en": "In trusted hands.",
+    "fr": "En de bonnes mains.",
+    "it": "En de bonnes mains."
+  },
+  "footerInfo": {
+    "basel": {
+      "de": {
+        "buero": "Büro Basel",
+        "adresse": "Aeschenvorstadt 16 | 4010 Basel | Schweiz",
+        "telefon": "Telefon +41 61 266 77 77",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "en": {
+        "buero": "Basel Office",
+        "adresse": "Aeschenvorstadt 16 | 4010 Basel | Switzerland",
+        "telefon": "Phone +41 61 266 77 77",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "fr": {
+        "buero": "Bureau de Bâle",
+        "adresse": "Aeschenvorstadt 16 | 4010 Bâle | Suisse",
+        "telefon": "Téléphone +41 61 266 77 77",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "it": {
+        "buero": "Ufficio Basilea",
+        "adresse": "Aeschenvorstadt 16 | 4010 Basilea | Svizzera",
+        "telefon": "Telefono +41 61 266 77 77",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      }
+    },
+    "zuerich": {
+      "de": {
+        "buero": "Büro Zürich",
+        "adresse": "St. Peterstrasse 1 | 8001 Zürich | Schweiz",
+        "telefon": "Telefon +41 44 225 88 66",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "en": {
+        "buero": "Zurich Office",
+        "adresse": "St. Peterstrasse 1 | 8001 Zurich | Switzerland",
+        "telefon": "Phone +41 44 225 88 66",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "fr": {
+        "buero": "Bureau de Zurich",
+        "adresse": "St. Peterstrasse 1 | 8001 Zurich | Suisse",
+        "telefon": "Téléphone +41 44 225 88 66",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "it": {
+        "buero": "Ufficio Zurigo",
+        "adresse": "St. Peterstrasse 1 | 8001 Zurigo | Svizzera",
+        "telefon": "Telefono +41 44 225 88 66",
+        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+      }
+    },
+    "lugano": {
+      "de": {
+        "buero": "Büro Lugano",
+        "adresse": "Via Pessina 7 | 6900 Lugano | Schweiz",
+        "telefon": "Telefon +41 91 910 71 71",
+        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "en": {
+        "buero": "Lugano Office",
+        "adresse": "Via Pessina 7 | 6900 Lugano | Switzerland",
+        "telefon": "Phone +41 91 910 71 71",
+        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "fr": {
+        "buero": "Bureau de Lugano",
+        "adresse": "Via Pessina 7 | 6900 Lugano | Suisse",
+        "telefon": "Téléphone +41 91 910 71 71",
+        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+      },
+      "it": {
+        "buero": "Ufficio Lugano",
+        "adresse": "Via Pessina 7 | 6900 Lugano | Svizzera",
+        "telefon": "Telefono +41 91 910 71 71",
+        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+      }
+    }
+  },
+  "logoVarianten": [
+    { "value": "42_Farbe", "text": "Standard (42pt, Farbe)", "filename": "Dreyfus_Logo_42_Farbe.png", "width": 56, "height": 21 },
+    { "value": "42_Grau", "text": "Standard (42pt, Grau)", "filename": "Dreyfus_Logo_42_Grau.png", "width": 56, "height": 21 },
+    { "value": "30_Farbe", "text": "Klein (30pt, Farbe)", "filename": "Dreyfus_Logo_30_Farbe.png", "width": 40, "height": 15 },
+    { "value": "30_Grau", "text": "Klein (30pt, Grau)", "filename": "Dreyfus_Logo_30_Grau.png", "width": 40, "height": 15 }
+  ]
+}
