@@ -38,30 +38,10 @@
 </head>
 <body>
     <script>
-        // Globale Variable für geladene Daten
-        let appData = null;
-        const DATA_URL = 'https://keshbe.github.io/brief-generator-addin/data.json';
-
         // Office.js Initialisierung
-        Office.onReady(async () => {
+        Office.onReady(() => {
             console.log('Dreyfus Commands geladen');
-            // Lade Daten beim Start
-            await loadData();
         });
-
-        // Lade Daten von JSON
-        async function loadData() {
-            try {
-                const response = await fetch(DATA_URL);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                appData = await response.json();
-                console.log('Commands: Daten erfolgreich geladen');
-            } catch (error) {
-                console.error('Commands: Fehler beim Laden der Daten:', error);
-            }
-        }
 
         // === FUNKTIONEN AUS DEN VBA MAKROS ===
 
@@ -197,17 +177,8 @@
                     await context.sync();
                     
                     if (pictures.items.length === 0) {
-                        // Verwende Standard Logo-Variante aus Daten falls geladen
-                        let logoUrl = 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png';
-                        let logoWidth = 56;
-                        let logoHeight = 21;
-                        
-                        if (appData && appData.logoVarianten && appData.logoVarianten.length > 0) {
-                            const defaultLogo = appData.logoVarianten[0]; // Erste Variante als Standard
-                            logoUrl = `https://keshbe.github.io/brief-generator-addin/${defaultLogo.filename}`;
-                            logoWidth = defaultLogo.width;
-                            logoHeight = defaultLogo.height;
-                        }
+                        // Füge Logo in Header ein (Standard: 42pt Farbe)
+                        const logoUrl = 'https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png';
                         
                         // Logo als Base64 laden und einfügen
                         try {
@@ -216,8 +187,8 @@
                                 const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
                                 const logo = logoParagraph.insertInlinePictureFromBase64(base64, Word.InsertLocation.start);
                                 // Logo-Größe festlegen
-                                logo.width = logoWidth;
-                                logo.height = logoHeight;
+                                logo.width = 140;
+                                logo.height = 52.5;
                             } else {
                                 // Fallback: Text-Platzhalter
                                 header.insertParagraph('[DREYFUS LOGO]', Word.InsertLocation.start);
