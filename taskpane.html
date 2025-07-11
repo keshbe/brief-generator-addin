@@ -189,7 +189,7 @@
         <h5 class="mb-0">Dreyfus Söhne & Cie AG, Banquiers</h5>
     </div>
     <div class="sub-header">
-        <small>Dreyfus Brief</small>
+        <small id="subHeaderText">Dreyfus Brief</small>
     </div>
 
     <div class="container">
@@ -198,9 +198,9 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="sprache" class="form-label">Sprache</label>
+                        <label for="sprache" class="form-label" id="label_sprache">Sprache</label>
                         <select class="form-select" id="sprache" required>
-                            <option value="">-- Bitte wählen --</option>
+                            <option value="" id="option_pleaseSelect">-- Bitte wählen --</option>
                             <option value="1">Deutsch</option>
                             <option value="2">English</option>
                             <option value="3">Français</option>
@@ -210,14 +210,14 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="absender" class="form-label">Absender</label>
+                        <label for="absender" class="form-label" id="label_absender">Absender</label>
                         <select class="form-select" id="absender" required>
-                            <option value="">-- Bitte wählen --</option>
+                            <option value="" id="option_pleaseSelectSender">-- Bitte wählen --</option>
                             <option value="1">Dreyfus Banquiers</option>
-                            <option value="2">Büro Basel</option>
-                            <option value="3">Büro Zürich</option>
-                            <option value="4">Büro Lugano</option>
-                            <option value="9">Neutral</option>
+                            <option value="2" id="option_officeBasel">Büro Basel</option>
+                            <option value="3" id="option_officeZurich">Büro Zürich</option>
+                            <option value="4" id="option_officeLugano">Büro Lugano</option>
+                            <option value="9" id="option_neutral">Neutral</option>
                         </select>
                     </div>
                 </div>
@@ -226,7 +226,7 @@
             <!-- Logo-Optionen -->
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="anonym">
-                <label class="form-check-label" for="anonym">
+                <label class="form-check-label" for="anonym" id="label_anonymous">
                     Anonym (nur Adresse, ohne Dreyfus)
                 </label>
                 <div class="anonym-warning" id="anonymWarning">
@@ -234,31 +234,31 @@
                 </div>
             </div>
 
-            <!-- Logo-Variante TEST - IMMER SICHTBAR -->
-            <div class="section-title">Logo-Optionen</div>
+            <!-- Logo-Variante -->
+            <div class="section-title" id="section_logoOptions">Logo-Optionen</div>
             <div class="row mb-3">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="logoVariante" class="form-label">Logo-Variante</label>
+                        <label for="logoVariante" class="form-label" id="label_logoVariant">Logo-Variante</label>
                         <select class="form-select" id="logoVariante">
-                            <option value="42_Farbe" selected>Standard (42pt, Farbe)</option>
-                            <option value="42_Grau">Standard (42pt, Grau)</option>
-                            <option value="30_Farbe">Klein (30pt, Farbe)</option>
-                            <option value="30_Grau">Klein (30pt, Grau)</option>
+                            <option value="42_Farbe" id="option_standardColor">Standard (42pt, Farbe)</option>
+                            <option value="42_Grau" id="option_standardGray">Standard (42pt, Grau)</option>
+                            <option value="30_Farbe" id="option_smallColor">Klein (30pt, Farbe)</option>
+                            <option value="30_Grau" id="option_smallGray">Klein (30pt, Grau)</option>
                         </select>
-                        <small class="text-muted">Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern</small>
+                        <small class="text-muted" id="logoNote">Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern</small>
                     </div>
                 </div>
             </div>
 
-            <div class="section-title">Adresse</div>
+            <div class="section-title" id="section_address">Adresse</div>
 
             <!-- Adresse -->
             <div class="form-group">
                 <label for="adresse" class="form-label">
-                    Adresse
+                    <span id="label_address">Adresse</span>
                     <button type="button" class="copy-btn" id="pasteAddress">
-                        Aus Zwischenablage einfügen
+                        <span id="btn_paste">Aus Zwischenablage einfügen</span>
                     </button>
                 </label>
                 <textarea class="form-control" id="adresse" rows="4"></textarea>
@@ -268,57 +268,57 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="ort" class="form-label">Ort</label>
+                        <label for="ort" class="form-label" id="label_place">Ort</label>
                         <input type="text" class="form-control" id="ort">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="datum" class="form-label">Datum</label>
+                        <label for="datum" class="form-label" id="label_date">Datum</label>
                         <input type="text" class="form-control" id="datum">
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="absenderKuerzel" class="form-label">Absenderkürzel</label>
+                <label for="absenderKuerzel" class="form-label" id="label_senderInitials">Absenderkürzel</label>
                 <input type="text" class="form-control" id="absenderKuerzel">
             </div>
 
-            <div class="section-title">Brief</div>
+            <div class="section-title" id="section_letter">Brief</div>
 
             <!-- Betreff und Anrede -->
             <div class="form-group">
-                <label for="betreff" class="form-label">Betreff</label>
+                <label for="betreff" class="form-label" id="label_subject">Betreff</label>
                 <input type="text" class="form-control" id="betreff">
             </div>
 
             <div class="form-group">
-                <label for="anrede" class="form-label">Anrede</label>
+                <label for="anrede" class="form-label" id="label_salutation">Anrede</label>
                 <input type="text" class="form-control" id="anrede">
             </div>
 
-            <div class="section-title">Gruss</div>
+            <div class="section-title" id="section_complimentaryClose">Gruss</div>
 
             <!-- Grussformel -->
             <div class="form-group">
-                <label for="gruss" class="form-label">Gruss</label>
+                <label for="gruss" class="form-label" id="label_complimentaryClose">Gruss</label>
                 <textarea class="form-control" id="gruss" rows="3"></textarea>
             </div>
 
-            <div class="section-title">Unterschriften</div>
+            <div class="section-title" id="section_signatures">Unterschriften</div>
 
             <!-- Unterschrift 1 -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="unterschrift1" class="form-label">Unterschrift 1</label>
+                        <label for="unterschrift1" class="form-label" id="label_signature1">Unterschrift 1</label>
                         <input type="text" class="form-control" id="unterschrift1">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="funktion1" class="form-label">Funktion 1</label>
+                        <label for="funktion1" class="form-label" id="label_function1">Funktion 1</label>
                         <input type="text" class="form-control" id="funktion1">
                     </div>
                 </div>
@@ -328,25 +328,25 @@
             <div class="row" id="unterschrift2Row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="unterschrift2" class="form-label">Unterschrift 2</label>
+                        <label for="unterschrift2" class="form-label" id="label_signature2">Unterschrift 2</label>
                         <input type="text" class="form-control" id="unterschrift2">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="funktion2" class="form-label">Funktion 2</label>
+                        <label for="funktion2" class="form-label" id="label_function2">Funktion 2</label>
                         <input type="text" class="form-control" id="funktion2">
                     </div>
                 </div>
             </div>
 
-            <div class="section-title">Abteilungen</div>
+            <div class="section-title" id="section_departments">Abteilungen</div>
 
             <!-- Abteilungen -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="abteilung1" class="form-label">Abteilung 1</label>
+                        <label for="abteilung1" class="form-label" id="label_department1">Abteilung 1</label>
                         <select class="form-select" id="abteilung1">
                             <option value="">-- Keine --</option>
                         </select>
@@ -354,7 +354,7 @@
                 </div>
                 <div class="col-md-6" id="abteilung2Row">
                     <div class="form-group">
-                        <label for="abteilung2" class="form-label">Abteilung 2</label>
+                        <label for="abteilung2" class="form-label" id="label_department2">Abteilung 2</label>
                         <select class="form-select" id="abteilung2">
                             <option value="">-- Keine --</option>
                         </select>
@@ -362,13 +362,13 @@
                 </div>
             </div>
 
-            <div class="section-title">Beilagen</div>
+            <div class="section-title" id="section_enclosures">Beilagen</div>
 
             <!-- Beilagen -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="beilage" class="form-label">Beilagen</label>
+                        <label for="beilage" class="form-label" id="label_enclosure">Beilagen</label>
                         <select class="form-select" id="beilage">
                             <option value="">-- Keine --</option>
                         </select>
@@ -376,14 +376,14 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="anlagen" class="form-label">Anlagen</label>
+                        <label for="anlagen" class="form-label" id="label_attachments">Anlagen</label>
                         <input type="text" class="form-control" id="anlagen">
                     </div>
                 </div>
             </div>
 
             <div class="d-grid gap-2 mt-4">
-                <button type="submit" class="btn btn-primary">OK</button>
+                <button type="submit" class="btn btn-primary" id="btn_ok">OK</button>
                 <button type="button" class="btn btn-secondary" id="cancelBtn">Schließen</button>
             </div>
         </form>
@@ -397,10 +397,249 @@
     </div>
 
     <script>
+        // === ÜBERSETZUNGEN ===
+        const translations = {
+            de: {
+                subHeaderText: 'Dreyfus Brief',
+                label_sprache: 'Sprache',
+                option_pleaseSelect: '-- Bitte wählen --',
+                option_pleaseSelectSender: '-- Bitte wählen --',
+                label_absender: 'Absender',
+                option_officeBasel: 'Büro Basel',
+                option_officeZurich: 'Büro Zürich',
+                option_officeLugano: 'Büro Lugano',
+                option_neutral: 'Neutral',
+                label_anonymous: 'Anonym (nur Adresse, ohne Dreyfus)',
+                anonymWarning: 'NICHT für Briefe mit vorgedruckten Dreyfus-Papier!',
+                section_logoOptions: 'Logo-Optionen',
+                label_logoVariant: 'Logo-Variante',
+                option_standardColor: 'Standard (42pt, Farbe)',
+                option_standardGray: 'Standard (42pt, Grau)',
+                option_smallColor: 'Klein (30pt, Farbe)',
+                option_smallGray: 'Klein (30pt, Grau)',
+                logoNote: 'Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern',
+                section_address: 'Adresse',
+                label_address: 'Adresse',
+                btn_paste: 'Aus Zwischenablage einfügen',
+                label_place: 'Ort',
+                label_date: 'Datum',
+                label_senderInitials: 'Absenderkürzel',
+                section_letter: 'Brief',
+                label_subject: 'Betreff',
+                label_salutation: 'Anrede',
+                section_complimentaryClose: 'Gruss',
+                label_complimentaryClose: 'Gruss',
+                section_signatures: 'Unterschriften',
+                label_signature1: 'Unterschrift 1',
+                label_signature2: 'Unterschrift 2',
+                label_function1: 'Funktion 1',
+                label_function2: 'Funktion 2',
+                section_departments: 'Abteilungen',
+                label_department1: 'Abteilung 1',
+                label_department2: 'Abteilung 2',
+                section_enclosures: 'Beilagen',
+                label_enclosure: 'Beilagen',
+                label_attachments: 'Anlagen',
+                none: '-- Keine --',
+                btn_ok: 'OK',
+                btn_close: 'Schließen',
+                statusCreating: 'Brief wird erstellt...',
+                statusSuccess: 'Brief wurde erfolgreich erstellt!',
+                statusCancelled: 'Aktion abgebrochen. Ihre Eingaben bleiben erhalten.',
+                statusClipboardInserted: 'Adresse eingefügt',
+                statusClipboardError: 'Bitte fügen Sie die Adresse manuell mit Strg+V ein.',
+                errorSelectLanguage: 'Bitte wählen Sie eine Sprache aus.',
+                errorSelectSender: 'Bitte wählen Sie einen Absender aus.'
+            },
+            en: {
+                subHeaderText: 'Dreyfus Letter',
+                label_sprache: 'Language',
+                option_pleaseSelect: '-- Please select --',
+                option_pleaseSelectSender: '-- Please select --',
+                label_absender: 'Sender',
+                option_officeBasel: 'Basel Office',
+                option_officeZurich: 'Zurich Office',
+                option_officeLugano: 'Lugano Office',
+                option_neutral: 'Neutral',
+                label_anonymous: 'Anonymous (address only, without Dreyfus)',
+                anonymWarning: 'NOT for letters with pre-printed Dreyfus paper!',
+                section_logoOptions: 'Logo Options',
+                label_logoVariant: 'Logo Variant',
+                option_standardColor: 'Standard (42pt, Color)',
+                option_standardGray: 'Standard (42pt, Gray)',
+                option_smallColor: 'Small (30pt, Color)',
+                option_smallGray: 'Small (30pt, Gray)',
+                logoNote: 'Logo is only displayed when not anonymous and with Dreyfus senders',
+                section_address: 'Address',
+                label_address: 'Address',
+                btn_paste: 'Paste from clipboard',
+                label_place: 'Place',
+                label_date: 'Date',
+                label_senderInitials: 'Sender initials',
+                section_letter: 'Letter',
+                label_subject: 'Subject',
+                label_salutation: 'Salutation',
+                section_complimentaryClose: 'Complimentary close',
+                label_complimentaryClose: 'Complimentary close',
+                section_signatures: 'Signatures',
+                label_signature1: 'Signature 1',
+                label_signature2: 'Signature 2',
+                label_function1: 'Function 1',
+                label_function2: 'Function 2',
+                section_departments: 'Departments',
+                label_department1: 'Department 1',
+                label_department2: 'Department 2',
+                section_enclosures: 'Enclosures',
+                label_enclosure: 'Enclosures',
+                label_attachments: 'Attachments',
+                none: '-- None --',
+                btn_ok: 'OK',
+                btn_close: 'Close',
+                statusCreating: 'Creating letter...',
+                statusSuccess: 'Letter created successfully!',
+                statusCancelled: 'Action cancelled. Your entries remain saved.',
+                statusClipboardInserted: 'Address inserted',
+                statusClipboardError: 'Please paste the address manually with Ctrl+V.',
+                errorSelectLanguage: 'Please select a language.',
+                errorSelectSender: 'Please select a sender.'
+            },
+            fr: {
+                subHeaderText: 'Lettre Dreyfus',
+                label_sprache: 'Langue',
+                option_pleaseSelect: '-- Veuillez sélectionner --',
+                option_pleaseSelectSender: '-- Veuillez sélectionner --',
+                label_absender: 'Expéditeur',
+                option_officeBasel: 'Bureau de Bâle',
+                option_officeZurich: 'Bureau de Zurich',
+                option_officeLugano: 'Bureau de Lugano',
+                option_neutral: 'Neutre',
+                label_anonymous: 'Anonyme (adresse uniquement, sans Dreyfus)',
+                anonymWarning: 'PAS pour les lettres avec papier Dreyfus pré-imprimé!',
+                section_logoOptions: 'Options du logo',
+                label_logoVariant: 'Variante du logo',
+                option_standardColor: 'Standard (42pt, Couleur)',
+                option_standardGray: 'Standard (42pt, Gris)',
+                option_smallColor: 'Petit (30pt, Couleur)',
+                option_smallGray: 'Petit (30pt, Gris)',
+                logoNote: 'Le logo n\'est affiché que si non anonyme et avec expéditeurs Dreyfus',
+                section_address: 'Adresse',
+                label_address: 'Adresse',
+                btn_paste: 'Coller depuis le presse-papiers',
+                label_place: 'Lieu',
+                label_date: 'Date',
+                label_senderInitials: 'Initiales de l\'expéditeur',
+                section_letter: 'Lettre',
+                label_subject: 'Objet',
+                label_salutation: 'Formule d\'appel',
+                section_complimentaryClose: 'Formule de politesse',
+                label_complimentaryClose: 'Formule de politesse',
+                section_signatures: 'Signatures',
+                label_signature1: 'Signature 1',
+                label_signature2: 'Signature 2',
+                label_function1: 'Fonction 1',
+                label_function2: 'Fonction 2',
+                section_departments: 'Départements',
+                label_department1: 'Département 1',
+                label_department2: 'Département 2',
+                section_enclosures: 'Pièces jointes',
+                label_enclosure: 'Pièces jointes',
+                label_attachments: 'Annexes',
+                none: '-- Aucune --',
+                btn_ok: 'OK',
+                btn_close: 'Fermer',
+                statusCreating: 'Création de la lettre en cours...',
+                statusSuccess: 'Lettre créée avec succès!',
+                statusCancelled: 'Action annulée. Vos entrées sont conservées.',
+                statusClipboardInserted: 'Adresse insérée',
+                statusClipboardError: 'Veuillez coller l\'adresse manuellement avec Ctrl+V.',
+                errorSelectLanguage: 'Veuillez sélectionner une langue.',
+                errorSelectSender: 'Veuillez sélectionner un expéditeur.'
+            },
+            it: {
+                subHeaderText: 'Lettera Dreyfus',
+                label_sprache: 'Lingua',
+                option_pleaseSelect: '-- Si prega di selezionare --',
+                option_pleaseSelectSender: '-- Si prega di selezionare --',
+                label_absender: 'Mittente',
+                option_officeBasel: 'Ufficio Basilea',
+                option_officeZurich: 'Ufficio Zurigo',
+                option_officeLugano: 'Ufficio Lugano',
+                option_neutral: 'Neutrale',
+                label_anonymous: 'Anonimo (solo indirizzo, senza Dreyfus)',
+                anonymWarning: 'NON per lettere con carta Dreyfus prestampata!',
+                section_logoOptions: 'Opzioni logo',
+                label_logoVariant: 'Variante logo',
+                option_standardColor: 'Standard (42pt, Colore)',
+                option_standardGray: 'Standard (42pt, Grigio)',
+                option_smallColor: 'Piccolo (30pt, Colore)',
+                option_smallGray: 'Piccolo (30pt, Grigio)',
+                logoNote: 'Il logo viene visualizzato solo se non anonimo e con mittenti Dreyfus',
+                section_address: 'Indirizzo',
+                label_address: 'Indirizzo',
+                btn_paste: 'Incolla dagli appunti',
+                label_place: 'Luogo',
+                label_date: 'Data',
+                label_senderInitials: 'Iniziali del mittente',
+                section_letter: 'Lettera',
+                label_subject: 'Oggetto',
+                label_salutation: 'Formula di apertura',
+                section_complimentaryClose: 'Formula di chiusura',
+                label_complimentaryClose: 'Formula di chiusura',
+                section_signatures: 'Firme',
+                label_signature1: 'Firma 1',
+                label_signature2: 'Firma 2',
+                label_function1: 'Funzione 1',
+                label_function2: 'Funzione 2',
+                section_departments: 'Dipartimenti',
+                label_department1: 'Dipartimento 1',
+                label_department2: 'Dipartimento 2',
+                section_enclosures: 'Allegati',
+                label_enclosure: 'Allegati',
+                label_attachments: 'Documenti',
+                none: '-- Nessuno --',
+                btn_ok: 'OK',
+                btn_close: 'Chiudi',
+                statusCreating: 'Creazione lettera in corso...',
+                statusSuccess: 'Lettera creata con successo!',
+                statusCancelled: 'Azione annullata. Le tue voci rimangono salvate.',
+                statusClipboardInserted: 'Indirizzo inserito',
+                statusClipboardError: 'Si prega di incollare l\'indirizzo manualmente con Ctrl+V.',
+                errorSelectLanguage: 'Si prega di selezionare una lingua.',
+                errorSelectSender: 'Si prega di selezionare un mittente.'
+            }
+        };
+
+        // Aktuelle Sprache
+        let currentLanguage = 'de';
+
+        // Funktion zum Übersetzen der UI - EINFACHER ANSATZ
+        function translateUI(languageCode) {
+            currentLanguage = languageCode;
+            const trans = translations[languageCode] || translations.de;
+
+            // Direkt alle Elemente mit IDs übersetzen
+            for (const [key, value] of Object.entries(trans)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+            
+            // Spezielle Behandlung für Buttons
+            document.getElementById('cancelBtn').textContent = trans.btn_close;
+            document.getElementById('anonymWarning').textContent = trans.anonymWarning;
+            document.getElementById('logoNote').textContent = trans.logoNote;
+        }
+
         // === ADAPTIVE SIZING SYSTEM für identische Druckausgabe ===
         const ADAPTIVE_SIZING = {
             // Umgebungserkennung
             detectEnvironment: () => {
+                // Prüfe ob Office verfügbar ist
+                if (typeof Office === 'undefined' || !Office.context) {
+                    console.log('Browser-Modus (kein Office.context)');
+                    return false;
+                }
                 const isWeb = Office.context.platform === Office.PlatformType.OfficeOnline;
                 console.log('Umgebung erkannt:', isWeb ? 'Web Word' : 'Desktop Word');
                 return isWeb;
@@ -547,20 +786,35 @@
             it: 'En de bonnes mains.'
         };
 
-        // Office.js Initialisierung
-        Office.onReady((info) => {
-            if (info.host === Office.HostType.Word) {
-                console.log('Dreyfus Brief Add-In ist bereit');
+        // Office.js Initialisierung - mit Fallback für Browser-Test
+        if (typeof Office !== 'undefined') {
+            Office.onReady((info) => {
+                if (info.host === Office.HostType.Word) {
+                    console.log('Dreyfus Brief Add-In ist bereit');
 
-                // Debug-Info anzeigen
-                logEnvironmentInfo();
+                    // Debug-Info anzeigen
+                    logEnvironmentInfo();
 
+                    initializeEventHandlers();
+                    setDefaultValues();
+                } else {
+                    showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
+                }
+            });
+        } else {
+            // Fallback für Browser-Test (ohne Word)
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('Browser-Test-Modus (ohne Word)');
                 initializeEventHandlers();
                 setDefaultValues();
-            } else {
-                showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
-            }
-        });
+                
+                // Zeige Warnung
+                const warning = document.createElement('div');
+                warning.style.cssText = 'background: #ff9800; color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;';
+                warning.textContent = '⚠️ TEST-MODUS: Die Brief-Erstellung funktioniert nur in Microsoft Word!';
+                document.body.appendChild(warning);
+            });
+        }
 
         function logEnvironmentInfo() {
             const isWeb = ADAPTIVE_SIZING.detectEnvironment();
@@ -580,7 +834,8 @@
         function initializeEventHandlers() {
             document.getElementById('briefForm').addEventListener('submit', erstelleBrief);
             document.getElementById('cancelBtn').addEventListener('click', () => {
-                showStatus('Aktion abgebrochen. Ihre Eingaben bleiben erhalten.', 'info');
+                const trans = translations[currentLanguage] || translations.de;
+                showStatus(trans.statusCancelled, 'info');
             });
             document.getElementById('sprache').addEventListener('change', onSpracheChange);
             document.getElementById('absender').addEventListener('change', onAbsenderChange);
@@ -617,6 +872,9 @@
 
             const sprache = sprachen[spracheId];
             const sprachCode = sprache.code.split('-')[0];
+
+            // UI übersetzen
+            translateUI(sprachCode);
 
             const datumField = document.getElementById('datum');
             const heute = new Date();
@@ -684,7 +942,8 @@
 
         function updateSelectOptions(selectId, options) {
             const select = document.getElementById(selectId);
-            select.innerHTML = '<option value="">-- Keine --</option>';
+            const trans = translations[currentLanguage] || translations.de;
+            select.innerHTML = `<option value="">${trans.none}</option>`;
             options.forEach(opt => {
                 const option = document.createElement('option');
                 option.value = opt.id;
@@ -694,6 +953,7 @@
         }
 
         async function pasteFromClipboard() {
+            const trans = translations[currentLanguage] || translations.de;
             try {
                 if (!navigator.clipboard || !navigator.clipboard.readText) {
                     showStatus('Zwischenablage ist in dieser Umgebung nicht verfügbar.', 'error');
@@ -702,9 +962,9 @@
 
                 const text = await navigator.clipboard.readText();
                 document.getElementById('adresse').value = text;
-                showStatus('Adresse eingefügt', 'success');
+                showStatus(trans.statusClipboardInserted, 'success');
             } catch (err) {
-                showStatus('Bitte fügen Sie die Adresse manuell mit Strg+V ein.', 'info');
+                showStatus(trans.statusClipboardError, 'info');
             }
         }
 
@@ -723,9 +983,16 @@
 
         async function erstelleBrief(event) {
             event.preventDefault();
+            const trans = translations[currentLanguage] || translations.de;
+
+            // Prüfe ob Word verfügbar ist
+            if (typeof Word === 'undefined') {
+                showStatus('⚠️ Brief-Erstellung funktioniert nur in Microsoft Word!', 'error');
+                return;
+            }
 
             try {
-                showStatus('Brief wird erstellt...', 'info');
+                showStatus(trans.statusCreating, 'info');
 
                 // === ADAPTIVE SIZING ERMITTELN ===
                 const logoSize = ADAPTIVE_SIZING.getLogo(document.getElementById('logoVariante').value);
@@ -765,11 +1032,11 @@
 
                 // Validierung
                 if (!formData.sprache) {
-                    showStatus('Bitte wählen Sie eine Sprache aus.', 'error');
+                    showStatus(trans.errorSelectLanguage, 'error');
                     return;
                 }
                 if (!formData.absender) {
-                    showStatus('Bitte wählen Sie einen Absender aus.', 'error');
+                    showStatus(trans.errorSelectSender, 'error');
                     return;
                 }
 
@@ -983,7 +1250,7 @@
 
                         if (formData.beilage) {
                             const beilage = document.getElementById('beilage').selectedOptions[0].text;
-                            if (beilage !== '-- Keine --') {
+                            if (beilage !== translations[currentLanguage].none) {
                                 beilagenText += beilage;
                                 hasBeilage = true;
                             }
@@ -1077,7 +1344,7 @@
                     await context.sync();
                 });
 
-                showStatus('Brief wurde erfolgreich erstellt!', 'success');
+                showStatus(trans.statusSuccess, 'success');
 
             } catch (error) {
                 console.error('Fehler beim Erstellen des Briefes:', error);
