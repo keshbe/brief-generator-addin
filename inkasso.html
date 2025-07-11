@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dreyfus Inkasso Generator</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <!-- Bootstrap für schönes Design -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* Dreyfus Schriftarten laden */
+        @font-face {
+            font-family: 'Dreyfus Sans';
+            src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSans-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Dreyfus Sans';
+            src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSans-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        body {
+            font-family: 'Dreyfus Sans';
+            margin: 0;
+            padding: 0;
+            background-color: #f8f2d9; /* Gleiche Farbe wie Brief */
+        }
+
+        .header-bar {
+            background-color: #7c7c7c; /* RGB(124, 124, 124) */
+            color: white;
+            padding: 10px 15px;
+            margin: 0;
+            font-family: 'Dreyfus Sans';
+        }
+
+        .sub-header {
+            background-color: #fdfbf2; /* RGB(253, 251, 242) */
+            padding: 5px 15px;
+            border-bottom: 1px solid #ddd;
+            font-family: 'Dreyfus Sans';
+        }
+
+        .container {
+            padding: 15px;
+            font-family: 'Dreyfus Sans';
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .form-control, .form-select {
+            font-size: 0.9rem;
+            padding: 5px 8px;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background-color: #0078d4;
+            border-color: #0078d4;
+            padding: 8px 20px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            padding: 8px 20px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        #status {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            display: none;
+            font-size: 0.85rem;
+        }
+
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .row {
+            margin-left: -5px;
+            margin-right: -5px;
+        }
+
+        .col-md-6, .col-md-8, .col-md-4 {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        /* Spezielle Styles für Inkasso */
+        .currency-select {
+            width: 80px;
+            display: inline-block;
+        }
+
+        .kontoart-input {
+            width: 100px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .betrag-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .betrag-row .currency-display {
+            width: 50px;
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .betrag-row .form-control {
+            flex: 1;
+            margin-left: 10px;
+            text-align: right;
+        }
+
+        .total-field {
+            background-color: #fff9c4;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .right-fields {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .right-fields .form-group {
+            margin-bottom: 8px;
+        }
+
+        .right-fields .form-control {
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+
+        .right-fields .form-label {
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+
+        /* Debug-Info für Entwicklung */
+        .debug-info {
+            background-color: #e9ecef;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-bar">
+        <h5 class="mb-0">Dreyfus Söhne & Cie AG, Banquiers</h5>
+    </div>
+    <div class="sub-header">
+        <small>Dreyfus Inkasso</small>
+    </div>
+
+    <div class="container">
+        <form id="inkassoForm">
+            <div class="section-title">KONTO</div>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="kontoNr" class="form-label">Konto-Nr.</label>
+                        <input type="text" class="form-control" id="kontoNr" placeholder="z.B. 123456789">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="nameVorname" class="form-label">Name / Vorname</label>
+                        <input type="text" class="form-control" id="nameVorname" placeholder="Name und Vorname eingeben">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="waehrung" class="form-label">Währung / Kontoart</label>
+                        <div style="display: flex; align-items: center;">
+                            <select class="form-select currency-select" id="waehrung">
+                                <option value="CHF" selected>CHF</option>
+                                <option value="EUR">EUR</option>
+                                <option value="USD">USD</option>
+                                <option value="GBP">GBP</option>
+                            </select>
+                            <input type="text" class="form-control kontoart-input" id="kontoart" placeholder="z.B. 501">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">INKASSO</div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="inkassopapier" class="form-label">Inkassopapier</label>
+                        <select class="form-select" id="inkassopapier">
+                            <option value="Check" selected>Check</option>
+                            <option value="Wechsel">Wechsel</option>
+                            <option value="Quittung">Quittung</option>
+                            <option value="Andere">Andere</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="waehrungInkasso" class="form-label">Währung</label>
+                        <select class="form-select" id="waehrungInkasso">
+                            <option value="CHF" selected>CHF</option>
+                            <option value="EUR">EUR</option>
+                            <option value="USD">USD</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Betrag</label>
+                <div id="betragContainer">
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                    <div class="betrag-row">
+                        <span class="currency-display">CHF</span>
+                        <input type="text" class="form-control betrag-input" placeholder="0.00">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="total" class="form-label">Total</label>
+                        <input type="text" class="form-control total-field" id="total" value="0.00" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">MITTEILUNG / WEISUNG</div>
+
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="fehlendesIndossament">
+                <label class="form-check-label" for="fehlendesIndossament">
+                    Fehlendes Indossament garantieren
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label for="spezielleWeisung" class="form-label">Spezielle Weisung</label>
+                <textarea class="form-control" id="spezielleWeisung" rows="3" placeholder="Hier können Sie spezielle Weisungen eingeben..."></textarea>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="referenz" class="form-label">Referenz</label>
+                        <input type="text" class="form-control" id="referenz" placeholder="Referenznummer eingeben">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="buchungstext" class="form-label">Buchungstext Gutschrift</label>
+                        <textarea class="form-control" id="buchungstext" rows="2" placeholder="Buchungstext eingeben"></textarea>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="right-fields">
+                        <div class="form-group">
+                            <label for="abteilung" class="form-label">Abteilung</label>
+                            <input type="text" class="form-control" id="abteilung" placeholder="z.B. EDV">
+                        </div>
+                        <div class="form-group">
+                            <label for="kuerzel" class="form-label">Kürzel</label>
+                            <input type="text" class="form-control" id="kuerzel" placeholder="z.B. SO2">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefon" class="form-label">Telefon</label>
+                            <input type="text" class="form-control" id="telefon" placeholder="z.B. 287">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">OK</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn">Abbrechen</button>
+            </div>
+        </form>
+
+        <div id="status"></div>
+
+        <!-- Debug-Info (nur in Entwicklung sichtbar) -->
+        <div id="debugInfo" class="debug-info">
+            <strong>Debug Info:</strong> <span id="debugText"></span>
+        </div>
+    </div>
+
+    <script>
+        // Office.js Initialisierung
+        if (typeof Office !== 'undefined') {
+            Office.onReady((info) => {
+                if (info.host === Office.HostType.Word) {
+                    console.log('Dreyfus Inkasso Add-In ist bereit');
+                    initializeEventHandlers();
+                    setupBetragCalculation();
+                    setupCurrencySync();
+                    setDefaultValues();
+                } else {
+                    showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
+                }
+            });
+        } else {
+            // Fallback für Browser-Test
+            document.addEventListener('DOMContentLoaded', () => {
+                console.log('Browser-Test-Modus (ohne Word)');
+                initializeEventHandlers();
+                setupBetragCalculation();
+                setupCurrencySync();
+                setDefaultValues();
+                
+                // Zeige Warnung
+                const warning = document.createElement('div');
+                warning.style.cssText = 'background: #ff9800; color: white; padding: 10px; text-align: center; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;';
+                warning.textContent = '⚠️ TEST-MODUS: Die Inkasso-Erstellung funktioniert nur in Microsoft Word!';
+                document.body.appendChild(warning);
+            });
+        }
+
+        function initializeEventHandlers() {
+            document.getElementById('inkassoForm').addEventListener('submit', erstelleInkasso);
+            document.getElementById('cancelBtn').addEventListener('click', () => {
+                showStatus('Aktion abgebrochen. Ihre Eingaben bleiben erhalten.', 'info');
+            });
+        }
+
+        function setDefaultValues() {
+            // Setze das aktuelle Datum
+            const heute = new Date();
+            // Falls benötigt, können hier weitere Standardwerte gesetzt werden
+        }
+
+        function setupBetragCalculation() {
+            // Event Listener für alle Betrag-Inputs
+            const betragInputs = document.querySelectorAll('.betrag-input');
+            betragInputs.forEach(input => {
+                input.addEventListener('input', calculateTotal);
+                input.addEventListener('blur', formatNumber);
+            });
+        }
+
+        function setupCurrencySync() {
+            // Synchronisiere Währung zwischen Konto und Inkasso
+            const waehrungSelect = document.getElementById('waehrung');
+            const waehrungInkassoSelect = document.getElementById('waehrungInkasso');
+            
+            waehrungSelect.addEventListener('change', (e) => {
+                waehrungInkassoSelect.value = e.target.value;
+                updateCurrencyDisplays(e.target.value);
+            });
+            
+            waehrungInkassoSelect.addEventListener('change', (e) => {
+                updateCurrencyDisplays(e.target.value);
+            });
+        }
+
+        function updateCurrencyDisplays(currency) {
+            document.querySelectorAll('.currency-display').forEach(display => {
+                display.textContent = currency;
+            });
+        }
+
+        function formatNumber(event) {
+            const input = event.target;
+            let value = input.value.replace(/[^\d.-]/g, '');
+            
+            if (value) {
+                const number = parseFloat(value);
+                if (!isNaN(number)) {
+                    // Formatiere mit Tausender-Trennzeichen (Schweizer Format mit ')
+                    input.value = number.toLocaleString('de-CH', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).replace(/\./g, "'");
+                }
+            }
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            const betragInputs = document.querySelectorAll('.betrag-input');
+            
+            betragInputs.forEach(input => {
+                const value = input.value.replace(/[^\d.-]/g, '');
+                if (value) {
+                    total += parseFloat(value) || 0;
+                }
+            });
+
+            // Formatiere Total
+            document.getElementById('total').value = total.toLocaleString('de-CH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).replace(/\./g, "'");
+        }
+
+        function showStatus(message, type) {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status-${type}`;
+            statusElement.style.display = 'block';
+
+            if (type === 'success' || type === 'info') {
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        async function erstelleInkasso(event) {
+            event.preventDefault();
+
+            // Prüfe ob Word verfügbar ist
+            if (typeof Word === 'undefined') {
+                showStatus('⚠️ Inkasso-Erstellung funktioniert nur in Microsoft Word!', 'error');
+                return;
+            }
+
+            try {
+                showStatus('Inkasso wird erstellt...', 'info');
+
+                // Sammle alle Daten
+                const formData = {
+                    kontoNr: document.getElementById('kontoNr').value,
+                    nameVorname: document.getElementById('nameVorname').value,
+                    waehrung: document.getElementById('waehrung').value,
+                    kontoart: document.getElementById('kontoart').value,
+                    inkassopapier: document.getElementById('inkassopapier').value,
+                    waehrungInkasso: document.getElementById('waehrungInkasso').value,
+                    betraege: [],
+                    total: document.getElementById('total').value,
+                    fehlendesIndossament: document.getElementById('fehlendesIndossament').checked,
+                    spezielleWeisung: document.getElementById('spezielleWeisung').value,
+                    referenz: document.getElementById('referenz').value,
+                    buchungstext: document.getElementById('buchungstext').value,
+                    abteilung: document.getElementById('abteilung').value,
+                    kuerzel: document.getElementById('kuerzel').value,
+                    telefon: document.getElementById('telefon').value
+                };
+
+                // Sammle alle Beträge
+                document.querySelectorAll('.betrag-input').forEach(input => {
+                    if (input.value.trim()) {
+                        formData.betraege.push(input.value);
+                    }
+                });
+
+                await Word.run(async (context) => {
+                    // Dokument leeren
+                    context.document.body.clear();
+
+                    // Standard-Schriftart setzen
+                    context.document.body.font.name = 'Dreyfus Sans';
+                    context.document.body.font.size = 11;
+
+                    // Seitenränder einstellen
+                    const sections = context.document.sections;
+                    sections.load('items');
+
+                    await context.sync();
+
+                    if (sections.items.length > 0) {
+                        const section = sections.items[0];
+                        section.topMargin = 72;    // 2.54 cm
+                        section.bottomMargin = 72; // 2.54 cm
+                        section.leftMargin = 72;   // 2.54 cm
+                        section.rightMargin = 72;  // 2.54 cm
+                    }
+
+                    // Titel
+                    const titleParagraph = context.document.body.insertParagraph('KONTO', Word.InsertLocation.start);
+                    titleParagraph.font.bold = true;
+                    titleParagraph.font.size = 14;
+                    titleParagraph.spaceAfter = 12;
+
+                    // Konto-Informationen
+                    context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    
+                    const kontoTable = context.document.body.insertTable(3, 2, Word.InsertLocation.end);
+                    kontoTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    kontoTable.rows.items[0].cells.items[0].body.insertText('Konto-Nr.', Word.InsertLocation.start);
+                    kontoTable.rows.items[0].cells.items[1].body.insertText(formData.kontoNr, Word.InsertLocation.start);
+                    
+                    kontoTable.rows.items[1].cells.items[0].body.insertText('Name / Vorname', Word.InsertLocation.start);
+                    kontoTable.rows.items[1].cells.items[1].body.insertText(formData.nameVorname, Word.InsertLocation.start);
+                    
+                    kontoTable.rows.items[2].cells.items[0].body.insertText('Währung / Kontoart', Word.InsertLocation.start);
+                    kontoTable.rows.items[2].cells.items[1].body.insertText(`${formData.waehrung} ${formData.kontoart}`, Word.InsertLocation.start);
+
+                    // CHECKBETRAG
+                    const checkTitleParagraph = context.document.body.insertParagraph('CHECKBETRAG', Word.InsertLocation.end);
+                    checkTitleParagraph.font.bold = true;
+                    checkTitleParagraph.font.size = 14;
+                    checkTitleParagraph.spaceBefore = 24;
+                    checkTitleParagraph.spaceAfter = 12;
+
+                    // Inkassopapier
+                    context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const inkassoTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
+                    inkassoTable.styleBuiltIn = Word.Style.tableGrid;
+                    inkassoTable.rows.items[0].cells.items[0].body.insertText('Inkassopapier', Word.InsertLocation.start);
+                    inkassoTable.rows.items[0].cells.items[1].body.insertText(formData.inkassopapier, Word.InsertLocation.start);
+
+                    context.document.body.insertParagraph('', Word.InsertLocation.end);
+
+                    // Erstelle eine Tabelle für die Beträge
+                    const betragTable = context.document.body.insertTable(formData.betraege.length + 3, 2, Word.InsertLocation.end);
+                    betragTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    // Header mit Linien
+                    const headerRow = betragTable.rows.items[0];
+                    headerRow.cells.items[0].body.insertText('Währung', Word.InsertLocation.start);
+                    headerRow.cells.items[0].body.paragraphs.items[0].font.bold = true;
+                    headerRow.cells.items[1].body.insertText('Betrag', Word.InsertLocation.start);
+                    headerRow.cells.items[1].body.paragraphs.items[0].font.bold = true;
+                    
+                    // Trennlinie
+                    betragTable.rows.items[1].cells.items[0].body.insertText('──────────────────────────────────', Word.InsertLocation.start);
+                    betragTable.rows.items[1].cells.items[1].body.insertText('─────────────────────', Word.InsertLocation.start);
+                    
+                    // Beträge
+                    formData.betraege.forEach((betrag, index) => {
+                        const rowIndex = index + 2;
+                        betragTable.rows.items[rowIndex].cells.items[0].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
+                        betragTable.rows.items[rowIndex].cells.items[1].body.insertText(betrag, Word.InsertLocation.start);
+                        betragTable.rows.items[rowIndex].cells.items[1].body.paragraphs.items[0].alignment = Word.Alignment.right;
+                    });
+
+                    // Füge leere Zeilen hinzu bis 10 Zeilen erreicht sind
+                    const emptyRowsNeeded = 10 - formData.betraege.length;
+                    for (let i = 0; i < emptyRowsNeeded; i++) {
+                        const rowIndex = formData.betraege.length + 2 + i;
+                        if (rowIndex < betragTable.rows.items.length) {
+                            betragTable.rows.items[rowIndex].cells.items[0].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
+                            betragTable.rows.items[rowIndex].cells.items[1].body.insertText('', Word.InsertLocation.start);
+                        }
+                    }
+
+                    // Total Tabelle
+                    context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const totalTable = context.document.body.insertTable(2, 3, Word.InsertLocation.end);
+                    totalTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    // Trennlinie
+                    totalTable.rows.items[0].cells.items[0].body.insertText('────────────────────────────────────────────────────────────────────────', Word.InsertLocation.start);
+                    totalTable.rows.items[0].cells.items[0].mergeTo(totalTable.rows.items[0].cells.items[2]);
+                    
+                    // Total
+                    totalTable.rows.items[1].cells.items[0].body.insertText('Total', Word.InsertLocation.start);
+                    totalTable.rows.items[1].cells.items[0].body.paragraphs.items[0].font.bold = true;
+                    totalTable.rows.items[1].cells.items[1].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
+                    totalTable.rows.items[1].cells.items[1].body.paragraphs.items[0].font.bold = true;
+                    totalTable.rows.items[1].cells.items[2].body.insertText(formData.total, Word.InsertLocation.start);
+                    totalTable.rows.items[1].cells.items[2].body.paragraphs.items[0].font.bold = true;
+                    totalTable.rows.items[1].cells.items[2].body.paragraphs.items[0].alignment = Word.Alignment.right;
+
+                    // Mitteilung / Weisungen
+                    const mitteilungParagraph = context.document.body.insertParagraph('MITTEILUNG / WEISUNGEN', Word.InsertLocation.end);
+                    mitteilungParagraph.font.bold = true;
+                    mitteilungParagraph.font.size = 14;
+                    mitteilungParagraph.spaceBefore = 24;
+                    mitteilungParagraph.spaceAfter = 12;
+
+                    // Mitteilungen Tabelle
+                    context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const mitteilungTable = context.document.body.insertTable(5, 2, Word.InsertLocation.end);
+                    mitteilungTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    mitteilungTable.rows.items[0].cells.items[0].body.insertText('Fehlendes Indossament garantieren', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[0].cells.items[1].body.insertText(formData.fehlendesIndossament ? 'Ja' : 'Nein', Word.InsertLocation.start);
+                    
+                    mitteilungTable.rows.items[1].cells.items[0].body.insertText('', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[1].cells.items[1].body.insertText('', Word.InsertLocation.start);
+                    
+                    mitteilungTable.rows.items[2].cells.items[0].body.insertText('Spezielle Weisungen', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[2].cells.items[1].body.insertText(formData.spezielleWeisung || '', Word.InsertLocation.start);
+                    
+                    mitteilungTable.rows.items[3].cells.items[0].body.insertText('Referenz', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[3].cells.items[1].body.insertText(formData.referenz || '', Word.InsertLocation.start);
+                    
+                    mitteilungTable.rows.items[4].cells.items[0].body.insertText('Buchungstext Gutschrift', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[4].cells.items[1].body.insertText(formData.buchungstext || '', Word.InsertLocation.start);
+
+                    // Datum und Visum
+                    const heute = new Date();
+                    const datumText = `Datum ${heute.toLocaleDateString('de-CH')} ${heute.toLocaleTimeString('de-CH', {hour: '2-digit', minute: '2-digit'})} Visum`;
+                    const datumParagraph = context.document.body.insertParagraph(datumText, Word.InsertLocation.end);
+                    datumParagraph.spaceBefore = 24;
+
+                    // Footer mit EDV Info
+                    context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const footerTable = context.document.body.insertTable(2, 1, Word.InsertLocation.end);
+                    footerTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    footerTable.rows.items[0].cells.items[0].body.insertText('────────────────────────────────────────────────────────────────────────', Word.InsertLocation.start);
+                    footerTable.rows.items[1].cells.items[0].body.insertText('EDV    SO2    287                               EDV / SO2 / 287', Word.InsertLocation.start);
+                    footerTable.rows.items[1].cells.items[0].body.paragraphs.items[0].font.size = 9;
+
+                    await context.sync();
+                });
+
+                showStatus('Inkasso wurde erfolgreich erstellt!', 'success');
+
+            } catch (error) {
+                console.error('Fehler beim Erstellen des Inkassos:', error);
+                showStatus('Fehler beim Erstellen des Inkassos: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
