@@ -51,9 +51,9 @@
                     <ExtensionPoint xsi:type="PrimaryCommandSurface">
                         <CustomTab id="tabBrief">
                             
-                            <!-- Hauptgruppe: Brief Generator -->
-                            <Group id="grpMain">
-                                <Label resid="Group.Main.Label" />
+                            <!-- Brief Generator Gruppe -->
+                            <Group id="grpBrief">
+                                <Label resid="Group.Brief.Label" />
                                 <Icon>
                                     <bt:Image size="16" resid="Icon.16x16"/>
                                     <bt:Image size="32" resid="Icon.32x32"/>
@@ -77,6 +77,16 @@
                                         <SourceLocation resid="Taskpane.Url"/>
                                     </Action>
                                 </Control>
+                            </Group>
+                            
+                            <!-- Inkasso Gruppe -->
+                            <Group id="grpInkasso">
+                                <Label resid="Group.Inkasso.Label" />
+                                <Icon>
+                                    <bt:Image size="16" resid="Icon.Inkasso.16x16"/>
+                                    <bt:Image size="32" resid="Icon.Inkasso.32x32"/>
+                                    <bt:Image size="80" resid="Icon.Inkasso.80x80"/>
+                                </Icon>
                                 
                                 <!-- Inkasso Brief Button -->
                                 <Control xsi:type="Button" id="btnInkasso">
@@ -95,7 +105,6 @@
                                         <SourceLocation resid="Inkasso.Url"/>
                                     </Action>
                                 </Control>
-                                
                             </Group>
                             
                             <Label resid="Tab.Label" />
@@ -126,7 +135,8 @@
             
             <bt:ShortStrings>
                 <bt:String id="Tab.Label" DefaultValue="DREYFUS" />
-                <bt:String id="Group.Main.Label" DefaultValue="Brief Tools" />
+                <bt:String id="Group.Brief.Label" DefaultValue="Brief Generator" />
+                <bt:String id="Group.Inkasso.Label" DefaultValue="Inkasso" />
                 <bt:String id="Button.Brief.Label" DefaultValue="Brief erstellen" />
                 <bt:String id="Button.Inkasso.Label" DefaultValue="Inkasso Brief" />
             </bt:ShortStrings>
