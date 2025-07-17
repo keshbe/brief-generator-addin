@@ -188,6 +188,7 @@
             text-align: center;
             padding: 20px;
             color: #666;
+            display: none;
         }
 
         .loading.show {
@@ -209,7 +210,7 @@
 
     <!-- Loading Indicator -->
     <div id="loadingIndicator" class="loading">
-        <div>Daten werden geladen...</div>
+        <div>Initialisierung...</div>
         <div class="mt-2">
             <div class="spinner-border spinner-border-sm" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -217,7 +218,7 @@
         </div>
     </div>
 
-    <div class="container content hidden" id="mainContent">
+    <div class="container content" id="mainContent">
         <form id="briefForm">
             <!-- Sprache und Absender -->
             <div class="row">
@@ -409,8 +410,190 @@
     </div>
 
     <script>
+        // === EMBEDDED DATA CONFIGURATION (Office Add-in Best Practice) ===
+        // Diese Daten sind direkt eingebettet für optimale Performance und Offline-Nutzung
+        const DREYFUS_DATA = {
+            "sprachen": {
+                "1": { "name": "Deutsch", "code": "de-DE", "dateFormat": "dd.mm.yyyy" },
+                "2": { "name": "English", "code": "en-US", "dateFormat": "mm-dd-yyyy" },
+                "3": { "name": "Français", "code": "fr-FR", "dateFormat": "dd.mm.yyyy" },
+                "4": { "name": "Italiano", "code": "it-IT", "dateFormat": "dd.mm.yyyy" }
+            },
+            "absenderData": {
+                "1": { "name": "Dreyfus Banquiers", "standort": "Basel", "anonymMoeglich": true, "slogan": true, "nurBasel": false },
+                "2": { "name": "Büro Basel", "standort": "Basel", "anonymMoeglich": false, "slogan": false, "nurBasel": true },
+                "3": { "name": "Büro Zürich", "standort": "Zürich", "anonymMoeglich": false, "slogan": false, "nurBasel": false },
+                "4": { "name": "Büro Lugano", "standort": "Lugano", "anonymMoeglich": true, "slogan": false, "nurBasel": false },
+                "9": { "name": "Neutral", "standort": "", "anonymMoeglich": true, "slogan": false, "nurBasel": false }
+            },
+            "abteilungen": {
+                "de": [
+                    { "id": 1, "name": "--" },
+                    { "id": 2, "name": "Vermögensverwaltung" },
+                    { "id": 3, "name": "Anlageberatung" },
+                    { "id": 4, "name": "Portfoliomanagement" },
+                    { "id": 5, "name": "Sekretariat" },
+                    { "id": 6, "name": "Buchhaltung" },
+                    { "id": 7, "name": "IT-Abteilung" }
+                ],
+                "en": [
+                    { "id": 1, "name": "--" },
+                    { "id": 2, "name": "Wealth Management" },
+                    { "id": 3, "name": "Investment Advisory" },
+                    { "id": 4, "name": "Portfolio Management" },
+                    { "id": 5, "name": "Secretariat" },
+                    { "id": 6, "name": "Accounting" },
+                    { "id": 7, "name": "IT Department" }
+                ],
+                "fr": [
+                    { "id": 1, "name": "--" },
+                    { "id": 2, "name": "Gestion de fortune" },
+                    { "id": 3, "name": "Conseil en placement" },
+                    { "id": 4, "name": "Gestion de portefeuille" },
+                    { "id": 5, "name": "Secrétariat" },
+                    { "id": 6, "name": "Comptabilité" },
+                    { "id": 7, "name": "Service informatique" }
+                ],
+                "it": [
+                    { "id": 1, "name": "--" },
+                    { "id": 2, "name": "Gestione patrimoniale" },
+                    { "id": 3, "name": "Consulenza agli investimenti" },
+                    { "id": 4, "name": "Gestione del portafoglio" },
+                    { "id": 5, "name": "Segretariato" },
+                    { "id": 6, "name": "Contabilità" },
+                    { "id": 7, "name": "Reparto IT" }
+                ]
+            },
+            "beilagen": {
+                "de": [
+                    { "id": 1, "name": "Informationsblatt" },
+                    { "id": 2, "name": "Vollmacht" },
+                    { "id": 3, "name": "Vertragsdokumente" }
+                ],
+                "en": [
+                    { "id": 1, "name": "Information Sheet" },
+                    { "id": 2, "name": "Power of Attorney" },
+                    { "id": 3, "name": "Contract Documents" }
+                ],
+                "fr": [
+                    { "id": 1, "name": "Feuille d'information" },
+                    { "id": 2, "name": "Procuration" },
+                    { "id": 3, "name": "Documents contractuels" }
+                ],
+                "it": [
+                    { "id": 1, "name": "Scheda informativa" },
+                    { "id": 2, "name": "Procura" },
+                    { "id": 3, "name": "Documenti contrattuali" }
+                ]
+            },
+            "grussformeln": {
+                "de": "Mit freundlichen Grüssen",
+                "en": "Yours sincerely,",
+                "fr": "Avec nos salutations les meilleures",
+                "it": "Cordiali saluti"
+            },
+            "firmenNamen": {
+                "de": "Dreyfus Söhne & Cie AG, Banquiers",
+                "en": "Dreyfus Sons & Co Ltd, Banquiers",
+                "fr": "Les Fils Dreyfus & Cie SA, Banquiers",
+                "it": "Les Fils Dreyfus & Cie SA, Banquiers"
+            },
+            "footerTaglines": {
+                "de": "Einzigartig aufgehoben.",
+                "en": "In trusted hands.",
+                "fr": "En de bonnes mains.",
+                "it": "En de bonnes mains."
+            },
+            "footerInfo": {
+                "basel": {
+                    "de": {
+                        "buero": "Büro Basel",
+                        "adresse": "Aeschenvorstadt 16 | 4010 Basel | Schweiz",
+                        "telefon": "Telefon +41 61 266 77 77",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "en": {
+                        "buero": "Basel Office",
+                        "adresse": "Aeschenvorstadt 16 | 4010 Basel | Switzerland",
+                        "telefon": "Phone +41 61 266 77 77",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "fr": {
+                        "buero": "Bureau de Bâle",
+                        "adresse": "Aeschenvorstadt 16 | 4010 Bâle | Suisse",
+                        "telefon": "Téléphone +41 61 266 77 77",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "it": {
+                        "buero": "Ufficio Basilea",
+                        "adresse": "Aeschenvorstadt 16 | 4010 Basilea | Svizzera",
+                        "telefon": "Telefono +41 61 266 77 77",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    }
+                },
+                "zuerich": {
+                    "de": {
+                        "buero": "Büro Zürich",
+                        "adresse": "St. Petersstrasse 1 | 8001 Zürich | Schweiz",
+                        "telefon": "Telefon +41 44 225 88 66",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "en": {
+                        "buero": "Zurich Office",
+                        "adresse": "St. Petersstrasse 1 | 8001 Zurich | Switzerland",
+                        "telefon": "Phone +41 44 225 88 66",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "fr": {
+                        "buero": "Bureau de Zurich",
+                        "adresse": "St. Petersstrasse 1 | 8001 Zurich | Suisse",
+                        "telefon": "Téléphone +41 44 225 88 66",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "it": {
+                        "buero": "Ufficio Zurigo",
+                        "adresse": "St. Petersstrasse 1 | 8001 Zurigo | Svizzera",
+                        "telefon": "Telefono +41 44 225 88 66",
+                        "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
+                    }
+                },
+                "lugano": {
+                    "de": {
+                        "buero": "Büro Lugano",
+                        "adresse": "Via Pessina 7 | 6900 Lugano | Schweiz",
+                        "telefon": "Telefon +41 91 910 71 71",
+                        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "en": {
+                        "buero": "Lugano Office",
+                        "adresse": "Via Pessina 7 | 6900 Lugano | Switzerland",
+                        "telefon": "Phone +41 91 910 71 71",
+                        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "fr": {
+                        "buero": "Bureau de Lugano",
+                        "adresse": "Via Pessina 7 | 6900 Lugano | Suisse",
+                        "telefon": "Téléphone +41 91 910 71 71",
+                        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+                    },
+                    "it": {
+                        "buero": "Ufficio Lugano",
+                        "adresse": "Via Pessina 7 | 6900 Lugano | Svizzera",
+                        "telefon": "Telefono +41 91 910 71 71",
+                        "email": "lugano@dreyfusbank.ch | www.dreyfusbank.ch"
+                    }
+                }
+            },
+            "logoVarianten": [
+                { "value": "42_Farbe", "text": "Standard (42pt, Farbe)", "filename": "Dreyfus_Logo_42_Farbe.png", "width": 56, "height": 21 },
+                { "value": "42_Grau", "text": "Standard (42pt, Grau)", "filename": "Dreyfus_Logo_42_Grau.png", "width": 56, "height": 21 },
+                { "value": "30_Farbe", "text": "Klein (30pt, Farbe)", "filename": "Dreyfus_Logo_30_Farbe.png", "width": 40, "height": 15 },
+                { "value": "30_Grau", "text": "Klein (30pt, Grau)", "filename": "Dreyfus_Logo_30_Grau.png", "width": 40, "height": 15 }
+            ]
+        };
+
         // === GLOBALE DATEN-VARIABLEN ===
-        let appData = null;
+        let appData = DREYFUS_DATA; // Direkt aus eingebetteten Daten
         let sprachen = {};
         let absenderData = {};
         let abteilungen = {};
@@ -420,6 +603,63 @@
         let footerTaglines = {};
         let footerInfo = {};
         let logoVarianten = [];
+
+        // === HYBRID DATA LOADING (Best Practice für Office Add-ins) ===
+        async function loadData() {
+            try {
+                showLoading(true);
+                
+                // STRATEGIE: Embedded Data First, External als Enhancement
+                console.log('Lade eingebettete Daten...');
+                
+                // 1. Sofort eingebettete Daten verwenden
+                appData = DREYFUS_DATA;
+                initializeDataFromSource(appData);
+                
+                // 2. Optional: Versuche externe Daten zu laden (Enhancement)
+                try {
+                    console.log('Versuche externe Daten zu laden...');
+                    const response = await fetch('https://keshbe.github.io/brief-generator-addin/data.json', {
+                        mode: 'cors',
+                        cache: 'default'
+                    });
+                    
+                    if (response.ok) {
+                        const externalData = await response.json();
+                        console.log('Externe Daten erfolgreich geladen - aktualisiere UI');
+                        appData = externalData;
+                        initializeDataFromSource(appData);
+                    }
+                } catch (externalError) {
+                    console.log('Externe Daten nicht verfügbar, verwende eingebettete Daten:', externalError.message);
+                    // Kein Problem - eingebettete Daten werden verwendet
+                }
+                
+                // UI initialisieren
+                initializeUI();
+                showLoading(false);
+                
+            } catch (error) {
+                console.error('Fehler beim Initialisieren:', error);
+                showLoading(false);
+                showStatus('Initialisierung fehlgeschlagen', 'error');
+            }
+        }
+
+        function initializeDataFromSource(data) {
+            // Globale Variablen aus Datenquelle setzen
+            sprachen = data.sprachen || {};
+            absenderData = data.absenderData || {};
+            abteilungen = data.abteilungen || {};
+            beilagen = data.beilagen || {};
+            grussformeln = data.grussformeln || {};
+            firmenNamen = data.firmenNamen || {};
+            footerTaglines = data.footerTaglines || {};
+            footerInfo = data.footerInfo || {};
+            logoVarianten = data.logoVarianten || [];
+            
+            console.log('Daten initialisiert:', Object.keys(data));
+        }
 
         // === ÜBERSETZUNGEN ===
         const translations = {
@@ -473,9 +713,7 @@
                 statusClipboardInserted: 'Adresse eingefügt',
                 statusClipboardError: 'Bitte fügen Sie die Adresse manuell mit Strg+V ein.',
                 errorSelectLanguage: 'Bitte wählen Sie eine Sprache aus.',
-                errorSelectSender: 'Bitte wählen Sie einen Absender aus.',
-                loadingData: 'Daten werden geladen...',
-                errorLoadingData: 'Fehler beim Laden der Daten. Bitte versuchen Sie es erneut.'
+                errorSelectSender: 'Bitte wählen Sie einen Absender aus.'
             },
             en: {
                 subHeaderText: 'Dreyfus Letter',
@@ -527,9 +765,7 @@
                 statusClipboardInserted: 'Address inserted',
                 statusClipboardError: 'Please paste the address manually with Ctrl+V.',
                 errorSelectLanguage: 'Please select a language.',
-                errorSelectSender: 'Please select a sender.',
-                loadingData: 'Loading data...',
-                errorLoadingData: 'Error loading data. Please try again.'
+                errorSelectSender: 'Please select a sender.'
             },
             fr: {
                 subHeaderText: 'Lettre Dreyfus',
@@ -581,9 +817,7 @@
                 statusClipboardInserted: 'Adresse insérée',
                 statusClipboardError: 'Veuillez coller l\'adresse manuellement avec Ctrl+V.',
                 errorSelectLanguage: 'Veuillez sélectionner une langue.',
-                errorSelectSender: 'Veuillez sélectionner un expéditeur.',
-                loadingData: 'Chargement des données...',
-                errorLoadingData: 'Erreur lors du chargement des données. Veuillez réessayer.'
+                errorSelectSender: 'Veuillez sélectionner un expéditeur.'
             },
             it: {
                 subHeaderText: 'Lettera Dreyfus',
@@ -635,63 +869,22 @@
                 statusClipboardInserted: 'Indirizzo inserito',
                 statusClipboardError: 'Si prega di incollare l\'indirizzo manualmente con Ctrl+V.',
                 errorSelectLanguage: 'Si prega di selezionare una lingua.',
-                errorSelectSender: 'Si prega di selezionare un mittente.',
-                loadingData: 'Caricamento dati...',
-                errorLoadingData: 'Errore nel caricamento dei dati. Si prega di riprovare.'
+                errorSelectSender: 'Si prega di selezionare un mittente.'
             }
         };
 
         // Aktuelle Sprache
         let currentLanguage = 'de';
 
-        // === DATEN LADEN ===
-        async function loadData() {
-            try {
-                showLoading(true);
-                
-                // Lade Daten von der JSON-Datei
-                const response = await fetch('https://keshbe.github.io/brief-generator-addin/data.json');
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                appData = await response.json();
-                
-                // Globale Variablen setzen
-                sprachen = appData.sprachen || {};
-                absenderData = appData.absenderData || {};
-                abteilungen = appData.abteilungen || {};
-                beilagen = appData.beilagen || {};
-                grussformeln = appData.grussformeln || {};
-                firmenNamen = appData.firmenNamen || {};
-                footerTaglines = appData.footerTaglines || {};
-                footerInfo = appData.footerInfo || {};
-                logoVarianten = appData.logoVarianten || [];
-
-                console.log('Daten erfolgreich geladen:', appData);
-                
-                // UI initialisieren
-                initializeUI();
-                showLoading(false);
-                
-            } catch (error) {
-                console.error('Fehler beim Laden der Daten:', error);
-                showLoading(false);
-                const trans = translations[currentLanguage] || translations.de;
-                showStatus(trans.errorLoadingData, 'error');
-            }
-        }
-
         function showLoading(show) {
             const loadingIndicator = document.getElementById('loadingIndicator');
             const mainContent = document.getElementById('mainContent');
             
             if (show) {
-                loadingIndicator.style.display = 'block';
+                loadingIndicator.classList.add('show');
                 mainContent.classList.add('hidden');
             } else {
-                loadingIndicator.style.display = 'none';
+                loadingIndicator.classList.remove('show');
                 mainContent.classList.remove('hidden');
             }
         }
@@ -712,7 +905,7 @@
             // Standardwerte setzen
             setDefaultValues();
             
-            console.log('UI initialisiert');
+            console.log('UI erfolgreich initialisiert');
         }
 
         function populateLanguageSelect() {
