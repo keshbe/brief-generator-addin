@@ -15,7 +15,7 @@
   "abteilungen": {
     "de": [
       { "id": 1, "name": "--" },
-      { "id": 2, "name": "Vermögensverwaltung" },
+      { "id": 2, "name": "Test Edit" },
       { "id": 3, "name": "Anlageberatung" },
       { "id": 4, "name": "Portfoliomanagement" },
       { "id": 5, "name": "Sekretariat" },
