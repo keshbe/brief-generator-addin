@@ -7,11 +7,11 @@
 
     <!-- Basis-Informationen -->
     <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.1.0</Version>
     <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
     <DefaultLocale>de-DE</DefaultLocale>
     <DisplayName DefaultValue="Dreyfus Brief Generator" />
-    <Description DefaultValue="Vereinfachtes Add-in mit einem Button" />
+    <Description DefaultValue="Brief- und Inkasso-Generator für Dreyfus" />
     
     <!-- Icons -->
     <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
@@ -37,7 +37,7 @@
     
     <Permissions>ReadWriteDocument</Permissions>
     
-    <!-- Version Overrides für Ribbon Button -->
+    <!-- Version Overrides für Ribbon Buttons -->
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
         
         <Hosts>
@@ -51,21 +51,21 @@
                     <ExtensionPoint xsi:type="PrimaryCommandSurface">
                         <CustomTab id="tabBrief">
                             
-                            <!-- Eine Gruppe mit einem Button -->
+                            <!-- Hauptgruppe: Brief Generator -->
                             <Group id="grpMain">
-                                <Label resid="Group.Label" />
+                                <Label resid="Group.Main.Label" />
                                 <Icon>
                                     <bt:Image size="16" resid="Icon.16x16"/>
                                     <bt:Image size="32" resid="Icon.32x32"/>
                                     <bt:Image size="80" resid="Icon.80x80"/>
                                 </Icon>
                                 
-                                <!-- Der einzige Button -->
-                                <Control xsi:type="Button" id="btnMain">
-                                    <Label resid="Button.Label" />
+                                <!-- Standard Brief Button -->
+                                <Control xsi:type="Button" id="btnBrief">
+                                    <Label resid="Button.Brief.Label" />
                                     <Supertip>
-                                        <Title resid="Button.Label" />
-                                        <Description resid="Button.Tooltip" />
+                                        <Title resid="Button.Brief.Label" />
+                                        <Description resid="Button.Brief.Tooltip" />
                                     </Supertip>
                                     <Icon>
                                         <bt:Image size="16" resid="Icon.16x16"/>
@@ -73,8 +73,26 @@
                                         <bt:Image size="80" resid="Icon.80x80"/>
                                     </Icon>
                                     <Action xsi:type="ShowTaskpane">
-                                        <TaskpaneId>MainTaskpane</TaskpaneId>
+                                        <TaskpaneId>BriefTaskpane</TaskpaneId>
                                         <SourceLocation resid="Taskpane.Url"/>
+                                    </Action>
+                                </Control>
+                                
+                                <!-- Inkasso Brief Button -->
+                                <Control xsi:type="Button" id="btnInkasso">
+                                    <Label resid="Button.Inkasso.Label" />
+                                    <Supertip>
+                                        <Title resid="Button.Inkasso.Label" />
+                                        <Description resid="Button.Inkasso.Tooltip" />
+                                    </Supertip>
+                                    <Icon>
+                                        <bt:Image size="16" resid="Icon.Inkasso.16x16"/>
+                                        <bt:Image size="32" resid="Icon.Inkasso.32x32"/>
+                                        <bt:Image size="80" resid="Icon.Inkasso.80x80"/>
+                                    </Icon>
+                                    <Action xsi:type="ShowTaskpane">
+                                        <TaskpaneId>InkassoTaskpane</TaskpaneId>
+                                        <SourceLocation resid="Inkasso.Url"/>
                                     </Action>
                                 </Control>
                                 
@@ -90,23 +108,32 @@
         <!-- Ressourcen -->
         <Resources>
             <bt:Images>
+                <!-- Standard Brief Icons -->
                 <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
                 <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
                 <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
+                
+                <!-- Inkasso Icons (können später durch spezifische Icons ersetzt werden) -->
+                <bt:Image id="Icon.Inkasso.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Grau.png"/>
+                <bt:Image id="Icon.Inkasso.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Grau.png"/>
+                <bt:Image id="Icon.Inkasso.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Grau.png"/>
             </bt:Images>
             
             <bt:Urls>
                 <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
+                <bt:Url id="Inkasso.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/inkasso.html" />
             </bt:Urls>
             
             <bt:ShortStrings>
-                <bt:String id="Tab.Label" DefaultValue="BRIEF" />
-                <bt:String id="Group.Label" DefaultValue="Brief Generator" />
-                <bt:String id="Button.Label" DefaultValue="Brief erstellen" />
+                <bt:String id="Tab.Label" DefaultValue="DREYFUS" />
+                <bt:String id="Group.Main.Label" DefaultValue="Brief Tools" />
+                <bt:String id="Button.Brief.Label" DefaultValue="Brief erstellen" />
+                <bt:String id="Button.Inkasso.Label" DefaultValue="Inkasso Brief" />
             </bt:ShortStrings>
             
             <bt:LongStrings>
-                <bt:String id="Button.Tooltip" DefaultValue="Öffnet den Dreyfus Brief Generator" />
+                <bt:String id="Button.Brief.Tooltip" DefaultValue="Öffnet den Standard Dreyfus Brief Generator" />
+                <bt:String id="Button.Inkasso.Tooltip" DefaultValue="Öffnet den Dreyfus Inkasso Brief Generator" />
             </bt:LongStrings>
         </Resources>
     </VersionOverrides>
