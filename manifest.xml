@@ -7,11 +7,22 @@
 
     <!-- Basis-Informationen -->
     <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
-    <Version>1.0.0.0</Version>
+    <Version>1.0.0.1</Version>
     <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
     <DefaultLocale>de-DE</DefaultLocale>
-    <DisplayName DefaultValue="Dreyfus Brief Generator" />
-    <Description DefaultValue="Vereinfachtes Add-in mit einem Button" />
+    
+    <!-- Lokalisierte Display Name und Description -->
+    <DisplayName DefaultValue="Dreyfus Brief Generator">
+        <Override Locale="en-US" Value="Dreyfus Letter Generator" />
+        <Override Locale="fr-FR" Value="Générateur de lettres Dreyfus" />
+        <Override Locale="it-IT" Value="Generatore lettere Dreyfus" />
+    </DisplayName>
+    
+    <Description DefaultValue="Vereinfachtes Add-in mit einem Button">
+        <Override Locale="en-US" Value="Simplified Add-in with one button" />
+        <Override Locale="fr-FR" Value="Add-in simplifié avec un bouton" />
+        <Override Locale="it-IT" Value="Add-in semplificato con un pulsante" />
+    </Description>
     
     <!-- Icons -->
     <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
@@ -99,52 +110,38 @@
                 <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
             </bt:Urls>
             
-            <!-- Deutsche Strings (Standard) -->
+            <!-- Alle Short Strings in einem Abschnitt konsolidiert -->
             <bt:ShortStrings>
-                <bt:String id="Tab.Label" DefaultValue="BRIEF" />
-                <bt:String id="Group.Label" DefaultValue="Brief Generator" />
-                <bt:String id="Button.Label" DefaultValue="Brief erstellen" />
+                <!-- Tab Label -->
+                <bt:String id="Tab.Label" DefaultValue="BRIEF">
+                    <bt:Override Locale="en-US" Value="LETTER" />
+                    <bt:Override Locale="fr-FR" Value="LETTRE" />
+                    <bt:Override Locale="it-IT" Value="LETTERA" />
+                </bt:String>
+                
+                <!-- Group Label -->
+                <bt:String id="Group.Label" DefaultValue="Brief Generator">
+                    <bt:Override Locale="en-US" Value="Letter Generator" />
+                    <bt:Override Locale="fr-FR" Value="Générateur de lettres" />
+                    <bt:Override Locale="it-IT" Value="Generatore lettere" />
+                </bt:String>
+                
+                <!-- Button Label -->
+                <bt:String id="Button.Label" DefaultValue="Brief erstellen">
+                    <bt:Override Locale="en-US" Value="Create Letter" />
+                    <bt:Override Locale="fr-FR" Value="Créer lettre" />
+                    <bt:Override Locale="it-IT" Value="Crea lettera" />
+                </bt:String>
             </bt:ShortStrings>
             
-            <!-- Englische Strings -->
-            <bt:ShortStrings locale="en-US">
-                <bt:String id="Tab.Label" DefaultValue="LETTER" />
-                <bt:String id="Group.Label" DefaultValue="Letter Generator" />
-                <bt:String id="Button.Label" DefaultValue="Create Letter" />
-            </bt:ShortStrings>
-            
-            <!-- Französische Strings -->
-            <bt:ShortStrings locale="fr-FR">
-                <bt:String id="Tab.Label" DefaultValue="LETTRE" />
-                <bt:String id="Group.Label" DefaultValue="Générateur de lettres" />
-                <bt:String id="Button.Label" DefaultValue="Créer lettre" />
-            </bt:ShortStrings>
-            
-            <!-- Italienische Strings -->
-            <bt:ShortStrings locale="it-IT">
-                <bt:String id="Tab.Label" DefaultValue="LETTERA" />
-                <bt:String id="Group.Label" DefaultValue="Generatore lettere" />
-                <bt:String id="Button.Label" DefaultValue="Crea lettera" />
-            </bt:ShortStrings>
-            
-            <!-- Deutsche Tooltips (Standard) -->
+            <!-- Alle Long Strings in einem Abschnitt konsolidiert -->
             <bt:LongStrings>
-                <bt:String id="Button.Tooltip" DefaultValue="Öffnet den Dreyfus Brief Generator" />
-            </bt:LongStrings>
-            
-            <!-- Englische Tooltips -->
-            <bt:LongStrings locale="en-US">
-                <bt:String id="Button.Tooltip" DefaultValue="Opens the Dreyfus letter generator" />
-            </bt:LongStrings>
-            
-            <!-- Französische Tooltips -->
-            <bt:LongStrings locale="fr-FR">
-                <bt:String id="Button.Tooltip" DefaultValue="Ouvre le générateur de lettres Dreyfus" />
-            </bt:LongStrings>
-            
-            <!-- Italienische Tooltips -->
-            <bt:LongStrings locale="it-IT">
-                <bt:String id="Button.Tooltip" DefaultValue="Apre il generatore di lettere Dreyfus" />
+                <!-- Button Tooltip -->
+                <bt:String id="Button.Tooltip" DefaultValue="Öffnet den Dreyfus Brief Generator">
+                    <bt:Override Locale="en-US" Value="Opens the Dreyfus letter generator" />
+                    <bt:Override Locale="fr-FR" Value="Ouvre le générateur de lettres Dreyfus" />
+                    <bt:Override Locale="it-IT" Value="Apre il generatore di lettere Dreyfus" />
+                </bt:String>
             </bt:LongStrings>
         </Resources>
     </VersionOverrides>
