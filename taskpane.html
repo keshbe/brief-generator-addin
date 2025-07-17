@@ -182,6 +182,41 @@
             margin-top: 10px;
             display: none;
         }
+
+        /* Loading Indicator */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .content.hidden {
+            display: none;
+        }
+
+        .data-source-indicator {
+            font-size: 0.7rem;
+            color: #666;
+            text-align: right;
+            padding: 2px 5px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+
+        .retry-btn {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -192,7 +227,26 @@
         <small id="subHeaderText">Dreyfus Brief</small>
     </div>
 
-    <div class="container">
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading">
+        <div id="loadingText">Daten werden geladen...</div>
+        <div class="mt-2">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="mt-2">
+            <small id="loadingDetails">Verbinde zu GitHub...</small>
+        </div>
+    </div>
+
+    <div class="container content hidden" id="mainContent">
+        <!-- Data Source Indicator -->
+        <div class="data-source-indicator" id="dataSourceIndicator">
+            Datenquelle: Wird ermittelt...
+            <button type="button" class="retry-btn d-none" id="retryDataLoad">🔄 Neu laden</button>
+        </div>
+
         <form id="briefForm">
             <!-- Sprache und Absender -->
             <div class="row">
@@ -201,10 +255,6 @@
                         <label for="sprache" class="form-label" id="label_sprache">Sprache</label>
                         <select class="form-select" id="sprache" required>
                             <option value="" id="option_pleaseSelect">-- Bitte wählen --</option>
-                            <option value="1">Deutsch</option>
-                            <option value="2">English</option>
-                            <option value="3">Français</option>
-                            <option value="4">Italiano</option>
                         </select>
                     </div>
                 </div>
@@ -213,11 +263,6 @@
                         <label for="absender" class="form-label" id="label_absender">Absender</label>
                         <select class="form-select" id="absender" required>
                             <option value="" id="option_pleaseSelectSender">-- Bitte wählen --</option>
-                            <option value="1">Dreyfus Banquiers</option>
-                            <option value="2" id="option_officeBasel">Büro Basel</option>
-                            <option value="3" id="option_officeZurich">Büro Zürich</option>
-                            <option value="4" id="option_officeLugano">Büro Lugano</option>
-                            <option value="9" id="option_neutral">Neutral</option>
                         </select>
                     </div>
                 </div>
@@ -241,10 +286,6 @@
                     <div class="form-group">
                         <label for="logoVariante" class="form-label" id="label_logoVariant">Logo-Variante</label>
                         <select class="form-select" id="logoVariante">
-                            <option value="42_Farbe" id="option_standardColor">Standard (42pt, Farbe)</option>
-                            <option value="42_Grau" id="option_standardGray">Standard (42pt, Grau)</option>
-                            <option value="30_Farbe" id="option_smallColor">Klein (30pt, Farbe)</option>
-                            <option value="30_Grau" id="option_smallGray">Klein (30pt, Grau)</option>
                         </select>
                         <small class="text-muted" id="logoNote">Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern</small>
                     </div>
@@ -397,6 +438,40 @@
     </div>
 
     <script>
+        // === KONFIGURATION FÜR EXTERNE DATENLADUNG ===
+        const DATA_CONFIG = {
+            // Primäre Datenquelle (GitHub Pages - automatisches CORS)
+            PRIMARY_URL: 'https://keshbe.github.io/brief-generator-addin/data.json',
+            
+            // Fallback URLs (optional)
+            FALLBACK_URLS: [
+                // Weitere URLs hinzufügen falls nötig
+            ],
+            
+            // Cache-Einstellungen
+            CACHE_DURATION: 5 * 60 * 1000, // 5 Minuten in Millisekunden
+            
+            // Retry-Einstellungen
+            MAX_RETRIES: 3,
+            RETRY_DELAY: 1000, // 1 Sekunde
+            
+            // Timeout-Einstellungen
+            FETCH_TIMEOUT: 10000 // 10 Sekunden
+        };
+
+        // === GLOBALE DATEN-VARIABLEN ===
+        let appData = null;
+        let sprachen = {};
+        let absenderData = {};
+        let abteilungen = {};
+        let beilagen = {};
+        let grussformeln = {};
+        let firmenNamen = {};
+        let footerTaglines = {};
+        let footerInfo = {};
+        let logoVarianten = [];
+        let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
+
         // === ÜBERSETZUNGEN ===
         const translations = {
             de: {
@@ -449,7 +524,14 @@
                 statusClipboardInserted: 'Adresse eingefügt',
                 statusClipboardError: 'Bitte fügen Sie die Adresse manuell mit Strg+V ein.',
                 errorSelectLanguage: 'Bitte wählen Sie eine Sprache aus.',
-                errorSelectSender: 'Bitte wählen Sie einen Absender aus.'
+                errorSelectSender: 'Bitte wählen Sie einen Absender aus.',
+                loadingData: 'Daten werden geladen...',
+                loadingFromGitHub: 'Lade von GitHub...',
+                loadingRetry: 'Wiederhole Versuch...',
+                dataSourceExternal: 'Externe Daten (GitHub) - Aktuell',
+                dataSourceCached: 'Zwischengespeicherte Daten',
+                dataSourceError: 'Fehler beim Laden - Offline-Modus',
+                errorLoadingData: 'Fehler beim Laden der Daten. Verwende Offline-Modus.'
             },
             en: {
                 subHeaderText: 'Dreyfus Letter',
@@ -501,7 +583,14 @@
                 statusClipboardInserted: 'Address inserted',
                 statusClipboardError: 'Please paste the address manually with Ctrl+V.',
                 errorSelectLanguage: 'Please select a language.',
-                errorSelectSender: 'Please select a sender.'
+                errorSelectSender: 'Please select a sender.',
+                loadingData: 'Loading data...',
+                loadingFromGitHub: 'Loading from GitHub...',
+                loadingRetry: 'Retrying...',
+                dataSourceExternal: 'External data (GitHub) - Current',
+                dataSourceCached: 'Cached data',
+                dataSourceError: 'Loading error - Offline mode',
+                errorLoadingData: 'Error loading data. Using offline mode.'
             },
             fr: {
                 subHeaderText: 'Lettre Dreyfus',
@@ -553,7 +642,14 @@
                 statusClipboardInserted: 'Adresse insérée',
                 statusClipboardError: 'Veuillez coller l\'adresse manuellement avec Ctrl+V.',
                 errorSelectLanguage: 'Veuillez sélectionner une langue.',
-                errorSelectSender: 'Veuillez sélectionner un expéditeur.'
+                errorSelectSender: 'Veuillez sélectionner un expéditeur.',
+                loadingData: 'Chargement des données...',
+                loadingFromGitHub: 'Chargement depuis GitHub...',
+                loadingRetry: 'Nouvelle tentative...',
+                dataSourceExternal: 'Données externes (GitHub) - Actuelles',
+                dataSourceCached: 'Données en cache',
+                dataSourceError: 'Erreur de chargement - Mode hors ligne',
+                errorLoadingData: 'Erreur lors du chargement des données. Utilisation du mode hors ligne.'
             },
             it: {
                 subHeaderText: 'Lettera Dreyfus',
@@ -605,12 +701,362 @@
                 statusClipboardInserted: 'Indirizzo inserito',
                 statusClipboardError: 'Si prega di incollare l\'indirizzo manualmente con Ctrl+V.',
                 errorSelectLanguage: 'Si prega di selezionare una lingua.',
-                errorSelectSender: 'Si prega di selezionare un mittente.'
+                errorSelectSender: 'Si prega di selezionare un mittente.',
+                loadingData: 'Caricamento dati...',
+                loadingFromGitHub: 'Caricamento da GitHub...',
+                loadingRetry: 'Tentativo di ripetizione...',
+                dataSourceExternal: 'Dati esterni (GitHub) - Attuali',
+                dataSourceCached: 'Dati memorizzati nella cache',
+                dataSourceError: 'Errore di caricamento - Modalità offline',
+                errorLoadingData: 'Errore nel caricamento dei dati. Utilizzo della modalità offline.'
             }
         };
 
         // Aktuelle Sprache
         let currentLanguage = 'de';
+
+        // === CACHE-SYSTEM ===
+        class DataCache {
+            constructor() {
+                this.cacheKey = 'dreyfus_data_cache';
+                this.timestampKey = 'dreyfus_data_timestamp';
+            }
+
+            set(data) {
+                try {
+                    sessionStorage.setItem(this.cacheKey, JSON.stringify(data));
+                    sessionStorage.setItem(this.timestampKey, Date.now().toString());
+                    console.log('Daten im Cache gespeichert');
+                } catch (error) {
+                    console.warn('Cache-Speicherung fehlgeschlagen:', error);
+                }
+            }
+
+            get() {
+                try {
+                    const timestamp = sessionStorage.getItem(this.timestampKey);
+                    if (!timestamp) return null;
+
+                    const age = Date.now() - parseInt(timestamp);
+                    if (age > DATA_CONFIG.CACHE_DURATION) {
+                        console.log('Cache-Daten sind veraltet');
+                        this.clear();
+                        return null;
+                    }
+
+                    const data = sessionStorage.getItem(this.cacheKey);
+                    if (data) {
+                        console.log('Daten aus Cache geladen');
+                        return JSON.parse(data);
+                    }
+                } catch (error) {
+                    console.warn('Cache-Laden fehlgeschlagen:', error);
+                    this.clear();
+                }
+                return null;
+            }
+
+            clear() {
+                try {
+                    sessionStorage.removeItem(this.cacheKey);
+                    sessionStorage.removeItem(this.timestampKey);
+                } catch (error) {
+                    // Ignoriere Fehler beim Löschen
+                }
+            }
+        }
+
+        const dataCache = new DataCache();
+
+        // === EXTERNE DATENLADUNG MIT RETRY-LOGIC ===
+        async function fetchWithTimeout(url, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), DATA_CONFIG.FETCH_TIMEOUT);
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal,
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        ...options.headers
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error;
+            }
+        }
+
+        async function loadExternalData(url, attempt = 1) {
+            try {
+                console.log(`Lade Daten von ${url} (Versuch ${attempt}/${DATA_CONFIG.MAX_RETRIES})`);
+                
+                const response = await fetchWithTimeout(url);
+                const data = await response.json();
+                
+                // Validiere die geladenen Daten
+                if (!data || !data.sprachen || !data.absenderData) {
+                    throw new Error('Unvollständige Datenstruktur');
+                }
+                
+                console.log('Externe Daten erfolgreich geladen');
+                dataCache.set(data);
+                dataSourceInfo = { 
+                    source: 'external', 
+                    timestamp: new Date(), 
+                    error: null,
+                    url: url 
+                };
+                
+                return data;
+                
+            } catch (error) {
+                console.warn(`Versuch ${attempt} fehlgeschlagen:`, error.message);
+                
+                if (attempt < DATA_CONFIG.MAX_RETRIES) {
+                    updateLoadingStatus(`loadingRetry`);
+                    await new Promise(resolve => setTimeout(resolve, DATA_CONFIG.RETRY_DELAY));
+                    return loadExternalData(url, attempt + 1);
+                }
+                
+                throw error;
+            }
+        }
+
+        async function loadData() {
+            try {
+                showLoading(true);
+                updateLoadingStatus('loadingFromGitHub');
+                
+                // 1. Versuche externe Daten zu laden
+                try {
+                    const data = await loadExternalData(DATA_CONFIG.PRIMARY_URL);
+                    initializeDataFromSource(data);
+                    initializeUI();
+                    showLoading(false);
+                    updateDataSourceIndicator();
+                    return;
+                } catch (error) {
+                    console.log('Primäre URL fehlgeschlagen, versuche Fallbacks...');
+                    
+                    // 2. Versuche Fallback-URLs
+                    for (const fallbackUrl of DATA_CONFIG.FALLBACK_URLS) {
+                        try {
+                            const data = await loadExternalData(fallbackUrl);
+                            initializeDataFromSource(data);
+                            initializeUI();
+                            showLoading(false);
+                            updateDataSourceIndicator();
+                            return;
+                        } catch (fallbackError) {
+                            console.log(`Fallback ${fallbackUrl} fehlgeschlagen:`, fallbackError.message);
+                        }
+                    }
+                }
+                
+                // 3. Verwende Cache falls verfügbar
+                const cachedData = dataCache.get();
+                if (cachedData) {
+                    console.log('Verwende zwischengespeicherte Daten');
+                    initializeDataFromSource(cachedData);
+                    dataSourceInfo = { 
+                        source: 'cache', 
+                        timestamp: new Date(parseInt(sessionStorage.getItem('dreyfus_data_timestamp'))), 
+                        error: 'Externe Daten nicht verfügbar' 
+                    };
+                    initializeUI();
+                    showLoading(false);
+                    updateDataSourceIndicator();
+                    return;
+                }
+                
+                // 4. Letzter Ausweg: Verwende eingebettete Fallback-Daten
+                throw new Error('Keine Datenquelle verfügbar');
+                
+            } catch (error) {
+                console.error('Datenladen fehlgeschlagen:', error);
+                showLoading(false);
+                dataSourceInfo = { source: 'error', timestamp: new Date(), error: error.message };
+                
+                const trans = translations[currentLanguage] || translations.de;
+                showStatus(trans.errorLoadingData, 'error');
+                updateDataSourceIndicator();
+                
+                // Zeige Retry-Button
+                document.getElementById('retryDataLoad').classList.remove('d-none');
+            }
+        }
+
+        function updateLoadingStatus(key) {
+            const trans = translations[currentLanguage] || translations.de;
+            const loadingText = document.getElementById('loadingText');
+            const loadingDetails = document.getElementById('loadingDetails');
+            
+            if (loadingText) loadingText.textContent = trans[key] || trans.loadingData;
+            if (loadingDetails) {
+                switch(key) {
+                    case 'loadingFromGitHub':
+                        loadingDetails.textContent = 'Verbinde zu GitHub...';
+                        break;
+                    case 'loadingRetry':
+                        loadingDetails.textContent = 'Wiederhole Verbindung...';
+                        break;
+                    default:
+                        loadingDetails.textContent = '';
+                }
+            }
+        }
+
+        function updateDataSourceIndicator() {
+            const indicator = document.getElementById('dataSourceIndicator');
+            const trans = translations[currentLanguage] || translations.de;
+            
+            let statusText = '';
+            let statusClass = '';
+            
+            switch(dataSourceInfo.source) {
+                case 'external':
+                    statusText = trans.dataSourceExternal;
+                    statusClass = 'text-success';
+                    break;
+                case 'cache':
+                    statusText = trans.dataSourceCached;
+                    statusClass = 'text-warning';
+                    break;
+                case 'error':
+                    statusText = trans.dataSourceError;
+                    statusClass = 'text-danger';
+                    break;
+                default:
+                    statusText = 'Datenquelle: Unbekannt';
+                    statusClass = 'text-muted';
+            }
+            
+            indicator.innerHTML = `
+                <span class="${statusClass}">Datenquelle: ${statusText}</span>
+                ${dataSourceInfo.timestamp ? ` (${dataSourceInfo.timestamp.toLocaleTimeString()})` : ''}
+                <button type="button" class="retry-btn ${dataSourceInfo.source === 'error' ? '' : 'd-none'}" id="retryDataLoad">🔄 Neu laden</button>
+            `;
+            
+            // Event Listener für Retry-Button
+            const retryBtn = document.getElementById('retryDataLoad');
+            if (retryBtn) {
+                retryBtn.onclick = () => {
+                    retryBtn.classList.add('d-none');
+                    loadData();
+                };
+            }
+        }
+
+        function initializeDataFromSource(data) {
+            // Globale Variablen aus Datenquelle setzen
+            sprachen = data.sprachen || {};
+            absenderData = data.absenderData || {};
+            abteilungen = data.abteilungen || {};
+            beilagen = data.beilagen || {};
+            grussformeln = data.grussformeln || {};
+            firmenNamen = data.firmenNamen || {};
+            footerTaglines = data.footerTaglines || {};
+            footerInfo = data.footerInfo || {};
+            logoVarianten = data.logoVarianten || [];
+            
+            console.log('Daten initialisiert:', Object.keys(data));
+        }
+
+        function showLoading(show) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (show) {
+                loadingIndicator.classList.add('show');
+                mainContent.classList.add('hidden');
+            } else {
+                loadingIndicator.classList.remove('show');
+                mainContent.classList.remove('hidden');
+            }
+        }
+
+        function initializeUI() {
+            // Sprachen Dropdown befüllen
+            populateLanguageSelect();
+            
+            // Absender Dropdown befüllen
+            populateAbsenderSelect();
+            
+            // Logo Varianten befüllen
+            populateLogoVarianten();
+            
+            // Event Handlers initialisieren
+            initializeEventHandlers();
+            
+            // Standardwerte setzen
+            setDefaultValues();
+            
+            console.log('UI erfolgreich initialisiert');
+        }
+
+        function populateLanguageSelect() {
+            const spracheSelect = document.getElementById('sprache');
+            
+            // Clear existing options except the first one
+            while (spracheSelect.children.length > 1) {
+                spracheSelect.removeChild(spracheSelect.lastChild);
+            }
+            
+            // Add language options
+            Object.keys(sprachen).forEach(key => {
+                const language = sprachen[key];
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = language.name;
+                spracheSelect.appendChild(option);
+            });
+        }
+
+        function populateAbsenderSelect() {
+            const absenderSelect = document.getElementById('absender');
+            
+            // Clear existing options except the first one
+            while (absenderSelect.children.length > 1) {
+                absenderSelect.removeChild(absenderSelect.lastChild);
+            }
+            
+            // Add sender options
+            Object.keys(absenderData).forEach(key => {
+                const sender = absenderData[key];
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = sender.name;
+                absenderSelect.appendChild(option);
+            });
+        }
+
+        function populateLogoVarianten() {
+            const logoSelect = document.getElementById('logoVariante');
+            
+            // Clear existing options
+            logoSelect.innerHTML = '';
+            
+            // Add logo variants
+            logoVarianten.forEach(variant => {
+                const option = document.createElement('option');
+                option.value = variant.value;
+                option.textContent = variant.text;
+                logoSelect.appendChild(option);
+            });
+        }
 
         // Funktion zum Übersetzen der UI - EINFACHER ANSATZ
         function translateUI(languageCode) {
@@ -629,6 +1075,9 @@
             document.getElementById('cancelBtn').textContent = trans.btn_close;
             document.getElementById('anonymWarning').textContent = trans.anonymWarning;
             document.getElementById('logoNote').textContent = trans.logoNote;
+            
+            // Update Data Source Indicator
+            updateDataSourceIndicator();
         }
 
         // === ADAPTIVE SIZING SYSTEM für identische Druckausgabe ===
@@ -686,106 +1135,6 @@
             }
         };
 
-        // Datenbank-Simulationen (in der echten Implementierung würden diese aus einer Datenbank kommen)
-        const sprachen = {
-            1: { name: 'Deutsch', code: 'de-DE', dateFormat: 'dd.mm.yyyy' },
-            2: { name: 'English', code: 'en-US', dateFormat: 'mm-dd-yyyy' },
-            3: { name: 'Français', code: 'fr-FR', dateFormat: 'dd.mm.yyyy' },
-            4: { name: 'Italiano', code: 'it-IT', dateFormat: 'dd.mm.yyyy' }
-        };
-
-        const absenderData = {
-            1: { name: 'Dreyfus Banquiers', standort: 'Basel', anonymMoeglich: true, slogan: true, nurBasel: false },
-            2: { name: 'Büro Basel', standort: 'Basel', anonymMoeglich: false, slogan: false, nurBasel: true },
-            3: { name: 'Büro Zürich', standort: 'Zürich', anonymMoeglich: false, slogan: false, nurBasel: false },
-            4: { name: 'Büro Lugano', standort: 'Lugano', anonymMoeglich: true, slogan: false, nurBasel: false },
-            9: { name: 'Neutral', standort: '', anonymMoeglich: true, slogan: false, nurBasel: false }
-        };
-
-        const abteilungen = {
-            de: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Vermögensverwaltung' },
-                { id: 3, name: 'Anlageberatung' },
-                { id: 4, name: 'Portfoliomanagement' },
-                { id: 5, name: 'Sekretariat' },
-                { id: 6, name: 'Buchhaltung' },
-                { id: 7, name: 'IT-Abteilung' }
-            ],
-            en: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Wealth Management' },
-                { id: 3, name: 'Investment Advisory' },
-                { id: 4, name: 'Portfolio Management' },
-                { id: 5, name: 'Secretariat' },
-                { id: 6, name: 'Accounting' },
-                { id: 7, name: 'IT Department' }
-            ],
-            fr: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Gestion de fortune' },
-                { id: 3, name: 'Conseil en placement' },
-                { id: 4, name: 'Gestion de portefeuille' },
-                { id: 5, name: 'Secrétariat' },
-                { id: 6, name: 'Comptabilité' },
-                { id: 7, name: 'Service informatique' }
-            ],
-            it: [
-                { id: 1, name: '--' },
-                { id: 2, name: 'Gestione patrimoniale' },
-                { id: 3, name: 'Consulenza agli investimenti' },
-                { id: 4, name: 'Gestione del portafoglio' },
-                { id: 5, name: 'Segretariato' },
-                { id: 6, name: 'Contabilità' },
-                { id: 7, name: 'Reparto IT' }
-            ]
-        };
-
-        const beilagen = {
-            de: [
-                { id: 1, name: 'Informationsblatt' },
-                { id: 2, name: 'Vollmacht' },
-                { id: 3, name: 'Vertragsdokumente' }
-            ],
-            en: [
-                { id: 1, name: 'Information Sheet' },
-                { id: 2, name: 'Power of Attorney' },
-                { id: 3, name: 'Contract Documents' }
-            ],
-            fr: [
-                { id: 1, name: 'Feuille d\'information' },
-                { id: 2, name: 'Procuration' },
-                { id: 3, name: 'Documents contractuels' }
-            ],
-            it: [
-                { id: 1, name: 'Scheda informativa' },
-                { id: 2, name: 'Procura' },
-                { id: 3, name: 'Documenti contrattuali' }
-            ]
-        };
-
-        const grussformeln = {
-            de: 'Mit freundlichen Grüssen',
-            en: 'Yours sincerely,', // Mit Komma!
-            fr: 'Avec nos salutations les meilleures',
-            it: 'Cordiali saluti'
-        };
-
-        const firmenNamen = {
-            de: 'Dreyfus Söhne & Cie AG, Banquiers',
-            en: 'Dreyfus Sons & Co Ltd, Banquiers',
-            fr: 'Les Fils Dreyfus & Cie SA, Banquiers',
-            it: 'Les Fils Dreyfus & Cie SA, Banquiers'
-        };
-
-        // Footer-Taglines für alle Sprachen
-        const footerTaglines = {
-            de: 'Einzigartig aufgehoben.',
-            en: 'In trusted hands.',
-            fr: 'En de bonnes mains.',
-            it: 'En de bonnes mains.'
-        };
-
         // Office.js Initialisierung - mit Fallback für Browser-Test
         if (typeof Office !== 'undefined') {
             Office.onReady((info) => {
@@ -795,8 +1144,8 @@
                     // Debug-Info anzeigen
                     logEnvironmentInfo();
 
-                    initializeEventHandlers();
-                    setDefaultValues();
+                    // Daten laden
+                    loadData();
                 } else {
                     showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
                 }
@@ -805,8 +1154,9 @@
             // Fallback für Browser-Test (ohne Word)
             document.addEventListener('DOMContentLoaded', () => {
                 console.log('Browser-Test-Modus (ohne Word)');
-                initializeEventHandlers();
-                setDefaultValues();
+                
+                // Daten laden
+                loadData();
                 
                 // Zeige Warnung
                 const warning = document.createElement('div');
@@ -821,14 +1171,15 @@
             const logoSize = ADAPTIVE_SIZING.getLogo('42');
             const footerSize = ADAPTIVE_SIZING.getFooter();
 
-            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt`;
+            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== ADAPTIVE SIZING INFO ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Logo 42pt:', logoSize);
             console.log('Footer:', footerSize);
-            console.log('=============================');
+            console.log('Datenquelle:', dataSourceInfo);
+            console.log('================================');
         }
 
         function initializeEventHandlers() {
@@ -1282,27 +1633,29 @@
                         const firmenName = firmenNamen[sprachCode] || firmenNamen.de;
                         let footerLines = [];
 
+                        // Verwende footerInfo aus den geladenen Daten
+                        let footerData = null;
                         switch (formData.absender) {
                             case '1':
                             case '2':
+                                footerData = footerInfo.basel?.[sprachCode];
+                                break;
                             case '3':
-                                footerLines = [
-                                    firmenName,
-                                    'Büro Zürich',
-                                    'St. Petersstrasse 1 | 8001 Zürich | Schweiz',
-                                    'Telefon +41 44 225 88 66',
-                                    'contact@dreyfusbank.ch | www.dreyfusbank.ch'
-                                ];
+                                footerData = footerInfo.zuerich?.[sprachCode];
                                 break;
                             case '4':
-                                footerLines = [
-                                    firmenName,
-                                    'Ufficio Lugano',
-                                    'Via Pessina 7 | 6900 Lugano | Svizzera',
-                                    'Telefono +41 91 910 71 71',
-                                    'lugano@dreyfusbank.ch | www.dreyfusbank.ch'
-                                ];
+                                footerData = footerInfo.lugano?.[sprachCode];
                                 break;
+                        }
+
+                        if (footerData) {
+                            footerLines = [
+                                firmenName,
+                                footerData.buero,
+                                footerData.adresse,
+                                footerData.telefon,
+                                footerData.email
+                            ];
                         }
 
                         if (footerLines.length > 0) {
