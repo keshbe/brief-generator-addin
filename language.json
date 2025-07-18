@@ -1,0 +1,322 @@
+{
+  "de": {
+    "header": {
+      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "subtitle": "Dreyfus Brief"
+    },
+    "loading": {
+      "dataLoading": "Daten werden geladen...",
+      "connectingGithub": "Verbinde zu GitHub...",
+      "retry": "Wiederhole Versuch..."
+    },
+    "indicators": {
+      "wordLanguage": "Word Sprache",
+      "dataSource": "Datenquelle",
+      "determining": "Wird ermittelt...",
+      "dataSourceExternal": "Externe Daten (GitHub) - Aktuell",
+      "dataSourceCached": "Zwischengespeicherte Daten",
+      "dataSourceError": "Fehler beim Laden - Offline-Modus",
+      "dataSourceUnknown": "Unbekannt",
+      "content": "Inhalt",
+      "error": "Fehler beim Ermitteln",
+      "browserTest": "Browser-Test-Modus"
+    },
+    "buttons": {
+      "reload": "Neu laden",
+      "pasteFromClipboard": "Aus Zwischenablage einfügen",
+      "ok": "OK",
+      "close": "Schließen"
+    },
+    "form": {
+      "language": "Sprache",
+      "pleaseSelect": "-- Bitte wählen --",
+      "sender": "Absender",
+      "pleaseSelectSender": "-- Bitte wählen --",
+      "anonymous": "Anonym (nur Adresse, ohne Dreyfus)",
+      "anonymousWarning": "NICHT für Briefe mit vorgedruckten Dreyfus-Papier!",
+      "logoVariant": "Logo-Variante",
+      "logoNote": "Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern",
+      "address": "Adresse",
+      "place": "Ort",
+      "date": "Datum",
+      "senderInitials": "Absenderkürzel",
+      "subject": "Betreff",
+      "salutation": "Anrede",
+      "complimentaryClose": "Gruss",
+      "signature1": "Unterschrift 1",
+      "signature2": "Unterschrift 2",
+      "function1": "Funktion 1",
+      "function2": "Funktion 2",
+      "department1": "Abteilung 1",
+      "department2": "Abteilung 2",
+      "enclosure": "Beilagen",
+      "attachments": "Anlagen",
+      "none": "-- Keine --"
+    },
+    "sections": {
+      "logoOptions": "Logo-Optionen",
+      "address": "Adresse",
+      "letter": "Brief",
+      "complimentaryClose": "Gruss",
+      "signatures": "Unterschriften",
+      "departments": "Abteilungen",
+      "enclosures": "Beilagen"
+    },
+    "status": {
+      "cancelled": "Aktion abgebrochen. Ihre Eingaben bleiben erhalten.",
+      "creating": "Brief wird erstellt...",
+      "success": "Brief wurde erfolgreich erstellt!",
+      "clipboardInserted": "Adresse eingefügt",
+      "clipboardError": "Bitte fügen Sie die Adresse manuell mit Strg+V ein.",
+      "clipboardNotAvailable": "Zwischenablage ist in dieser Umgebung nicht verfügbar.",
+      "errorLoadingData": "Fehler beim Laden der Daten. Verwende Offline-Modus."
+    },
+    "errors": {
+      "selectLanguage": "Bitte wählen Sie eine Sprache aus.",
+      "selectSender": "Bitte wählen Sie einen Absender aus.",
+      "onlyWord": "Dieses Add-In funktioniert nur in Microsoft Word",
+      "onlyInWord": "⚠️ Brief-Erstellung funktioniert nur in Microsoft Word!",
+      "creatingLetter": "Fehler beim Erstellen des Briefes"
+    }
+  },
+  "en": {
+    "header": {
+      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "subtitle": "Dreyfus Letter"
+    },
+    "loading": {
+      "dataLoading": "Loading data...",
+      "connectingGithub": "Connecting to GitHub...",
+      "retry": "Retrying..."
+    },
+    "indicators": {
+      "wordLanguage": "Word Language",
+      "dataSource": "Data Source",
+      "determining": "Determining...",
+      "dataSourceExternal": "External data (GitHub) - Current",
+      "dataSourceCached": "Cached data",
+      "dataSourceError": "Loading error - Offline mode",
+      "dataSourceUnknown": "Unknown",
+      "content": "Content",
+      "error": "Error determining",
+      "browserTest": "Browser test mode"
+    },
+    "buttons": {
+      "reload": "Reload",
+      "pasteFromClipboard": "Paste from clipboard",
+      "ok": "OK",
+      "close": "Close"
+    },
+    "form": {
+      "language": "Language",
+      "pleaseSelect": "-- Please select --",
+      "sender": "Sender",
+      "pleaseSelectSender": "-- Please select --",
+      "anonymous": "Anonymous (address only, without Dreyfus)",
+      "anonymousWarning": "NOT for letters with pre-printed Dreyfus paper!",
+      "logoVariant": "Logo Variant",
+      "logoNote": "Logo is only displayed when not anonymous and with Dreyfus senders",
+      "address": "Address",
+      "place": "Place",
+      "date": "Date",
+      "senderInitials": "Sender initials",
+      "subject": "Subject",
+      "salutation": "Salutation",
+      "complimentaryClose": "Complimentary close",
+      "signature1": "Signature 1",
+      "signature2": "Signature 2",
+      "function1": "Function 1",
+      "function2": "Function 2",
+      "department1": "Department 1",
+      "department2": "Department 2",
+      "enclosure": "Enclosures",
+      "attachments": "Attachments",
+      "none": "-- None --"
+    },
+    "sections": {
+      "logoOptions": "Logo Options",
+      "address": "Address",
+      "letter": "Letter",
+      "complimentaryClose": "Complimentary close",
+      "signatures": "Signatures",
+      "departments": "Departments",
+      "enclosures": "Enclosures"
+    },
+    "status": {
+      "cancelled": "Action cancelled. Your entries remain saved.",
+      "creating": "Creating letter...",
+      "success": "Letter created successfully!",
+      "clipboardInserted": "Address inserted",
+      "clipboardError": "Please paste the address manually with Ctrl+V.",
+      "clipboardNotAvailable": "Clipboard is not available in this environment.",
+      "errorLoadingData": "Error loading data. Using offline mode."
+    },
+    "errors": {
+      "selectLanguage": "Please select a language.",
+      "selectSender": "Please select a sender.",
+      "onlyWord": "This Add-In only works in Microsoft Word",
+      "onlyInWord": "⚠️ Letter creation only works in Microsoft Word!",
+      "creatingLetter": "Error creating letter"
+    }
+  },
+  "fr": {
+    "header": {
+      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "subtitle": "Lettre Dreyfus"
+    },
+    "loading": {
+      "dataLoading": "Chargement des données...",
+      "connectingGithub": "Connexion à GitHub...",
+      "retry": "Nouvelle tentative..."
+    },
+    "indicators": {
+      "wordLanguage": "Langue Word",
+      "dataSource": "Source de données",
+      "determining": "Déterminant...",
+      "dataSourceExternal": "Données externes (GitHub) - Actuelles",
+      "dataSourceCached": "Données en cache",
+      "dataSourceError": "Erreur de chargement - Mode hors ligne",
+      "dataSourceUnknown": "Inconnu",
+      "content": "Contenu",
+      "error": "Erreur de détermination",
+      "browserTest": "Mode test navigateur"
+    },
+    "buttons": {
+      "reload": "Recharger",
+      "pasteFromClipboard": "Coller depuis le presse-papiers",
+      "ok": "OK",
+      "close": "Fermer"
+    },
+    "form": {
+      "language": "Langue",
+      "pleaseSelect": "-- Veuillez sélectionner --",
+      "sender": "Expéditeur",
+      "pleaseSelectSender": "-- Veuillez sélectionner --",
+      "anonymous": "Anonyme (adresse uniquement, sans Dreyfus)",
+      "anonymousWarning": "PAS pour les lettres avec papier Dreyfus pré-imprimé!",
+      "logoVariant": "Variante du logo",
+      "logoNote": "Le logo n'est affiché que si non anonyme et avec expéditeurs Dreyfus",
+      "address": "Adresse",
+      "place": "Lieu",
+      "date": "Date",
+      "senderInitials": "Initiales de l'expéditeur",
+      "subject": "Objet",
+      "salutation": "Formule d'appel",
+      "complimentaryClose": "Formule de politesse",
+      "signature1": "Signature 1",
+      "signature2": "Signature 2",
+      "function1": "Fonction 1",
+      "function2": "Fonction 2",
+      "department1": "Département 1",
+      "department2": "Département 2",
+      "enclosure": "Pièces jointes",
+      "attachments": "Annexes",
+      "none": "-- Aucune --"
+    },
+    "sections": {
+      "logoOptions": "Options du logo",
+      "address": "Adresse",
+      "letter": "Lettre",
+      "complimentaryClose": "Formule de politesse",
+      "signatures": "Signatures",
+      "departments": "Départements",
+      "enclosures": "Pièces jointes"
+    },
+    "status": {
+      "cancelled": "Action annulée. Vos entrées sont conservées.",
+      "creating": "Création de la lettre en cours...",
+      "success": "Lettre créée avec succès!",
+      "clipboardInserted": "Adresse insérée",
+      "clipboardError": "Veuillez coller l'adresse manuellement avec Ctrl+V.",
+      "clipboardNotAvailable": "Le presse-papiers n'est pas disponible dans cet environnement.",
+      "errorLoadingData": "Erreur lors du chargement des données. Utilisation du mode hors ligne."
+    },
+    "errors": {
+      "selectLanguage": "Veuillez sélectionner une langue.",
+      "selectSender": "Veuillez sélectionner un expéditeur.",
+      "onlyWord": "Ce complément ne fonctionne que dans Microsoft Word",
+      "onlyInWord": "⚠️ La création de lettres ne fonctionne que dans Microsoft Word!",
+      "creatingLetter": "Erreur lors de la création de la lettre"
+    }
+  },
+  "it": {
+    "header": {
+      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "subtitle": "Lettera Dreyfus"
+    },
+    "loading": {
+      "dataLoading": "Caricamento dati...",
+      "connectingGithub": "Connessione a GitHub...",
+      "retry": "Tentativo di ripetizione..."
+    },
+    "indicators": {
+      "wordLanguage": "Lingua Word",
+      "dataSource": "Fonte dati",
+      "determining": "Determinazione...",
+      "dataSourceExternal": "Dati esterni (GitHub) - Attuali",
+      "dataSourceCached": "Dati memorizzati nella cache",
+      "dataSourceError": "Errore di caricamento - Modalità offline",
+      "dataSourceUnknown": "Sconosciuto",
+      "content": "Contenuto",
+      "error": "Errore di determinazione",
+      "browserTest": "Modalità test browser"
+    },
+    "buttons": {
+      "reload": "Ricarica",
+      "pasteFromClipboard": "Incolla dagli appunti",
+      "ok": "OK",
+      "close": "Chiudi"
+    },
+    "form": {
+      "language": "Lingua",
+      "pleaseSelect": "-- Si prega di selezionare --",
+      "sender": "Mittente",
+      "pleaseSelectSender": "-- Si prega di selezionare --",
+      "anonymous": "Anonimo (solo indirizzo, senza Dreyfus)",
+      "anonymousWarning": "NON per lettere con carta Dreyfus prestampata!",
+      "logoVariant": "Variante logo",
+      "logoNote": "Il logo viene visualizzato solo se non anonimo e con mittenti Dreyfus",
+      "address": "Indirizzo",
+      "place": "Luogo",
+      "date": "Data",
+      "senderInitials": "Iniziali del mittente",
+      "subject": "Oggetto",
+      "salutation": "Formula di apertura",
+      "complimentaryClose": "Formula di chiusura",
+      "signature1": "Firma 1",
+      "signature2": "Firma 2",
+      "function1": "Funzione 1",
+      "function2": "Funzione 2",
+      "department1": "Dipartimento 1",
+      "department2": "Dipartimento 2",
+      "enclosure": "Allegati",
+      "attachments": "Documenti",
+      "none": "-- Nessuno --"
+    },
+    "sections": {
+      "logoOptions": "Opzioni logo",
+      "address": "Indirizzo",
+      "letter": "Lettera",
+      "complimentaryClose": "Formula di chiusura",
+      "signatures": "Firme",
+      "departments": "Dipartimenti",
+      "enclosures": "Allegati"
+    },
+    "status": {
+      "cancelled": "Azione annullata. Le tue voci rimangono salvate.",
+      "creating": "Creazione lettera in corso...",
+      "success": "Lettera creata con successo!",
+      "clipboardInserted": "Indirizzo inserito",
+      "clipboardError": "Si prega di incollare l'indirizzo manualmente con Ctrl+V.",
+      "clipboardNotAvailable": "Gli appunti non sono disponibili in questo ambiente.",
+      "errorLoadingData": "Errore nel caricamento dei dati. Utilizzo della modalità offline."
+    },
+    "errors": {
+      "selectLanguage": "Si prega di selezionare una lingua.",
+      "selectSender": "Si prega di selezionare un mittente.",
+      "onlyWord": "Questo componente aggiuntivo funziona solo in Microsoft Word",
+      "onlyInWord": "⚠️ La creazione di lettere funziona solo in Microsoft Word!",
+      "creatingLetter": "Errore nella creazione della lettera"
+    }
+  }
+}
