@@ -122,10 +122,10 @@
                 </bt:String>
                 
                 <!-- Button-Beschriftung -->
-                <bt:String id="Button.Label" DefaultValue="Öffnen">
-                    <bt:Override Locale="en-US" Value="Open" />
-                    <bt:Override Locale="fr-FR" Value="Ouvrir" />
-                    <bt:Override Locale="it-IT" Value="Apri" />
+                <bt:String id="Button.Label" DefaultValue="Brief">
+                    <bt:Override Locale="en-US" Value="Letter" />
+                    <bt:Override Locale="fr-FR" Value="Lettre" />
+                    <bt:Override Locale="it-IT" Value="Lettera" />
                 </bt:String>
             </bt:ShortStrings>
             
