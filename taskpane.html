@@ -21,6 +21,64 @@
             font-style: normal;
         }
 
+        // === AUTOMATISCHE WORD-SPRACHE AUSWAHL ===
+        function autoSelectWordLanguage() {
+            try {
+                const wordLang = wordLanguageInfo.displayLanguage;
+                if (!wordLang || wordLang === 'unknown' || wordLang === 'error' || wordLang === 'browser-test') {
+                    console.log('Keine gültige Word-Sprache für Auto-Auswahl verfügbar');
+                    return;
+                }
+
+                // Word-Sprachcode auf Dropdown-Werte mappen
+                const languageMapping = {
+                    // Deutsch
+                    'de': 'de',
+                    'de-DE': 'de', 
+                    'de-CH': 'de',
+                    'de-AT': 'de',
+                    // Englisch  
+                    'en': 'en',
+                    'en-US': 'en',
+                    'en-GB': 'en',
+                    // Französisch
+                    'fr': 'fr', 
+                    'fr-FR': 'fr',
+                    'fr-CH': 'fr',
+                    'fr-CA': 'fr',
+                    // Italienisch
+                    'it': 'it',
+                    'it-IT': 'it', 
+                    'it-CH': 'it'
+                };
+
+                const mappedLanguage = languageMapping[wordLang];
+                if (!mappedLanguage) {
+                    console.log(`Word-Sprache "${wordLang}" konnte nicht gemappt werden`);
+                    return;
+                }
+
+                // Prüfen ob die gemappte Sprache im Dropdown verfügbar ist
+                const spracheSelect = document.getElementById('sprache');
+                const availableOptions = Array.from(spracheSelect.options).map(opt => opt.value);
+                
+                if (!availableOptions.includes(mappedLanguage)) {
+                    console.log(`Gemappte Sprache "${mappedLanguage}" ist nicht im Dropdown verfügbar`);
+                    return;
+                }
+
+                // Sprache automatisch auswählen
+                spracheSelect.value = mappedLanguage;
+                console.log(`Word-Sprache automatisch ausgewählt: "${wordLang}" → "${mappedLanguage}"`);
+
+                // onChange Event manuell triggern, um abhängige Felder zu aktualisieren
+                spracheSelect.dispatchEvent(new Event('change'));
+                
+            } catch (error) {
+                console.warn('Fehler bei automatischer Sprach-Auswahl:', error);
+            }
+        }
+
         @font-face {
             font-family: 'Dreyfus Sans';
             src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSans-Bold.ttf') format('truetype');
@@ -1109,6 +1167,9 @@
             
             // Standardwerte setzen
             setDefaultValues();
+            
+            // Word-Sprache automatisch auswählen
+            autoSelectWordLanguage();
             
             // Indikatoren aktualisieren
             updateWordLanguageIndicator();
