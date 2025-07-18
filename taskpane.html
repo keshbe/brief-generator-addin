@@ -1127,7 +1127,7 @@
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== DREYFUS BRIEF ADD-IN INFO (V4: FOOTER-FIX NACH MICROSOFT-DOKUMENTATION) ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO (V5: KOMBINIERTE UNTERSCHRIFTEN-TABELLE) ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
             console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
@@ -1320,7 +1320,7 @@
                     emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
                 };
 
-                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix (Offizielle API) + Footer-Fix + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
+                console.log('Korrigierte Adaptive Sizing + Kombinierte Unterschriften-Tabelle + Footer-Fix + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1584,65 +1584,122 @@
                         }
                     }
 
-                    // Unterschriften - mit Tabelle für korrekte Trennung
+                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle
                     if (formData.unterschrift1 || formData.unterschrift2) {
+                        // Bestimme wie viele Zeilen benötigt werden
+                        let rowCount = 1; // Mindestens für Unterschriften
+                        
+                        const hasFunktionen = formData.funktion1 || formData.funktion2;
+                        const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
+                            (formData.abteilung2 && formData.abteilung2 !== '1');
+                        
+                        if (hasFunktionen) rowCount++;
+                        if (hasAbteilungen) rowCount++;
+                        
+                        // Eine Tabelle mit dynamischer Zeilenzahl erstellen
+                        const signatureTable = context.document.body.insertTable(rowCount, 2, Word.InsertLocation.end);
+                        signatureTable.horizontalAlignment = Word.Alignment.left;
+                        signatureTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
+                        
+                        // Tabelle konfigurieren nach offizieller API
+                        signatureTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                        signatureTable.autoFitWindow();
+                        
+                        await context.sync();
+                        
+                        let currentRow = 0;
+                        
+                        // ZEILE 1: Unterschriften
+                        if (formData.unterschrift1) {
+                            const cell1 = signatureTable.getCell(currentRow, 0);
+                            const para1 = cell1.body.insertParagraph(formData.unterschrift1, Word.InsertLocation.start);
+                            para1.font.name = 'Dreyfus Sans';
+                            para1.font.size = 11;
+                            para1.alignment = Word.Alignment.left;
+                        }
+                        
                         if (formData.unterschrift2 && !formData.anonym) {
-                            // Zwei Unterschriften: Verwende Tabelle
-                            const table = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
-                            table.horizontalAlignment = Word.Alignment.left;
-                            table.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
-                            
-                            // Tabelle konfigurieren nach offizieller API
-                            table.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
-                            table.horizontalAlignment = Word.Alignment.left;
-                            
-                            // Tabelle auf Fensterbreite anpassen (50/50 automatisch)
-                            table.autoFitWindow();
-                            
-                            await context.sync();
-                            
-                            // Erste Unterschrift (links)
-                            if (formData.unterschrift1) {
-                                const cell1 = table.getCell(0, 0);
-                                const para1 = cell1.body.insertParagraph(formData.unterschrift1, Word.InsertLocation.start);
+                            const cell2 = signatureTable.getCell(currentRow, 1);
+                            const para2 = cell2.body.insertParagraph(formData.unterschrift2, Word.InsertLocation.start);
+                            para2.font.name = 'Dreyfus Sans';
+                            para2.font.size = 11;
+                            para2.alignment = Word.Alignment.left;
+                        }
+                        
+                        currentRow++;
+                        
+                        // ZEILE 2: Funktionen (falls vorhanden)
+                        if (hasFunktionen) {
+                            if (formData.funktion1) {
+                                const cell1 = signatureTable.getCell(currentRow, 0);
+                                const para1 = cell1.body.insertParagraph(formData.funktion1, Word.InsertLocation.start);
                                 para1.font.name = 'Dreyfus Sans';
-                                para1.font.size = 11;
+                                para1.font.size = 10;
                                 para1.alignment = Word.Alignment.left;
                             }
                             
-                            // Zweite Unterschrift (rechts)
-                            if (formData.unterschrift2) {
-                                const cell2 = table.getCell(0, 1);
-                                const para2 = cell2.body.insertParagraph(formData.unterschrift2, Word.InsertLocation.start);
+                            if (formData.funktion2 && !formData.anonym) {
+                                const cell2 = signatureTable.getCell(currentRow, 1);
+                                const para2 = cell2.body.insertParagraph(formData.funktion2, Word.InsertLocation.start);
                                 para2.font.name = 'Dreyfus Sans';
-                                para2.font.size = 11;
+                                para2.font.size = 10;
                                 para2.alignment = Word.Alignment.left;
                             }
                             
-                            // Synchronisation nach Text-Einfügung
-                            await context.sync();
+                            currentRow++;
+                        }
+                        
+                        // ZEILE 3: Abteilungen (falls vorhanden)
+                        if (hasAbteilungen) {
+                            let abt1Text = '';
+                            let abt2Text = '';
                             
-                            // Abstand nach Tabelle
-                            const hasFunktionen = formData.funktion1 || formData.funktion2;
-                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
-                                (formData.abteilung2 && formData.abteilung2 !== '1');
+                            if (formData.abteilung1 && formData.abteilung1 !== '1') {
+                                const abt1Selected = document.getElementById('abteilung1').selectedOptions[0].text;
+                                if (abt1Selected !== getText('form.none')) {
+                                    abt1Text = abt1Selected;
+                                }
+                            }
                             
-                            // Leerer Paragraph für Abstand
-                            const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                            spacingPara.spaceAfter = (hasFunktionen || hasAbteilungen) ? 2 : 20;
+                            if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
+                                const abt2Selected = document.getElementById('abteilung2').selectedOptions[0].text;
+                                if (abt2Selected !== getText('form.none')) {
+                                    abt2Text = abt2Selected;
+                                }
+                            }
                             
-                        } else {
-                            // Nur eine Unterschrift: Normaler Paragraph
-                            const unterschriftenParagraph = context.document.body.insertParagraph(formData.unterschrift1, Word.InsertLocation.end);
-                            unterschriftenParagraph.alignment = Word.Alignment.left;
-                            unterschriftenParagraph.font.name = 'Dreyfus Sans';
-                            unterschriftenParagraph.font.size = 11;
-
-                            const hasFunktionen = formData.funktion1 || formData.funktion2;
-                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
-                                (formData.abteilung2 && formData.abteilung2 !== '1');
-
-                            unterschriftenParagraph.spaceAfter = (hasFunktionen || hasAbteilungen) ? 2 : 20;
+                            if (abt1Text) {
+                                const cell1 = signatureTable.getCell(currentRow, 0);
+                                const para1 = cell1.body.insertParagraph(abt1Text, Word.InsertLocation.start);
+                                para1.font.name = 'Dreyfus Sans';
+                                para1.font.size = 10;
+                                para1.alignment = Word.Alignment.left;
+                            }
+                            
+                            if (abt2Text) {
+                                const cell2 = signatureTable.getCell(currentRow, 1);
+                                const para2 = cell2.body.insertParagraph(abt2Text, Word.InsertLocation.start);
+                                para2.font.name = 'Dreyfus Sans';
+                                para2.font.size = 10;
+                                para2.alignment = Word.Alignment.left;
+                            }
+                        }
+                        
+                        // Synchronisation nach Text-Einfügung
+                        await context.sync();
+                        
+                        // Abstand nach der kombinierten Tabelle
+                        const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                        spacingPara.spaceAfter = 30;
+                        
+                    } else {
+                        // Wenn keine Unterschriften, prüfe auf einzelne Funktionen/Abteilungen
+                        if (formData.funktion1 || formData.funktion2) {
+                            const funktionenParagraph = context.document.body.insertParagraph(formData.funktion1 || '', Word.InsertLocation.end);
+                            funktionenParagraph.font.size = 10;
+                            funktionenParagraph.font.name = 'Dreyfus Sans';
+                            funktionenParagraph.alignment = Word.Alignment.left;
+                            funktionenParagraph.spaceAfter = 20;
                         }
                     }
 
