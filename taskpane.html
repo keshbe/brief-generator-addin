@@ -21,16 +21,17 @@
             font-style: normal;
         }
 
-        // === AUTOMATISCHE WORD-SPRACHE AUSWAHL ===
-        function autoSelectWordLanguage() {
+        // === AUTOMATISCHE UI-ÜBERSETZUNG IN WORD-SPRACHE ===
+        function autoTranslateToWordLanguage() {
             try {
                 const wordLang = wordLanguageInfo.displayLanguage;
                 if (!wordLang || wordLang === 'unknown' || wordLang === 'error' || wordLang === 'browser-test') {
-                    console.log('Keine gültige Word-Sprache für Auto-Auswahl verfügbar');
+                    console.log('Keine gültige Word-Sprache für Auto-Übersetzung verfügbar, verwende Deutsch als Standard');
+                    translateUI('de');
                     return;
                 }
 
-                // Word-Sprachcode auf Dropdown-Werte mappen
+                // Word-Sprachcode auf UI-Sprache mappen
                 const languageMapping = {
                     // Deutsch
                     'de': 'de',
@@ -52,30 +53,22 @@
                     'it-CH': 'it'
                 };
 
-                const mappedLanguage = languageMapping[wordLang];
-                if (!mappedLanguage) {
-                    console.log(`Word-Sprache "${wordLang}" konnte nicht gemappt werden`);
+                const mappedLanguage = languageMapping[wordLang] || 'de'; // Fallback auf Deutsch
+
+                // Prüfen ob Übersetzung verfügbar ist
+                if (!translations[mappedLanguage]) {
+                    console.log(`Übersetzung für "${mappedLanguage}" nicht verfügbar, verwende Deutsch`);
+                    translateUI('de');
                     return;
                 }
 
-                // Prüfen ob die gemappte Sprache im Dropdown verfügbar ist
-                const spracheSelect = document.getElementById('sprache');
-                const availableOptions = Array.from(spracheSelect.options).map(opt => opt.value);
-                
-                if (!availableOptions.includes(mappedLanguage)) {
-                    console.log(`Gemappte Sprache "${mappedLanguage}" ist nicht im Dropdown verfügbar`);
-                    return;
-                }
-
-                // Sprache automatisch auswählen
-                spracheSelect.value = mappedLanguage;
-                console.log(`Word-Sprache automatisch ausgewählt: "${wordLang}" → "${mappedLanguage}"`);
-
-                // onChange Event manuell triggern, um abhängige Felder zu aktualisieren
-                spracheSelect.dispatchEvent(new Event('change'));
+                // UI automatisch in Word-Sprache übersetzen
+                translateUI(mappedLanguage);
+                console.log(`UI automatisch übersetzt: Word "${wordLang}" → UI "${mappedLanguage}"`);
                 
             } catch (error) {
-                console.warn('Fehler bei automatischer Sprach-Auswahl:', error);
+                console.warn('Fehler bei automatischer UI-Übersetzung:', error);
+                translateUI('de'); // Fallback auf Deutsch
             }
         }
 
@@ -1168,8 +1161,8 @@
             // Standardwerte setzen
             setDefaultValues();
             
-            // Word-Sprache automatisch auswählen
-            autoSelectWordLanguage();
+            // UI automatisch in Word-Sprache anzeigen
+            autoTranslateToWordLanguage();
             
             // Indikatoren aktualisieren
             updateWordLanguageIndicator();
