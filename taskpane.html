@@ -476,8 +476,8 @@
         let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
         let wordLanguageInfo = { displayLanguage: 'unknown', contentLanguage: 'unknown', timestamp: null };
 
-        // Aktuelle Sprache
-        let currentLanguage = 'de';
+        // Aktuelle Sprache - wird dynamisch gesetzt
+        let currentLanguage = null;
 
         // === CACHE-SYSTEM ===
         class DataCache {
@@ -593,6 +593,12 @@
                 languageCache.set(languageData);
                 translations = languageData;
                 console.log('Übersetzungen geladen:', Object.keys(translations));
+                
+                // Automatische Spracherkennung ausführen sobald Übersetzungen verfügbar sind
+                if (wordLanguageInfo.displayLanguage && wordLanguageInfo.displayLanguage !== 'unknown') {
+                    autoDetectLanguage();
+                }
+                
                 return languageData;
             } catch (error) {
                 console.error('Sprachen konnten nicht geladen werden:', error);
@@ -670,7 +676,9 @@
             const loadingDetails = document.getElementById('loadingDetails');
             if (loadingDetails) {
                 const text = getText(`loading.${key}`);
-                loadingDetails.textContent = text !== '...' ? text : 'Loading...';
+                if (text !== '...') {
+                    loadingDetails.textContent = text;
+                }
             }
         }
 
@@ -731,7 +739,10 @@
                     };
                     
                     console.log('Word Sprachen erkannt:', wordLanguageInfo);
-                    updateWordLanguageIndicator();
+                    
+                    // Automatische Spracherkennung für UI
+                    autoDetectLanguage();
+                    
                 } else {
                     // Fallback für Browser-Test
                     wordLanguageInfo = {
@@ -739,8 +750,12 @@
                         contentLanguage: 'browser-test',
                         timestamp: new Date()
                     };
-                    updateWordLanguageIndicator();
+                    
+                    // Browser-Sprache als Fallback
+                    autoDetectLanguageFromBrowser();
                 }
+                
+                updateWordLanguageIndicator();
             } catch (error) {
                 console.warn('Fehler beim Ermitteln der Word-Sprache:', error);
                 wordLanguageInfo = {
@@ -750,6 +765,73 @@
                     error: error.message
                 };
                 updateWordLanguageIndicator();
+            }
+        }
+
+        function autoDetectLanguage() {
+            if (!translations || !wordLanguageInfo.displayLanguage) return;
+            
+            // Word-Sprache auswerten (z.B. "de-CH" -> "de")
+            const wordLang = wordLanguageInfo.displayLanguage.split('-')[0].toLowerCase();
+            
+            // Prüfe ob diese Sprache in Übersetzungen verfügbar ist
+            if (translations[wordLang]) {
+                currentLanguage = wordLang;
+                console.log('Automatische Spracherkennung:', wordLang);
+                
+                // UI sofort übersetzen
+                translateUI();
+                
+                // Sprachen-Dropdown vorauswählen falls Daten schon geladen
+                autoSelectLanguageDropdown();
+            } else {
+                console.log('Word-Sprache nicht verfügbar in Übersetzungen:', wordLang);
+            }
+        }
+
+        function autoDetectLanguageFromBrowser() {
+            if (!translations) return;
+            
+            // Browser-Sprache als Fallback
+            const browserLang = navigator.language.split('-')[0].toLowerCase();
+            
+            if (translations[browserLang]) {
+                currentLanguage = browserLang;
+                console.log('Browser-Spracherkennung:', browserLang);
+                translateUI();
+                autoSelectLanguageDropdown();
+            }
+        }
+
+        function autoSelectLanguageDropdown() {
+            if (!currentLanguage) return;
+            
+            // Finde den entsprechenden Sprachen-Eintrag in den App-Daten
+            const spracheSelect = document.getElementById('sprache');
+            
+            for (const [key, language] of Object.entries(sprachen)) {
+                const langCode = language.code.split('-')[0].toLowerCase();
+                if (langCode === currentLanguage) {
+                    spracheSelect.value = key;
+                    console.log('Sprachen-Dropdown automatisch ausgewählt:', key, language.name);
+                    
+                    // Datum automatisch setzen
+                    const datumField = document.getElementById('datum');
+                    const heute = new Date();
+                    datumField.value = formatDate(heute, currentLanguage);
+                    
+                    // Grussformel automatisch setzen
+                    if (grussformeln[currentLanguage]) {
+                        document.getElementById('gruss').value = grussformeln[currentLanguage];
+                    }
+                    
+                    // Abteilungen und Beilagen für die Sprache laden
+                    updateSelectOptions('abteilung1', abteilungen[currentLanguage]);
+                    updateSelectOptions('abteilung2', abteilungen[currentLanguage]);
+                    updateSelectOptions('beilage', beilagen[currentLanguage]);
+                    
+                    break;
+                }
             }
         }
 
@@ -839,9 +921,6 @@
         }
 
         function initializeUI() {
-            // UI Übersetzungen anwenden
-            translateUI();
-            
             // Sprachen Dropdown befüllen
             populateLanguageSelect();
             
@@ -850,6 +929,11 @@
             
             // Logo Varianten befüllen
             populateLogoVarianten();
+            
+            // Automatische Spracherkennung ausführen (falls noch nicht passiert)
+            if (!currentLanguage && translations) {
+                autoDetectLanguage();
+            }
             
             // Event Handlers initialisieren
             initializeEventHandlers();
@@ -861,7 +945,7 @@
             updateWordLanguageIndicator();
             updateDataSourceIndicator();
             
-            console.log('UI erfolgreich initialisiert');
+            console.log('UI erfolgreich initialisiert - Aktuelle Sprache:', currentLanguage);
         }
 
         function populateLanguageSelect() {
@@ -1065,7 +1149,10 @@
         function setDefaultValues() {
             const heute = new Date();
             const datumField = document.getElementById('datum');
-            datumField.value = formatDate(heute, 'de');
+            
+            if (currentLanguage) {
+                datumField.value = formatDate(heute, currentLanguage);
+            }
         }
 
         function formatDate(date, sprache) {
@@ -1073,16 +1160,15 @@
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
 
-            switch (sprache) {
-                case 'en':
-                    return `${month}-${day}-${year}`;
-                case 'fr':
-                    return `le ${day}.${month}.${year}`;
-                case 'de':
-                case 'it':
-                default:
-                    return `${day}.${month}.${year}`;
+            if (sprache === 'en') {
+                return `${month}-${day}-${year}`;
+            } else if (sprache === 'fr') {
+                return `le ${day}.${month}.${year}`;
+            } else if (sprache === 'de' || sprache === 'it') {
+                return `${day}.${month}.${year}`;
             }
+            
+            return ''; // Keine Formatierung für unbekannte Sprachen
         }
 
         function onSpracheChange() {
@@ -1092,6 +1178,10 @@
             const sprache = sprachen[spracheId];
             const sprachCode = sprache.code.split('-')[0];
 
+            // Aktuelle Sprache setzen (manuell vom User geändert)
+            currentLanguage = sprachCode;
+            console.log('Sprache manuell geändert zu:', sprachCode);
+
             // UI übersetzen
             translateUI(sprachCode);
 
@@ -1099,7 +1189,9 @@
             const heute = new Date();
             datumField.value = formatDate(heute, sprachCode);
 
-            document.getElementById('gruss').value = grussformeln[sprachCode] || grussformeln.de;
+            if (grussformeln[sprachCode]) {
+                document.getElementById('gruss').value = grussformeln[sprachCode];
+            }
 
             const absenderId = document.getElementById('absender').value;
             if (absenderId && absenderId !== '4') {
@@ -1112,9 +1204,9 @@
                 document.getElementById('ort').value = ort;
             }
 
-            updateSelectOptions('abteilung1', abteilungen[sprachCode] || []);
-            updateSelectOptions('abteilung2', abteilungen[sprachCode] || []);
-            updateSelectOptions('beilage', beilagen[sprachCode] || []);
+            updateSelectOptions('abteilung1', abteilungen[sprachCode]);
+            updateSelectOptions('abteilung2', abteilungen[sprachCode]);
+            updateSelectOptions('beilage', beilagen[sprachCode]);
         }
 
         function onAbsenderChange() {
@@ -1163,12 +1255,15 @@
             const select = document.getElementById(selectId);
             const noneText = getText('form.none');
             select.innerHTML = `<option value="">${noneText}</option>`;
-            options.forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt.id;
-                option.textContent = opt.name;
-                select.appendChild(option);
-            });
+            
+            if (options && Array.isArray(options)) {
+                options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt.id;
+                    option.textContent = opt.name;
+                    select.appendChild(option);
+                });
+            }
         }
 
         async function pasteFromClipboard() {
@@ -1377,11 +1472,15 @@
                         // Dreyfus Name (nur wenn nicht anonym)
                         if (!formData.anonym) {
                             const sprachCode = sprachen[formData.sprache].code.split('-')[0];
-                            const firmenName = firmenNamen[sprachCode] || firmenNamen.de;
+                            const firmenName = firmenNamen[sprachCode];
 
-                            const dreyfusParagraph = context.document.body.insertParagraph(firmenName, Word.InsertLocation.end);
-                            dreyfusParagraph.alignment = Word.Alignment.left;
-                            dreyfusParagraph.spaceAfter = spacing.signatureAfter;
+                            if (firmenName) {
+                                const dreyfusParagraph = context.document.body.insertParagraph(firmenName, Word.InsertLocation.end);
+                                dreyfusParagraph.alignment = Word.Alignment.left;
+                                dreyfusParagraph.spaceAfter = spacing.signatureAfter;
+                            } else {
+                                grussParagraph.spaceAfter = spacing.signatureAfter;
+                            }
                         } else {
                             grussParagraph.spaceAfter = spacing.signatureAfter;
                         }
@@ -1496,7 +1595,7 @@
 
                     if (!formData.anonym) {
                         const sprachCode = sprachen[formData.sprache].code.split('-')[0];
-                        const firmenName = firmenNamen[sprachCode] || firmenNamen.de;
+                        const firmenName = firmenNamen[sprachCode];
                         let footerLines = [];
 
                         // Verwende footerInfo aus den geladenen Daten
@@ -1514,7 +1613,7 @@
                                 break;
                         }
 
-                        if (footerData) {
+                        if (footerData && firmenName) {
                             footerLines = [
                                 firmenName,
                                 footerData.buero,
