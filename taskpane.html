@@ -23,53 +23,21 @@
 
         // === AUTOMATISCHE UI-ÜBERSETZUNG IN WORD-SPRACHE ===
         function autoTranslateToWordLanguage() {
-            try {
-                const wordLang = wordLanguageInfo.displayLanguage;
-                if (!wordLang || wordLang === 'unknown' || wordLang === 'error' || wordLang === 'browser-test') {
-                    console.log('Keine gültige Word-Sprache für Auto-Übersetzung verfügbar, verwende Deutsch als Standard');
-                    translateUI('de');
-                    return;
-                }
+            // Einfache Logik: Versuche Word-Sprache, sonst Deutsch
+            const wordLang = wordLanguageInfo.displayLanguage;
+            
+            // Word-Sprachcode auf UI-Sprache mappen
+            const languageMapping = {
+                'de': 'de', 'de-DE': 'de', 'de-CH': 'de', 'de-AT': 'de',
+                'en': 'en', 'en-US': 'en', 'en-GB': 'en',
+                'fr': 'fr', 'fr-FR': 'fr', 'fr-CH': 'fr', 'fr-CA': 'fr',
+                'it': 'it', 'it-IT': 'it', 'it-CH': 'it'
+            };
 
-                // Word-Sprachcode auf UI-Sprache mappen
-                const languageMapping = {
-                    // Deutsch
-                    'de': 'de',
-                    'de-DE': 'de', 
-                    'de-CH': 'de',
-                    'de-AT': 'de',
-                    // Englisch  
-                    'en': 'en',
-                    'en-US': 'en',
-                    'en-GB': 'en',
-                    // Französisch
-                    'fr': 'fr', 
-                    'fr-FR': 'fr',
-                    'fr-CH': 'fr',
-                    'fr-CA': 'fr',
-                    // Italienisch
-                    'it': 'it',
-                    'it-IT': 'it', 
-                    'it-CH': 'it'
-                };
-
-                const mappedLanguage = languageMapping[wordLang] || 'de'; // Fallback auf Deutsch
-
-                // Prüfen ob Übersetzung verfügbar ist
-                if (!translations[mappedLanguage]) {
-                    console.log(`Übersetzung für "${mappedLanguage}" nicht verfügbar, verwende Deutsch`);
-                    translateUI('de');
-                    return;
-                }
-
-                // UI automatisch in Word-Sprache übersetzen
-                translateUI(mappedLanguage);
-                console.log(`UI automatisch übersetzt: Word "${wordLang}" → UI "${mappedLanguage}"`);
-                
-            } catch (error) {
-                console.warn('Fehler bei automatischer UI-Übersetzung:', error);
-                translateUI('de'); // Fallback auf Deutsch
-            }
+            const uiLanguage = languageMapping[wordLang] || 'de'; // Einfach: Deutsch als Fallback
+            
+            translateUI(uiLanguage);
+            console.log(`UI-Sprache: ${wordLang ? `Word "${wordLang}"` : 'Standard'} → "${uiLanguage}"`);
         }
 
         @font-face {
@@ -1168,6 +1136,9 @@
             updateWordLanguageIndicator();
             updateDataSourceIndicator();
             
+            // Debug-Info anzeigen (erst nach erfolgreichem UI-Setup)
+            logEnvironmentInfo();
+            
             console.log('UI erfolgreich initialisiert');
         }
 
@@ -1306,13 +1277,10 @@
                 if (info.host === Office.HostType.Word) {
                     console.log('Dreyfus Brief Add-In ist bereit');
 
-                    // Word-Sprache ermitteln
+                    // Word-Sprache ermitteln (nach Office.onReady)
                     detectWordLanguage();
 
-                    // Debug-Info anzeigen
-                    logEnvironmentInfo();
-
-                    // Daten laden
+                    // Daten laden (das startet den Hauptprozess)
                     loadData();
                 } else {
                     showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
@@ -1343,7 +1311,12 @@
             const footerSize = ADAPTIVE_SIZING.getFooter();
 
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
-            document.getElementById('debugText').textContent = debugText;
+            
+            // Nur setzen wenn Element existiert
+            const debugElement = document.getElementById('debugText');
+            if (debugElement) {
+                debugElement.textContent = debugText;
+            }
 
             console.log('=== DREYFUS BRIEF ADD-IN INFO ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
