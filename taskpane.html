@@ -1025,7 +1025,7 @@
             updateWordLanguageIndicator();
         }
 
-        // === ADAPTIVE SIZING SYSTEM für CD-MANUAL KONFORMITÄT ===
+        // === ADAPTIVE SIZING SYSTEM für identische Druckausgabe ===
         const ADAPTIVE_SIZING = {
             // Umgebungserkennung
             detectEnvironment: () => {
@@ -1039,80 +1039,46 @@
                 return isWeb;
             },
 
-            // LOGO-GRÖSSEN GEMÄSS CD-MANUAL
-            // Logo ist exakt 30mm x 30mm quadratisch
+            // *** KORRIGIERTE LOGO-GRÖSSBEN FÜR PROFESSIONELLES BRIEFFORMAT ***
             getLogo: (variant = '42') => {
                 const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-                
-                // CD-Manual: Logo ist 30mm x 30mm (85pt x 85pt)
-                // Leicht reduziert für Web-Kompatibilität
-                return isWeb
-                    ? { width: 80, height: 80 }    // Web: Leicht kleiner
-                    : { width: 85, height: 85 };   // Desktop: Exakt 30mm
+
+                if (variant.startsWith('30')) {
+                    // 30pt Logos - noch kompakter
+                    return isWeb
+                        ? { width: 17, height: 6.5 }  // Web: Sehr klein
+                        : { width: 20, height: 7.5 }; // Desktop: Klein
+                } else { // 42pt
+                    // 42pt Logos - kompakte Größe für Briefkopf
+                    return isWeb
+                        ? { width: 24, height: 9 }    // Web: Kompakt
+                        : { width: 28, height: 10.5 };// Desktop: Etwas größer
+                }
             },
 
-            // Footer-Grössen gemäss CD-Manual
+            // Footer-Größen für identische Druckausgabe
             getFooter: () => {
                 const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-                // CD-Manual zeigt Footer in 7pt
                 return isWeb
-                    ? { fontSize: 7, lineSpacing: 0.8 }   // Web: Exakt CD-Manual
-                    : { fontSize: 7, lineSpacing: 0.9 };  // Desktop: Minimal angepasst
+                    ? { fontSize: 6, lineSpacing: 0.8 }   // Web: Kleiner
+                    : { fontSize: 7, lineSpacing: 0.9 };  // Desktop: Standard
             },
 
-            // POSITIONEN GEMÄSS CD-MANUAL (in pt)
-            // Umrechnung: 1mm = 2.83465pt
-            getPositions: () => {
-                // Horizontale Positionen aus CD-Manual (exakte Werte)
-                return {
-                    logoLeft: 71,          // 25mm = 71pt (Logo Start)
-                    logoWidth: 85,         // 30mm = 85pt (Logo Breite)
-                    addressLeft: 346,      // 122mm = 346pt (Adresse Start)
-                    signatureGap: 241,     // 85mm = 241pt (Abstand zwischen Unterschriften)
-                    rightMargin: 28,       // 10mm = 28pt (Rechter Rand)
-                    pageWidth: 595        // A4 Breite = 210mm = 595pt
-                };
-            },
-
-            // VERTIKALE ABSTÄNDE GEMÄSS CD-MANUAL (in pt)
-            getVerticalPositions: () => {
-                // Vertikale Positionen aus CD-Manual (exakte Werte)
-                return {
-                    logoTop: 34,          // 12mm = 34pt (Logo von oben)
-                    addressTop: 150,      // 53mm = 150pt (Empfängeradresse)
-                    dateTop: 269,         // 95mm = 269pt (Ort/Datum/Kürzel)
-                    footerBottom: 34,     // 12mm = 34pt (Abstand Slogan zu Blattende)
-                    pageHeight: 842       // A4 Höhe = 297mm = 842pt
-                };
-            },
-
-            // ABSTÄNDE GEMÄSS CD-MANUAL (in pt)
+            // *** REDUZIERTE ABSTÄNDE FÜR KOMPAKTERES LAYOUT ***
             getSpacing: (type) => {
                 const isWeb = ADAPTIVE_SIZING.detectEnvironment();
-                const webFactor = 0.95; // Web: 5% kleiner für Konsistenz
+                const webFactor = 0.85; // Web: 15% kleiner
 
                 const baseSpacing = {
-                    afterDate: 20,        // Nach Ort/Datum bis Betreff
-                    afterSubject: 12,     // Nach Betreff bis Anrede
-                    greetingAfter: 12,    // Nach Anrede bis Text
-                    textAfter: 60,        // Nach Textbereich bis Gruss
-                    signatureAfter: 50,   // Nach Gruss bis Unterschriften
-                    emptyBefore: 30       // Vor Beilagen
+                    logoAfter: 18,        // Abstand nach Logo (reduziert von 30)
+                    addressAfter: 40,     // Abstand nach Adresse (reduziert von 60)
+                    greetingAfter: 25,    // Abstand nach Anrede (reduziert von 40)
+                    textAfter: 40,        // Abstand nach Textbereich (reduziert von 60)
+                    signatureAfter: 40,   // Abstand nach Gruss (reduziert von 60)
+                    emptyBefore: 15       // Abstand vor Beilagen (reduziert von 20)
                 };
 
                 return Math.round(isWeb ? baseSpacing[type] * webFactor : baseSpacing[type]);
-            },
-
-            // SCHRIFTGRÖSSEN GEMÄSS CD-MANUAL
-            getFontSizes: () => {
-                return {
-                    grundtext: { size: 10.5, lineHeight: 13 },      // Grundtexte
-                    betreff: { size: 10.5, lineHeight: 13 },        // Betreff (Bold)
-                    adresse: { size: 9, lineHeight: 12 },           // Adresse
-                    claim: { size: 9, lineHeight: 11 },             // Claim
-                    pagina: { size: 7, lineHeight: 9 },             // Pagina
-                    footer: { size: 7, lineHeight: 9 }              // Footer
-                };
             }
         };
 
@@ -1157,20 +1123,16 @@
             const isWeb = ADAPTIVE_SIZING.detectEnvironment();
             const logoSize = ADAPTIVE_SIZING.getLogo('42');
             const footerSize = ADAPTIVE_SIZING.getFooter();
-            const fontSizes = ADAPTIVE_SIZING.getFontSizes();
-            const positions = ADAPTIVE_SIZING.getPositions();
 
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== DREYFUS BRIEF ADD-IN INFO (CD-MANUAL KONFORM) ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO (V6: TABELLE MIT WERTEN NACH MICROSOFT-METHODE) ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
             console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
-            console.log('Logo 42pt (CD-MANUAL):', logoSize);
+            console.log('Logo 42pt (KORRIGIERT):', logoSize);
             console.log('Footer:', footerSize);
-            console.log('Font Sizes:', fontSizes);
-            console.log('Positions (mm -> pt):', positions);
             console.log('Datenquelle:', dataSourceInfo);
             console.log('===================================');
         }
@@ -1349,22 +1311,16 @@
                 // === ADAPTIVE SIZING ERMITTELN ===
                 const logoSize = ADAPTIVE_SIZING.getLogo(document.getElementById('logoVariante').value);
                 const footerSize = ADAPTIVE_SIZING.getFooter();
-                const fontSizes = ADAPTIVE_SIZING.getFontSizes();
-                const positions = ADAPTIVE_SIZING.getPositions();
-                const verticalPos = ADAPTIVE_SIZING.getVerticalPositions();
+                const spacing = {
+                    logoAfter: ADAPTIVE_SIZING.getSpacing('logoAfter'),
+                    addressAfter: ADAPTIVE_SIZING.getSpacing('addressAfter'),
+                    greetingAfter: ADAPTIVE_SIZING.getSpacing('greetingAfter'),
+                    textAfter: ADAPTIVE_SIZING.getSpacing('textAfter'),
+                    signatureAfter: ADAPTIVE_SIZING.getSpacing('signatureAfter'),
+                    emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
+                };
 
-                console.log('CD-Manual konforme Größen verwendet:', { 
-                    logoSize, 
-                    footerSize, 
-                    fontSizes, 
-                    positions,
-                    verticalPos,
-                    'Logo': '30x30mm bei 25mm links, 12mm oben',
-                    'Adresse': '122mm links, 53mm oben',
-                    'Ort/Datum': '122mm links, 95mm oben',
-                    'Unterschriften': '85mm Abstand',
-                    'Footer': '12mm vom Blattende'
-                });
+                console.log('Korrigierte Adaptive Sizing + Tabelle mit Werten (Microsoft-Methode) + Footer-Fix + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1402,9 +1358,9 @@
                     // Dokument leeren
                     context.document.body.clear();
 
-                    // Standard-Schriftart setzen (CD-Manual: Dreyfus Sans Regular)
+                    // Standard-Schriftart setzen
                     context.document.body.font.name = 'Dreyfus Sans';
-                    context.document.body.font.size = fontSizes.grundtext.size;
+                    context.document.body.font.size = 11;
 
                     // Seitenränder einstellen
                     const sections = context.document.sections;
@@ -1414,19 +1370,14 @@
 
                     if (sections.items.length > 0) {
                         const section = sections.items[0];
-                        section.topMargin = 0;      // Kein oberer Rand (Logo bei 12mm von oben)
-                        section.bottomMargin = 0;   // Kein unterer Rand (Footer kontrolliert Abstand)
-                        section.leftMargin = 0;     // Kein linker Rand (Logo bei 25mm von links)
-                        section.rightMargin = 28;   // 10mm rechter Rand
+                        section.topMargin = 72;    // 2.54 cm
+                        section.bottomMargin = 72; // 2.54 cm
+                        section.leftMargin = 72;   // 2.54 cm
+                        section.rightMargin = 72;  // 2.54 cm
                     }
 
-                    const section = sections.items[0];
-                    const positions = ADAPTIVE_SIZING.getPositions();
-                    const verticalPos = ADAPTIVE_SIZING.getVerticalPositions();
-
-                    // === HEADER MIT CD-MANUAL KONFORMEM LOGO ===
-                    const section = sections.items[0];
-                    const header = section.getHeader(Word.HeaderFooterType.primary);
+                    // === HEADER MIT KORRIGIERTEM LOGO ===
+                    const header = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
                     header.clear();
 
                     if (!formData.anonym && formData.absender !== '9' && formData.absender !== '') {
@@ -1434,47 +1385,40 @@
                             const logoVariante = formData.logoVariante || '42_Farbe';
                             const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
 
-                            // Logo direkt einfügen mit exakter Positionierung
                             const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
                             logoParagraph.alignment = Word.Alignment.left;
-                            // Einrückung von links: 25mm = 71pt
-                            logoParagraph.leftIndent = positions.logoLeft;
-                            // Abstand von oben wird durch Header-Position gesteuert (12mm)
-                            logoParagraph.spaceBefore = 0;
-                            logoParagraph.spaceAfter = 0;
 
                             try {
                                 const base64Logo = await getImageAsBase64(logoUrl);
                                 if (base64Logo) {
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
 
-                                    // === EXAKTE CD-MANUAL LOGO-GRÖSSE: 30mm x 30mm ===
+                                    // === KORRIGIERTE LOGO-GRÖSSE FÜR PROFESSIONELLES LAYOUT ===
                                     logo.width = logoSize.width;
                                     logo.height = logoSize.height;
 
-                                    console.log(`Logo eingefügt: ${logoSize.width}x${logoSize.height}px (30x30mm) bei 25mm von links, 12mm von oben`);
+                                    // Korrigierte Abstände
+                                    logoParagraph.spaceAfter = spacing.logoAfter;
+
+                                    console.log(`Logo eingefügt (KORRIGIERT): ${logoSize.width}x${logoSize.height}px, Abstand: ${spacing.logoAfter}pt`);
                                 } else {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
                                     logoParagraph.font.color = '#666666';
-                                    logoParagraph.font.size = fontSizes.adresse.size;
+                                    logoParagraph.font.size = 10; // Kleinerer Platzhalter
                                 }
                             } catch (imgError) {
                                 logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
                                 logoParagraph.font.color = '#666666';
-                                logoParagraph.font.size = fontSizes.adresse.size;
+                                logoParagraph.font.size = 10; // Kleinerer Platzhalter
                                 console.log('Logo als Platzhalter eingefügt:', imgError);
                             }
-                            
-                            // Header-Höhe auf 12mm setzen
-                            section.headerDistance = 34; // 12mm = 34pt
-                            
                         } catch (logoError) {
                             console.error('Logo konnte nicht eingefügt werden:', logoError);
                         }
                     }
 
-                    // === FOOTER MIT CD-MANUAL KONFORMEN SCHRIFTGRÖSSEN ===
+                    // === FOOTER MIT KORRIGIERTER IMPLEMENTIERUNG (NACH MICROSOFT-DOKUMENTATION) ===
                     const footer = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
                     footer.clear();
 
@@ -1506,11 +1450,11 @@
                                 footerData.email
                             ];
 
-                            // Footer-Zeilen einfügen (CD-Manual: 7pt)
+                            // Footer-Zeilen einfügen (nach Microsoft-Dokumentation)
                             footerLines.forEach((line, index) => {
                                 const footerParagraph = footer.insertParagraph(line, Word.InsertLocation.end);
                                 footerParagraph.font.name = 'Dreyfus Sans';
-                                footerParagraph.font.size = fontSizes.footer.size;
+                                footerParagraph.font.size = footerSize.fontSize;
                                 footerParagraph.font.color = '#7a7a7a';
                                 footerParagraph.alignment = Word.Alignment.center;
                                 footerParagraph.spaceAfter = 0;
@@ -1526,7 +1470,7 @@
 
                                 const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.name = 'Dreyfus Sans';
-                                taglineParagraph.font.size = fontSizes.footer.size;
+                                taglineParagraph.font.size = footerSize.fontSize;
                                 taglineParagraph.font.color = '#7a7a7a';
                                 taglineParagraph.alignment = Word.Alignment.center;
                                 taglineParagraph.lineSpacing = footerSize.lineSpacing;
@@ -1534,77 +1478,27 @@
                                 taglineParagraph.spaceBefore = 2;
                             }
 
-                            console.log(`Footer formatiert: ${fontSizes.footer.size}pt, Spacing: ${footerSize.lineSpacing}`);
+                            console.log(`Footer formatiert: ${footerSize.fontSize}pt, Spacing: ${footerSize.lineSpacing}`);
                         }
                     }
 
                     // Header und Footer synchronisieren
                     await context.sync();
 
-                    // === HAUPTINHALT MIT CD-MANUAL KONFORMEN ABSTÄNDEN ===
+                    // === HAUPTINHALT MIT KORRIGIERTEN ABSTÄNDEN ===
 
-                    // === ADRESSE UND DATUM GEMÄSS CD-MANUAL POSITIONIERUNG ===
-                    // CD-Manual: Exakte Positionen in mm umgerechnet zu pt
-                    
-                    const positions = ADAPTIVE_SIZING.getPositions();
-                    const verticalPos = ADAPTIVE_SIZING.getVerticalPositions();
-                    const spacing = {
-                        afterDate: ADAPTIVE_SIZING.getSpacing('afterDate'),
-                        afterSubject: ADAPTIVE_SIZING.getSpacing('afterSubject'),
-                        greetingAfter: ADAPTIVE_SIZING.getSpacing('greetingAfter'),
-                        textAfter: ADAPTIVE_SIZING.getSpacing('textAfter'),
-                        signatureAfter: ADAPTIVE_SIZING.getSpacing('signatureAfter'),
-                        emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
-                    };
-
-                    // === ADRESSE UND ORT/DATUM GEMÄSS CD-MANUAL ===
-                    // Adresse bei 122mm von links, 53mm von oben
-                    // Ort/Datum bei 122mm von links, 95mm von oben
-                    
-                    const positions = ADAPTIVE_SIZING.getPositions();
-                    const verticalPos = ADAPTIVE_SIZING.getVerticalPositions();
-                    const spacing = {
-                        afterDate: ADAPTIVE_SIZING.getSpacing('afterDate'),
-                        afterSubject: ADAPTIVE_SIZING.getSpacing('afterSubject'),
-                        greetingAfter: ADAPTIVE_SIZING.getSpacing('greetingAfter'),
-                        textAfter: ADAPTIVE_SIZING.getSpacing('textAfter'),
-                        signatureAfter: ADAPTIVE_SIZING.getSpacing('signatureAfter'),
-                        emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
-                    };
-
-                    // === VERTIKALER ABSTAND BIS ZUR ADRESSE (53mm) ===
-                    const spacerToAddress = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                    spacerToAddress.spaceAfter = verticalPos.addressTop - verticalPos.logoTop; // 150pt - 34pt = 116pt
-
-                    // === ADRESSE ALS TABELLE (122mm von links) ===
-                    const addressTable = context.document.body.insertTable(2, 2, Word.InsertLocation.end);
-                    addressTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
-                    addressTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
-                    
-                    // Spaltenbreiten: Links leer (122mm), Rechts für Adresse
-                    const leftPaddingCell = addressTable.getCell(0, 0);
-                    leftPaddingCell.columnWidth = positions.addressLeft; // 346pt = 122mm
-                    leftPaddingCell.body.clear();
-                    
-                    // Adresse in rechter Zelle (Zeile 1)
-                    const addressCell = addressTable.getCell(0, 1);
-                    addressCell.body.clear();
-                    
+                    // Empfängeradresse
                     if (formData.adresse) {
-                        const adresseParagraph = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
+                        const adresseParagraph = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
+                        adresseParagraph.alignment = Word.Alignment.left;
+                        adresseParagraph.spaceAfter = spacing.addressAfter;
+                        // Normale Formatierung für Adresse
                         adresseParagraph.font.name = 'Dreyfus Sans';
-                        adresseParagraph.font.size = fontSizes.adresse.size;
-                        adresseParagraph.font.color = '#7a7a7a'; // DSC Grau
-                        adresseParagraph.lineSpacing = fontSizes.adresse.lineHeight;
+                        adresseParagraph.font.size = 11;
+                        adresseParagraph.font.bold = false;
                     }
-                    
-                    // Linke Zelle für Ort/Datum leer lassen
-                    addressTable.getCell(1, 0).body.clear();
-                    
-                    // Ort/Datum in rechter Zelle (Zeile 2)
-                    const dateCell = addressTable.getCell(1, 1);
-                    dateCell.body.clear();
-                    
+
+                    // Ort, Datum und Absenderkürzel
                     let ortDatumText = '';
                     if (formData.ort) {
                         ortDatumText = formData.ort;
@@ -1617,34 +1511,26 @@
                     }
 
                     if (ortDatumText) {
-                        const ortDatumParagraph = dateCell.body.insertParagraph(ortDatumText, Word.InsertLocation.start);
+                        const ortDatumParagraph = context.document.body.insertParagraph(ortDatumText, Word.InsertLocation.end);
+                        ortDatumParagraph.alignment = Word.Alignment.right;
+                        ortDatumParagraph.spaceAfter = 30; // Kompakter Abstand
+                        // Normale Formatierung für Ort/Datum
                         ortDatumParagraph.font.name = 'Dreyfus Sans';
-                        ortDatumParagraph.font.size = fontSizes.grundtext.size;
+                        ortDatumParagraph.font.size = 11;
+                        ortDatumParagraph.font.bold = false;
                     }
-                    
-                    // Zeilenhöhen anpassen für korrekte Positionierung
-                    // Adresse bei 53mm, Ort/Datum bei 95mm = 42mm Differenz = 119pt
-                    const addressHeight = verticalPos.dateTop - verticalPos.addressTop; // 269pt - 150pt = 119pt
-                    addressTable.getRow(0).preferredHeight = addressHeight;
-                    
-                    // Synchronisieren
-                    await context.sync();
-                    
-                    // === ABSTAND BIS ZUM BETREFF ===
-                    const spacerToSubject = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                    spacerToSubject.spaceAfter = spacing.afterDate;
 
-                    // Betreff (CD-Manual: 10.5pt Bold)
+                    // Betreff
                     if (formData.betreff) {
                         const betreffParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                         betreffParagraph.alignment = Word.Alignment.left;
-                        betreffParagraph.spaceAfter = spacing.afterSubject;
+                        betreffParagraph.spaceAfter = 12;
                         
-                        // Nur den Betreff-Text fett machen
+                        // Nur den Betreff-Text fett machen, nicht den ganzen Paragraph
                         const betreffRange = betreffParagraph.insertText(formData.betreff, Word.InsertLocation.start);
                         betreffRange.font.bold = true;
                         betreffRange.font.name = 'Dreyfus Sans';
-                        betreffRange.font.size = fontSizes.betreff.size;
+                        betreffRange.font.size = 11;
                     }
 
                     // Anrede
@@ -1652,8 +1538,9 @@
                         const anredeParagraph = context.document.body.insertParagraph(formData.anrede, Word.InsertLocation.end);
                         anredeParagraph.alignment = Word.Alignment.left;
                         anredeParagraph.spaceAfter = spacing.greetingAfter;
+                        // Sicherstellen, dass Anrede normale Formatierung hat
                         anredeParagraph.font.name = 'Dreyfus Sans';
-                        anredeParagraph.font.size = fontSizes.grundtext.size;
+                        anredeParagraph.font.size = 11;
                         anredeParagraph.font.bold = false;
                     }
 
@@ -1661,8 +1548,9 @@
                     const textParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                     textParagraph.alignment = Word.Alignment.left;
                     textParagraph.spaceAfter = spacing.textAfter;
+                    // Sicherstellen, dass Textbereich normale Formatierung hat
                     textParagraph.font.name = 'Dreyfus Sans';
-                    textParagraph.font.size = fontSizes.grundtext.size;
+                    textParagraph.font.size = 11;
                     textParagraph.font.bold = false;
 
                     // Grussformel
@@ -1670,8 +1558,9 @@
                         const grussParagraph = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
                         grussParagraph.alignment = Word.Alignment.left;
                         grussParagraph.spaceAfter = 6;
+                        // Normale Formatierung für Grußformel
                         grussParagraph.font.name = 'Dreyfus Sans';
-                        grussParagraph.font.size = fontSizes.grundtext.size;
+                        grussParagraph.font.size = 11;
                         grussParagraph.font.bold = false;
 
                         // Dreyfus Name (nur wenn nicht anonym)
@@ -1683,8 +1572,9 @@
                                 const dreyfusParagraph = context.document.body.insertParagraph(firmenName, Word.InsertLocation.end);
                                 dreyfusParagraph.alignment = Word.Alignment.left;
                                 dreyfusParagraph.spaceAfter = spacing.signatureAfter;
+                                // Normale Formatierung für Firmenname
                                 dreyfusParagraph.font.name = 'Dreyfus Sans';
-                                dreyfusParagraph.font.size = fontSizes.grundtext.size;
+                                dreyfusParagraph.font.size = 11;
                                 dreyfusParagraph.font.bold = false;
                             } else {
                                 grussParagraph.spaceAfter = spacing.signatureAfter;
@@ -1694,106 +1584,223 @@
                         }
                     }
 
-                    // Unterschriften mit 85mm Abstand zwischen Spalten
+                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle mit Werten
                     if (formData.unterschrift1 || formData.unterschrift2) {
-                        // === UNTERSCHRIFTEN-TABELLE MIT EXAKTEM 85mm ABSTAND ===
-                        const unterschriftenData = [];
+                        // Sammle alle Daten für die Tabelle
+                        const tableData = [];
                         
-                        // Zeile 1: Unterschriften
-                        unterschriftenData.push([
+                        // ZEILE 1: Unterschriften
+                        const unterschriftRow = [
                             formData.unterschrift1 || '',
                             (formData.unterschrift2 && !formData.anonym) ? formData.unterschrift2 : ''
-                        ]);
+                        ];
+                        tableData.push(unterschriftRow);
                         
-                        // Zeile 2: Funktionen
-                        if (formData.funktion1 || formData.funktion2) {
-                            unterschriftenData.push([
+                        // ZEILE 2: Funktionen (falls vorhanden)
+                        const hasFunktionen = formData.funktion1 || formData.funktion2;
+                        if (hasFunktionen) {
+                            const funktionRow = [
                                 formData.funktion1 || '',
                                 (formData.funktion2 && !formData.anonym) ? formData.funktion2 : ''
-                            ]);
+                            ];
+                            tableData.push(funktionRow);
                         }
                         
-                        // Zeile 3: Abteilungen (falls vorhanden)
+                        // ZEILE 3: Abteilungen (falls vorhanden)
                         const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
-                            (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym);
+                            (formData.abteilung2 && formData.abteilung2 !== '1');
                         
                         if (hasAbteilungen) {
                             let abt1Text = '';
                             let abt2Text = '';
                             
                             if (formData.abteilung1 && formData.abteilung1 !== '1') {
-                                const abt1Selected = document.getElementById('abteilung1').selectedOptions[0];
-                                if (abt1Selected && abt1Selected.text !== getText('form.none')) {
-                                    abt1Text = abt1Selected.text;
+                                const abt1Selected = document.getElementById('abteilung1').selectedOptions[0].text;
+                                if (abt1Selected !== getText('form.none')) {
+                                    abt1Text = abt1Selected;
                                 }
                             }
                             
                             if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
-                                const abt2Selected = document.getElementById('abteilung2').selectedOptions[0];
-                                if (abt2Selected && abt2Selected.text !== getText('form.none')) {
-                                    abt2Text = abt2Selected.text;
+                                const abt2Selected = document.getElementById('abteilung2').selectedOptions[0].text;
+                                if (abt2Selected !== getText('form.none')) {
+                                    abt2Text = abt2Selected;
                                 }
                             }
                             
-                            if (abt1Text || abt2Text) {
-                                unterschriftenData.push([abt1Text, abt2Text]);
-                            }
+                            const abteilungRow = [abt1Text, abt2Text];
+                            tableData.push(abteilungRow);
                         }
                         
-                        // Tabelle erstellen mit 3 Spalten für korrekten Abstand
+                        // Tabelle mit Daten erstellen (Microsoft-Dokumentation Methode)
                         const signatureTable = context.document.body.insertTable(
-                            unterschriftenData.length,  // Anzahl Zeilen
-                            3,                          // 3 Spalten (links, mitte leer, rechts)
-                            Word.InsertLocation.end
+                            tableData.length,  // Anzahl Zeilen
+                            2,                 // Anzahl Spalten
+                            Word.InsertLocation.end,
+                            tableData         // Daten direkt mitgeben
                         );
                         
-                        // Tabelle formatieren
+                        // Tabelle konfigurieren
+                        signatureTable.horizontalAlignment = Word.Alignment.left;
                         signatureTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
                         signatureTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                        signatureTable.autoFitWindow();
                         
-                        // Spaltenbreiten: Links und rechts je 150pt, Mitte 241pt (85mm)
-                        signatureTable.getColumn(0).width = 150;
-                        signatureTable.getColumn(1).width = positions.signatureGap; // 241pt = 85mm
-                        signatureTable.getColumn(2).width = 150;
+                        // Tabelle mit Standardformatierung setzen
+                        signatureTable.font.name = 'Dreyfus Sans';
+                        signatureTable.font.size = 11;
+                        signatureTable.horizontalAlignment = Word.Alignment.left;
                         
-                        // Daten in Tabelle einfügen
-                        for (let i = 0; i < unterschriftenData.length; i++) {
-                            // Linke Spalte
-                            const leftCell = signatureTable.getCell(i, 0);
-                            leftCell.body.clear();
-                            if (unterschriftenData[i][0]) {
-                                const leftPara = leftCell.body.insertParagraph(unterschriftenData[i][0], Word.InsertLocation.start);
-                                leftPara.font.name = 'Dreyfus Sans';
-                                leftPara.font.size = fontSizes.grundtext.size;
-                            }
-                            
-                            // Mittlere Spalte leer lassen
-                            signatureTable.getCell(i, 1).body.clear();
-                            
-                            // Rechte Spalte
-                            const rightCell = signatureTable.getCell(i, 2);
-                            rightCell.body.clear();
-                            if (unterschriftenData[i][1]) {
-                                const rightPara = rightCell.body.insertParagraph(unterschriftenData[i][1], Word.InsertLocation.start);
-                                rightPara.font.name = 'Dreyfus Sans';
-                                rightPara.font.size = fontSizes.grundtext.size;
-                            }
-                        }
-                        
-                        // Zeilenhöhen kompakt halten
-                        for (let i = 0; i < unterschriftenData.length; i++) {
-                            signatureTable.getRow(i).preferredHeight = 18;
-                        }
-                        
-                        // Synchronisation
+                        // Synchronisation nach Formatierung
                         await context.sync();
                         
-                        // Abstand nach der Tabelle
+                        // Abstand nach der kombinierten Tabelle
                         const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                        spacingPara.spaceAfter = 40;
+                        spacingPara.spaceAfter = 30;
+                        
+                    } else {
+                        // Wenn keine Unterschriften, prüfe auf einzelne Funktionen/Abteilungen
+                        if (formData.funktion1 || formData.funktion2) {
+                            const funktionenParagraph = context.document.body.insertParagraph(formData.funktion1 || '', Word.InsertLocation.end);
+                            funktionenParagraph.font.size = 10;
+                            funktionenParagraph.font.name = 'Dreyfus Sans';
+                            funktionenParagraph.alignment = Word.Alignment.left;
+                            funktionenParagraph.spaceAfter = 20;
+                        }
                     }
 
-                    // Beilagen (CD-Manual: 10pt)
+                    // Funktionen - mit Tabelle für korrekte Trennung
+                    if (formData.funktion1 || formData.funktion2) {
+                        if (formData.funktion2 && !formData.anonym) {
+                            // Zwei Funktionen: Verwende Tabelle
+                            const funktionenTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
+                            funktionenTable.horizontalAlignment = Word.Alignment.left;
+                            funktionenTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
+                            
+                            // Tabelle unsichtbar machen
+                            funktionenTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                            
+                            // Spaltenbreiten setzen
+                            funktionenTable.columns.getFirst().width = 200; // Linke Spalte
+                            funktionenTable.columns.getLast().width = 200;  // Rechte Spalte
+                            
+                            // Erste Funktion (links)
+                            if (formData.funktion1) {
+                                const cell1 = funktionenTable.getCell(0, 0);
+                                const para1 = cell1.body.insertParagraph(formData.funktion1, Word.InsertLocation.start);
+                                para1.font.name = 'Dreyfus Sans';
+                                para1.font.size = 10;
+                                para1.alignment = Word.Alignment.left;
+                            }
+                            
+                            // Zweite Funktion (rechts)
+                            if (formData.funktion2) {
+                                const cell2 = funktionenTable.getCell(0, 1);
+                                const para2 = cell2.body.insertParagraph(formData.funktion2, Word.InsertLocation.start);
+                                para2.font.name = 'Dreyfus Sans';
+                                para2.font.size = 10;
+                                para2.alignment = Word.Alignment.left;
+                            }
+                            
+                            // Synchronisation nach Text-Einfügung
+                            await context.sync();
+                            
+                            // Abstand nach Tabelle
+                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
+                                (formData.abteilung2 && formData.abteilung2 !== '1');
+                            
+                            // Leerer Paragraph für Abstand
+                            const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                            spacingPara.spaceAfter = hasAbteilungen ? 2 : 20;
+                            
+                        } else {
+                            // Nur eine Funktion: Normaler Paragraph
+                            const funktionenParagraph = context.document.body.insertParagraph(formData.funktion1, Word.InsertLocation.end);
+                            funktionenParagraph.font.size = 10;
+                            funktionenParagraph.font.name = 'Dreyfus Sans';
+                            funktionenParagraph.alignment = Word.Alignment.left;
+
+                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
+                                (formData.abteilung2 && formData.abteilung2 !== '1');
+                            funktionenParagraph.spaceAfter = hasAbteilungen ? 2 : 20;
+                        }
+                    }
+
+                    // Abteilungen - mit Tabelle für korrekte Trennung
+                    if ((formData.abteilung1 && formData.abteilung1 !== '1') ||
+                        (formData.abteilung2 && formData.abteilung2 !== '1')) {
+                        
+                        let abt1Text = '';
+                        let abt2Text = '';
+                        
+                        if (formData.abteilung1 && formData.abteilung1 !== '1') {
+                            const abt1Selected = document.getElementById('abteilung1').selectedOptions[0].text;
+                            if (abt1Selected !== getText('form.none')) {
+                                abt1Text = abt1Selected;
+                            }
+                        }
+                        
+                        if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
+                            const abt2Selected = document.getElementById('abteilung2').selectedOptions[0].text;
+                            if (abt2Selected !== getText('form.none')) {
+                                abt2Text = abt2Selected;
+                            }
+                        }
+                        
+                        if (abt1Text || abt2Text) {
+                            if (abt1Text && abt2Text) {
+                                // Zwei Abteilungen: Verwende Tabelle
+                                const abteilungenTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
+                                abteilungenTable.horizontalAlignment = Word.Alignment.left;
+                                abteilungenTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
+                                
+                                // Tabelle konfigurieren nach offizieller API
+                                abteilungenTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                                abteilungenTable.horizontalAlignment = Word.Alignment.left;
+                                
+                                // Tabelle auf Fensterbreite anpassen (50/50 automatisch)
+                                abteilungenTable.autoFitWindow();
+                                
+                                await context.sync();
+                                
+                                // Erste Abteilung (links)
+                                if (abt1Text) {
+                                    const cell1 = abteilungenTable.getCell(0, 0);
+                                    const para1 = cell1.body.insertParagraph(abt1Text, Word.InsertLocation.start);
+                                    para1.font.name = 'Dreyfus Sans';
+                                    para1.font.size = 10;
+                                    para1.alignment = Word.Alignment.left;
+                                }
+                                
+                                // Zweite Abteilung (rechts)
+                                if (abt2Text) {
+                                    const cell2 = abteilungenTable.getCell(0, 1);
+                                    const para2 = cell2.body.insertParagraph(abt2Text, Word.InsertLocation.start);
+                                    para2.font.name = 'Dreyfus Sans';
+                                    para2.font.size = 10;
+                                    para2.alignment = Word.Alignment.left;
+                                }
+                                
+                                // Synchronisation nach Text-Einfügung
+                                await context.sync();
+                                
+                                // Leerer Paragraph für Abstand
+                                const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                                spacingPara.spaceAfter = 20;
+                                
+                            } else {
+                                // Nur eine Abteilung: Normaler Paragraph
+                                const abteilungText = abt1Text || abt2Text;
+                                const abteilungenParagraph = context.document.body.insertParagraph(abteilungText, Word.InsertLocation.end);
+                                abteilungenParagraph.font.size = 10;
+                                abteilungenParagraph.font.name = 'Dreyfus Sans';
+                                abteilungenParagraph.alignment = Word.Alignment.left;
+                                abteilungenParagraph.spaceAfter = 20;
+                            }
+                        }
+                    }
+
+                    // Beilagen
                     if (formData.beilage || formData.anlagen) {
                         let beilagenText = '';
                         let hasBeilage = false;
@@ -1818,8 +1825,7 @@
                             emptyParagraph.spaceAfter = spacing.emptyBefore;
 
                             const beilagenContent = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
-                            beilagenContent.font.size = fontSizes.grundtext.size;
-                            beilagenContent.font.name = 'Dreyfus Sans';
+                            beilagenContent.font.size = 10;
                             beilagenContent.alignment = Word.Alignment.left;
                         }
                     }
