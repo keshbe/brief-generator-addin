@@ -1068,21 +1068,41 @@
                     : { fontSize: 7, lineSpacing: 0.9 };  // Desktop: Minimal angepasst
             },
 
+            // POSITIONEN GEMÄSS CD-MANUAL (in pt)
+            // Umrechnung: 1mm = 2.83465pt
+            getPositions: () => {
+                // Horizontale Positionen aus CD-Manual
+                return {
+                    logoLeft: 71,          // 25mm = 71pt
+                    addressLeft: 312,      // 110mm = 312pt
+                    addressRight: 346,     // 122mm = 346pt
+                    pageWidth: 567        // 200mm = 567pt (nutzbare Breite)
+                };
+            },
+
+            // VERTIKALE ABSTÄNDE GEMÄSS CD-MANUAL (in pt)
+            getVerticalPositions: () => {
+                // Vertikale Positionen aus CD-Manual
+                return {
+                    logoTop: 34,          // 12mm = 34pt
+                    addressTop: 150,      // 53mm = 150pt
+                    dateTop: 272          // 96mm = 272pt
+                };
+            },
+
             // ABSTÄNDE GEMÄSS CD-MANUAL (in pt)
             // Basiert auf den vertikalen Abständen im Manual
             getSpacing: (type) => {
                 const isWeb = ADAPTIVE_SIZING.detectEnvironment();
                 const webFactor = 0.95; // Web: 5% kleiner für Konsistenz
 
-                // Umrechnung der CD-Manual mm-Werte in pt
-                // 12mm = 34pt, 53mm = 150pt, 96mm = 272pt, etc.
                 const baseSpacing = {
-                    logoAfter: 34,        // Nach Logo bis Adresse (12mm -> 34pt)
-                    addressAfter: 116,    // Nach Adresse bis Haupttext (53mm-12mm = 41mm -> 116pt)
-                    greetingAfter: 14,    // Nach Anrede (Standard CD-Manual)
-                    textAfter: 85,        // Nach Textbereich (Standard)
-                    signatureAfter: 85,   // Nach Gruss (Standard)
-                    emptyBefore: 20       // Vor Beilagen (Standard)
+                    afterDate: 30,        // Nach Ort/Datum bis Betreff
+                    afterSubject: 12,     // Nach Betreff bis Anrede
+                    greetingAfter: 14,    // Nach Anrede
+                    textAfter: 85,        // Nach Textbereich
+                    signatureAfter: 85,   // Nach Gruss
+                    emptyBefore: 20       // Vor Beilagen
                 };
 
                 return Math.round(isWeb ? baseSpacing[type] * webFactor : baseSpacing[type]);
@@ -1333,16 +1353,10 @@
                 const logoSize = ADAPTIVE_SIZING.getLogo(document.getElementById('logoVariante').value);
                 const footerSize = ADAPTIVE_SIZING.getFooter();
                 const fontSizes = ADAPTIVE_SIZING.getFontSizes();
-                const spacing = {
-                    logoAfter: ADAPTIVE_SIZING.getSpacing('logoAfter'),
-                    addressAfter: ADAPTIVE_SIZING.getSpacing('addressAfter'),
-                    greetingAfter: ADAPTIVE_SIZING.getSpacing('greetingAfter'),
-                    textAfter: ADAPTIVE_SIZING.getSpacing('textAfter'),
-                    signatureAfter: ADAPTIVE_SIZING.getSpacing('signatureAfter'),
-                    emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
-                };
+                const positions = ADAPTIVE_SIZING.getPositions();
+                const verticalPos = ADAPTIVE_SIZING.getVerticalPositions();
 
-                console.log('CD-Manual konforme Größen verwendet:', { logoSize, footerSize, fontSizes, spacing });
+                console.log('CD-Manual konforme Größen verwendet:', { logoSize, footerSize, fontSizes, positions, verticalPos });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1419,10 +1433,10 @@
                                     logo.width = logoSize.width;
                                     logo.height = logoSize.height;
 
-                                    // Korrigierte Abstände
-                                    logoParagraph.spaceAfter = spacing.logoAfter;
+                                    // Logo-Abstand wird durch die Tabellenlösung gesteuert
+                                    logoParagraph.spaceAfter = 0;
 
-                                    console.log(`Logo eingefügt (CD-MANUAL): ${logoSize.width}x${logoSize.height}px, Abstand: ${spacing.logoAfter}pt`);
+                                    console.log(`Logo eingefügt (CD-MANUAL): ${logoSize.width}x${logoSize.height}px`);
                                 } else {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
@@ -1509,18 +1523,46 @@
 
                     // === HAUPTINHALT MIT CD-MANUAL KONFORMEN ABSTÄNDEN ===
 
-                    // Empfängeradresse (CD-Manual: 9pt, 12pt Zeilenabstand)
+                    // === ADRESSE UND DATUM GEMÄSS CD-MANUAL POSITIONIERUNG ===
+                    // CD-Manual: Adresse rechts bei 110-122mm, Datum darunter bei 96mm
+                    
+                    const positions = ADAPTIVE_SIZING.getPositions();
+                    const verticalPos = ADAPTIVE_SIZING.getVerticalPositions();
+                    const spacing = {
+                        afterDate: ADAPTIVE_SIZING.getSpacing('afterDate'),
+                        afterSubject: ADAPTIVE_SIZING.getSpacing('afterSubject'),
+                        greetingAfter: ADAPTIVE_SIZING.getSpacing('greetingAfter'),
+                        textAfter: ADAPTIVE_SIZING.getSpacing('textAfter'),
+                        signatureAfter: ADAPTIVE_SIZING.getSpacing('signatureAfter'),
+                        emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
+                    };
+
+                    // Erstelle eine unsichtbare Tabelle für die korrekte Positionierung
+                    // 1 Zeile, 2 Spalten: Links leer (für Logo-Bereich), Rechts für Adresse
+                    const layoutTable = context.document.body.insertTable(2, 2, Word.InsertLocation.end);
+                    layoutTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
+                    layoutTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                    
+                    // Spaltenbreiten setzen gemäss CD-Manual
+                    // Erste Spalte: 110mm (312pt) für Logo-Bereich
+                    // Zweite Spalte: Rest für Adresse
+                    layoutTable.getCell(0, 0).columnWidth = 312; // 110mm
+                    
+                    // Zeile 1: Adresse (rechts)
+                    const addressCell = layoutTable.getCell(0, 1);
+                    addressCell.body.clear();
                     if (formData.adresse) {
-                        const adresseParagraph = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
-                        adresseParagraph.alignment = Word.Alignment.left;
-                        adresseParagraph.spaceAfter = spacing.addressAfter;
+                        const adresseParagraph = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
                         adresseParagraph.font.name = 'Dreyfus Sans';
                         adresseParagraph.font.size = fontSizes.adresse.size;
-                        adresseParagraph.font.bold = false;
+                        adresseParagraph.font.color = '#7a7a7a'; // DSC Grau gemäss CD-Manual
                         adresseParagraph.lineSpacing = fontSizes.adresse.lineHeight;
                     }
-
-                    // Ort, Datum und Absenderkürzel
+                    
+                    // Zeile 2: Ort/Datum (rechts)
+                    const dateCell = layoutTable.getCell(1, 1);
+                    dateCell.body.clear();
+                    
                     let ortDatumText = '';
                     if (formData.ort) {
                         ortDatumText = formData.ort;
@@ -1533,19 +1575,23 @@
                     }
 
                     if (ortDatumText) {
-                        const ortDatumParagraph = context.document.body.insertParagraph(ortDatumText, Word.InsertLocation.end);
-                        ortDatumParagraph.alignment = Word.Alignment.right;
-                        ortDatumParagraph.spaceAfter = 30;
+                        const ortDatumParagraph = dateCell.body.insertParagraph(ortDatumText, Word.InsertLocation.start);
                         ortDatumParagraph.font.name = 'Dreyfus Sans';
                         ortDatumParagraph.font.size = fontSizes.grundtext.size;
-                        ortDatumParagraph.font.bold = false;
                     }
+                    
+                    // Synchronisieren
+                    await context.sync();
+                    
+                    // Abstand nach der Tabelle
+                    const spacingAfterTable = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    spacingAfterTable.spaceAfter = spacing.afterDate;
 
                     // Betreff (CD-Manual: 10.5pt Bold)
                     if (formData.betreff) {
                         const betreffParagraph = context.document.body.insertParagraph('', Word.InsertLocation.end);
                         betreffParagraph.alignment = Word.Alignment.left;
-                        betreffParagraph.spaceAfter = 12;
+                        betreffParagraph.spaceAfter = spacing.afterSubject;
                         
                         // Nur den Betreff-Text fett machen
                         const betreffRange = betreffParagraph.insertText(formData.betreff, Word.InsertLocation.start);
