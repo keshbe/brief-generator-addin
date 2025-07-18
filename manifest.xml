@@ -5,64 +5,61 @@
            xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
            xsi:type="TaskPaneApp">
 
-    <!-- Basis-Informationen -->
+    <!-- Add-In Identifikation und Metadaten -->
     <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
     <Version>1.0.0.2</Version>
     <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
     <DefaultLocale>de-DE</DefaultLocale>
     
-    <!-- Lokalisierte Display Name und Description -->
-    <DisplayName DefaultValue="Dreyfus Brief Generator">
-        <Override Locale="en-US" Value="Dreyfus Letter Generator" />
-        <Override Locale="fr-FR" Value="Générateur de lettres Dreyfus" />
-        <Override Locale="it-IT" Value="Generatore lettere Dreyfus" />
-    </DisplayName>
+    <!-- Anzeigename und mehrsprachige Beschreibungen -->
+    <DisplayName DefaultValue="Dreyfus AddIn" />
     
-    <Description DefaultValue="Vereinfachtes Add-in mit einem Button">
-        <Override Locale="en-US" Value="Simplified Add-in with one button" />
-        <Override Locale="fr-FR" Value="Add-in simplifié avec un bouton" />
-        <Override Locale="it-IT" Value="Add-in semplificato con un pulsante" />
+    <Description DefaultValue="AddIn für die Nutzung von Office für Dreyfus">
+        <Override Locale="en-US" Value="AddIn for Office usage at Dreyfus" />
+        <Override Locale="fr-FR" Value="AddIn pour l'utilisation d'Office chez Dreyfus" />
+        <Override Locale="it-IT" Value="AddIn per l'uso di Office presso Dreyfus" />
     </Description>
     
-    <!-- Icons -->
+    <!-- Logo-Definitionen für verschiedene Auflösungen -->
     <IconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
     <HighResolutionIconUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
     
-    <!-- Support URL -->
+    <!-- Support-Kontakt für Benutzer -->
     <SupportUrl DefaultValue="https://keshbe.github.io/brief-generator-addin/"/>
     
-    <!-- App Domain -->
+    <!-- Erlaubte Domains für das Add-In -->
     <AppDomains>
         <AppDomain>https://keshbe.github.io</AppDomain>
     </AppDomains>
     
-    <!-- Host -->
+    <!-- Unterstützte Office-Anwendungen -->
     <Hosts>
         <Host Name="Document" />
     </Hosts>
     
-    <!-- Standard-Einstellungen -->
+    <!-- Hauptkonfiguration für das Add-In -->
     <DefaultSettings>
         <SourceLocation DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html"/>
     </DefaultSettings>
     
+    <!-- Erforderliche Berechtigungen -->
     <Permissions>ReadWriteDocument</Permissions>
     
-    <!-- Version Overrides für Ribbon Button -->
+    <!-- Moderne Ribbon-Integration (Office 2016+) -->
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
         
         <Hosts>
             <Host xsi:type="Document">
                 
                 <DesktopFormFactor>
-                    <!-- Taskpane URL -->
+                    <!-- Verweis auf die Hauptfunktionsdatei -->
                     <FunctionFile resid="Taskpane.Url" />
                     
-                    <!-- Ribbon Extension -->
+                    <!-- Integration in das Office Ribbon -->
                     <ExtensionPoint xsi:type="PrimaryCommandSurface">
-                        <CustomTab id="tabBrief">
+                        <CustomTab id="tabDreyfus">
                             
-                            <!-- Eine Gruppe mit einem Button -->
+                            <!-- Hauptgruppe mit Dreyfus-Tools -->
                             <Group id="grpMain">
                                 <Label resid="Group.Label" />
                                 <Icon>
@@ -71,7 +68,7 @@
                                     <bt:Image size="80" resid="Icon.80x80"/>
                                 </Icon>
                                 
-                                <!-- Der einzige Button -->
+                                <!-- Hauptbutton zum Öffnen des Add-Ins -->
                                 <Control xsi:type="Button" id="btnMain">
                                     <Label resid="Button.Label" />
                                     <Supertip>
@@ -98,49 +95,47 @@
             </Host>
         </Hosts>
         
-        <!-- Ressourcen -->
+        <!-- Zentrale Ressourcenverwaltung -->
         <Resources>
+            <!-- Logo-Dateien in verschiedenen Größen -->
             <bt:Images>
                 <bt:Image id="Icon.16x16" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
                 <bt:Image id="Icon.32x32" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_30_Farbe.png"/>
                 <bt:Image id="Icon.80x80" DefaultValue="https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_42_Farbe.png"/>
             </bt:Images>
             
+            <!-- URL-Referenzen -->
             <bt:Urls>
                 <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
             </bt:Urls>
             
-            <!-- Alle Short Strings in einem Abschnitt konsolidiert -->
+            <!-- Kurze Textstrings für Labels -->
             <bt:ShortStrings>
-                <!-- Tab Label -->
-                <bt:String id="Tab.Label" DefaultValue="DREYFUS">
-                    <bt:Override Locale="en-US" Value="DREYFUS" />
-                    <bt:Override Locale="fr-FR" Value="DREYFUS" />
-                    <bt:Override Locale="it-IT" Value="DREYFUS" />
+                <!-- Name des Ribbon-Tabs -->
+                <bt:String id="Tab.Label" DefaultValue="DREYFUS" />
+                
+                <!-- Gruppenbezeichnung -->
+                <bt:String id="Group.Label" DefaultValue="Tools">
+                    <bt:Override Locale="en-US" Value="Tools" />
+                    <bt:Override Locale="fr-FR" Value="Outils" />
+                    <bt:Override Locale="it-IT" Value="Strumenti" />
                 </bt:String>
                 
-                <!-- Group Label -->
-                <bt:String id="Group.Label" DefaultValue="Brief Generator">
-                    <bt:Override Locale="en-US" Value="Letter Generator" />
-                    <bt:Override Locale="fr-FR" Value="Générateur de lettres" />
-                    <bt:Override Locale="it-IT" Value="Generatore lettere" />
-                </bt:String>
-                
-                <!-- Button Label -->
-                <bt:String id="Button.Label" DefaultValue="Brief erstellen">
-                    <bt:Override Locale="en-US" Value="Create Letter" />
-                    <bt:Override Locale="fr-FR" Value="Créer lettre" />
-                    <bt:Override Locale="it-IT" Value="Crea lettera" />
+                <!-- Button-Beschriftung -->
+                <bt:String id="Button.Label" DefaultValue="Öffnen">
+                    <bt:Override Locale="en-US" Value="Open" />
+                    <bt:Override Locale="fr-FR" Value="Ouvrir" />
+                    <bt:Override Locale="it-IT" Value="Apri" />
                 </bt:String>
             </bt:ShortStrings>
             
-            <!-- Alle Long Strings in einem Abschnitt konsolidiert -->
+            <!-- Längere Texte für Tooltips und Beschreibungen -->
             <bt:LongStrings>
-                <!-- Button Tooltip -->
-                <bt:String id="Button.Tooltip" DefaultValue="Öffnet den Dreyfus Brief Generator">
-                    <bt:Override Locale="en-US" Value="Opens the Dreyfus letter generator" />
-                    <bt:Override Locale="fr-FR" Value="Ouvre le générateur de lettres Dreyfus" />
-                    <bt:Override Locale="it-IT" Value="Apre il generatore di lettere Dreyfus" />
+                <!-- Tooltip-Text für den Hauptbutton -->
+                <bt:String id="Button.Tooltip" DefaultValue="Öffnet das Dreyfus AddIn">
+                    <bt:Override Locale="en-US" Value="Opens the Dreyfus AddIn" />
+                    <bt:Override Locale="fr-FR" Value="Ouvre l'AddIn Dreyfus" />
+                    <bt:Override Locale="it-IT" Value="Apre l'AddIn Dreyfus" />
                 </bt:String>
             </bt:LongStrings>
         </Resources>
