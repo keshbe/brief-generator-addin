@@ -1006,6 +1006,9 @@
                     };
                     
                     console.log('Word Sprachen erkannt:', wordLanguageInfo);
+                    
+                    // UI SOFORT übersetzen, unabhängig vom Datenladen-Status
+                    autoTranslateToWordLanguage();
                     updateWordLanguageIndicator();
                 } else {
                     // Fallback für Browser-Test
@@ -1014,6 +1017,9 @@
                         contentLanguage: 'browser-test',
                         timestamp: new Date()
                     };
+                    
+                    // UI auch im Browser-Test übersetzen (auf Deutsch)
+                    autoTranslateToWordLanguage();
                     updateWordLanguageIndicator();
                 }
             } catch (error) {
@@ -1024,6 +1030,9 @@
                     timestamp: new Date(),
                     error: error.message
                 };
+                
+                // Auch bei Fehlern: UI auf Deutsch übersetzen
+                autoTranslateToWordLanguage();
                 updateWordLanguageIndicator();
             }
         }
@@ -1129,8 +1138,8 @@
             // Standardwerte setzen
             setDefaultValues();
             
-            // UI automatisch in Word-Sprache anzeigen
-            autoTranslateToWordLanguage();
+            // UI-Übersetzung hier NICHT mehr nötig - passiert bereits in detectWordLanguage()
+            // autoTranslateToWordLanguage(); // ENTFERNT
             
             // Indikatoren aktualisieren
             updateWordLanguageIndicator();
