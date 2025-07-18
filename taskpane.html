@@ -241,6 +241,11 @@
     </div>
 
     <div class="container content hidden" id="mainContent">
+        <!-- Word Language Indicator -->
+        <div class="data-source-indicator" id="wordLanguageIndicator">
+            Word Sprache: Wird ermittelt...
+        </div>
+
         <!-- Data Source Indicator -->
         <div class="data-source-indicator" id="dataSourceIndicator">
             Datenquelle: Wird ermittelt...
@@ -471,6 +476,7 @@
         let footerInfo = {};
         let logoVarianten = [];
         let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
+        let wordLanguageInfo = { displayLanguage: 'unknown', contentLanguage: 'unknown', timestamp: null };
 
         // === ÜBERSETZUNGEN ===
         const translations = {
@@ -847,6 +853,7 @@
                     initializeUI();
                     showLoading(false);
                     updateDataSourceIndicator();
+                    updateWordLanguageIndicator();
                     return;
                 } catch (error) {
                     console.log('Primäre URL fehlgeschlagen, versuche Fallbacks...');
@@ -859,6 +866,7 @@
                             initializeUI();
                             showLoading(false);
                             updateDataSourceIndicator();
+                            updateWordLanguageIndicator();
                             return;
                         } catch (fallbackError) {
                             console.log(`Fallback ${fallbackUrl} fehlgeschlagen:`, fallbackError.message);
@@ -879,6 +887,7 @@
                     initializeUI();
                     showLoading(false);
                     updateDataSourceIndicator();
+                    updateWordLanguageIndicator();
                     return;
                 }
                 
@@ -893,6 +902,7 @@
                 const trans = translations[currentLanguage] || translations.de;
                 showStatus(trans.errorLoadingData, 'error');
                 updateDataSourceIndicator();
+                updateWordLanguageIndicator();
                 
                 // Zeige Retry-Button
                 document.getElementById('retryDataLoad').classList.remove('d-none');
@@ -960,6 +970,102 @@
             }
         }
 
+        // === WORD LANGUAGE DETECTION ===
+        function detectWordLanguage() {
+            try {
+                if (typeof Office !== 'undefined' && Office.context) {
+                    // Display Language (UI Sprache von Word)
+                    const displayLanguage = Office.context.displayLanguage || 'unknown';
+                    
+                    // Content Language (falls verfügbar)
+                    const contentLanguage = Office.context.contentLanguage || displayLanguage;
+                    
+                    wordLanguageInfo = {
+                        displayLanguage: displayLanguage,
+                        contentLanguage: contentLanguage,
+                        timestamp: new Date()
+                    };
+                    
+                    console.log('Word Sprachen erkannt:', wordLanguageInfo);
+                    updateWordLanguageIndicator();
+                } else {
+                    // Fallback für Browser-Test
+                    wordLanguageInfo = {
+                        displayLanguage: 'browser-test',
+                        contentLanguage: 'browser-test',
+                        timestamp: new Date()
+                    };
+                    updateWordLanguageIndicator();
+                }
+            } catch (error) {
+                console.warn('Fehler beim Ermitteln der Word-Sprache:', error);
+                wordLanguageInfo = {
+                    displayLanguage: 'error',
+                    contentLanguage: 'error',
+                    timestamp: new Date(),
+                    error: error.message
+                };
+                updateWordLanguageIndicator();
+            }
+        }
+
+        function updateWordLanguageIndicator() {
+            const indicator = document.getElementById('wordLanguageIndicator');
+            
+            let statusText = '';
+            let statusClass = '';
+            let detailText = '';
+            
+            if (wordLanguageInfo.displayLanguage === 'unknown') {
+                statusText = 'Word Sprache: Wird ermittelt...';
+                statusClass = 'text-muted';
+            } else if (wordLanguageInfo.displayLanguage === 'error') {
+                statusText = 'Word Sprache: Fehler beim Ermitteln';
+                statusClass = 'text-danger';
+                detailText = wordLanguageInfo.error ? ` (${wordLanguageInfo.error})` : '';
+            } else if (wordLanguageInfo.displayLanguage === 'browser-test') {
+                statusText = 'Word Sprache: Browser-Test-Modus';
+                statusClass = 'text-warning';
+            } else {
+                // Normale Anzeige
+                const displayLang = wordLanguageInfo.displayLanguage;
+                const contentLang = wordLanguageInfo.contentLanguage;
+                
+                // Sprach-Codes in lesbare Namen umwandeln
+                const languageNames = {
+                    'de-DE': 'Deutsch (Deutschland)',
+                    'de-CH': 'Deutsch (Schweiz)',
+                    'de-AT': 'Deutsch (Österreich)',
+                    'en-US': 'English (United States)',
+                    'en-GB': 'English (United Kingdom)',
+                    'fr-FR': 'Français (France)',
+                    'fr-CH': 'Français (Suisse)',
+                    'it-IT': 'Italiano (Italia)',
+                    'it-CH': 'Italiano (Svizzera)',
+                    'de': 'Deutsch',
+                    'en': 'English',
+                    'fr': 'Français',
+                    'it': 'Italiano'
+                };
+                
+                const displayName = languageNames[displayLang] || displayLang;
+                const contentName = languageNames[contentLang] || contentLang;
+                
+                if (displayLang === contentLang) {
+                    statusText = `Word Sprache: ${displayName}`;
+                } else {
+                    statusText = `Word Sprache: ${displayName} | Inhalt: ${contentName}`;
+                }
+                
+                statusClass = 'text-primary';
+                detailText = ` (${wordLanguageInfo.timestamp.toLocaleTimeString()})`;
+            }
+            
+            indicator.innerHTML = `
+                <span class="${statusClass}">${statusText}</span>${detailText}
+            `;
+        }
+
         function initializeDataFromSource(data) {
             // Globale Variablen aus Datenquelle setzen
             sprachen = data.sprachen || {};
@@ -1003,6 +1109,10 @@
             
             // Standardwerte setzen
             setDefaultValues();
+            
+            // Indikatoren aktualisieren
+            updateWordLanguageIndicator();
+            updateDataSourceIndicator();
             
             console.log('UI erfolgreich initialisiert');
         }
@@ -1076,8 +1186,9 @@
             document.getElementById('anonymWarning').textContent = trans.anonymWarning;
             document.getElementById('logoNote').textContent = trans.logoNote;
             
-            // Update Data Source Indicator
+            // Update Indicators
             updateDataSourceIndicator();
+            updateWordLanguageIndicator();
         }
 
         // === ADAPTIVE SIZING SYSTEM für identische Druckausgabe ===
@@ -1141,6 +1252,9 @@
                 if (info.host === Office.HostType.Word) {
                     console.log('Dreyfus Brief Add-In ist bereit');
 
+                    // Word-Sprache ermitteln
+                    detectWordLanguage();
+
                     // Debug-Info anzeigen
                     logEnvironmentInfo();
 
@@ -1154,6 +1268,9 @@
             // Fallback für Browser-Test (ohne Word)
             document.addEventListener('DOMContentLoaded', () => {
                 console.log('Browser-Test-Modus (ohne Word)');
+                
+                // Word-Sprache ermitteln (Browser-Fallback)
+                detectWordLanguage();
                 
                 // Daten laden
                 loadData();
@@ -1171,11 +1288,13 @@
             const logoSize = ADAPTIVE_SIZING.getLogo('42');
             const footerSize = ADAPTIVE_SIZING.getFooter();
 
-            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
+            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
             console.log('=== DREYFUS BRIEF ADD-IN INFO ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
+            console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
+            console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
             console.log('Logo 42pt:', logoSize);
             console.log('Footer:', footerSize);
             console.log('Datenquelle:', dataSourceInfo);
