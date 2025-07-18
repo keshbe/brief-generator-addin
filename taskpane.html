@@ -585,20 +585,20 @@
         const FONT_SIZES = {
             GRUNDTEXT: {
                 size: 10.5,        // 10.5pt
-                lineSpacing: 1.24  // 13pt Zeilenabstand (13/10.5)
+                lineSpacing: 13    // 13pt Zeilenabstand (absolut)
             },
             BETREFF: {
                 size: 10.5,        // 10.5pt
-                lineSpacing: 1.24, // 13pt Zeilenabstand
+                lineSpacing: 13,   // 13pt Zeilenabstand (absolut)
                 bold: true
             },
             ADRESSE: {
                 size: 9,           // 9pt
-                lineSpacing: 1.33  // 12pt Zeilenabstand (12/9)
+                lineSpacing: 12    // 12pt Zeilenabstand (absolut)
             },
             FOOTER: {
                 size: 9,           // 9pt
-                lineSpacing: 1.33  // 12pt Zeilenabstand
+                lineSpacing: 12    // 12pt Zeilenabstand (absolut)
             },
             PAGINA: {
                 size: 7            // 7pt für Seitenzahlen
@@ -1533,7 +1533,7 @@
                     spacerPara.spaceBefore = CD_MANUAL_MEASURES.mmToPt(11);
                     spacerPara.spaceAfter = 0;
                     spacerPara.font.size = 1;
-                    spacerPara.lineSpacing = 1;
+                    spacerPara.lineSpacing = 6;  // Minimaler Zeilenabstand für Spacer
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
@@ -1580,7 +1580,7 @@
                             const afterAddressPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             afterAddressPara.spaceAfter = 40;
                             afterAddressPara.font.size = 1;
-                            afterAddressPara.lineSpacing = 1;
+                            afterAddressPara.lineSpacing = 6;  // Minimaler Zeilenabstand für Spacer
                             
                         } catch (addressError) {
                             console.error('Fehler bei der Adresstabelle:', addressError);
@@ -1763,7 +1763,7 @@
                             const spacingPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacingPara.spaceAfter = 30;
                             spacingPara.font.size = 1;
-                            spacingPara.lineSpacing = 1;
+                            spacingPara.lineSpacing = 6;  // Minimaler Zeilenabstand für Spacer
                             
                         } catch (tableError) {
                             console.error('Fehler bei der Unterschriften-Tabelle:', tableError);
@@ -1803,12 +1803,13 @@
                             const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacerPara.spaceAfter = 15;
                             spacerPara.font.size = 1;
-                            spacerPara.lineSpacing = 1;
+                            spacerPara.lineSpacing = 6;  // Minimaler Zeilenabstand für Spacer
 
                             const beilagenPara = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
                             beilagenPara.font.size = FONT_SIZES.BEILAGEN.size;  // Beilagen 10pt
                             beilagenPara.font.name = 'Dreyfus Sans';
                             beilagenPara.alignment = Word.Alignment.left;
+                            beilagenPara.lineSpacing = 12;  // 12pt Zeilenabstand für Beilagen
                         }
                     }
 
