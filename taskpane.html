@@ -1322,6 +1322,7 @@
                 await Word.run(async (context) => {
                     // Dokument leeren
                     context.document.body.clear();
+                    await context.sync();
 
                     // Standard-Schriftart setzen
                     context.document.body.font.name = 'Dreyfus Sans';
@@ -1335,11 +1336,14 @@
 
                     if (sections.items.length > 0) {
                         const section = sections.items[0];
-                        // Standard Seitenränder für A4
-                        section.topMargin = 72;    // 2.54 cm
-                        section.bottomMargin = 72; // 2.54 cm
-                        section.leftMargin = 72;   // 2.54 cm
-                        section.rightMargin = CD_MANUAL_MEASURES.rightMargin; // 10mm CD-Manual
+                        // Seitenränder für CD-Manual Konformität
+                        section.topMargin = 34;     // 12mm für Logo-Position
+                        section.bottomMargin = 72;  // Standard 2.54cm
+                        section.leftMargin = 71;    // 25mm genau
+                        section.rightMargin = 28;   // 10mm genau
+                        
+                        // Header-Abstand vom Seitenrand
+                        section.headerDistance = 34; // 12mm
                     }
 
                     // === HEADER MIT CD-MANUAL KONFORMEM LOGO ===
@@ -1351,11 +1355,10 @@
                             const logoVariante = formData.logoVariante || '42_Farbe';
                             const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
 
-                            // Logo-Paragraph
+                            // Logo direkt im Header (Position durch Seitenränder bereits korrekt)
                             const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
                             logoParagraph.alignment = Word.Alignment.left;
-                            // Vereinfachte Positionierung
-                            logoParagraph.leftIndent = 71; // ~25mm von links
+                            logoParagraph.spaceBefore = 0;
                             logoParagraph.spaceAfter = 20;
 
                             try {
@@ -1363,11 +1366,14 @@
                                 if (base64Logo) {
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
 
-                                    // CD-Manual konforme Logo-Größe: 30mm x 30mm
-                                    logo.width = 85;  // ~30mm
-                                    logo.height = 85; // ~30mm
+                                    // Logo mit MAX 30mm (85pt)
+                                    const maxSize = 85; // 30mm in pt
+                                    
+                                    // Setze beide Dimensionen auf max und Word behält das Aspect Ratio
+                                    logo.width = maxSize;
+                                    logo.height = maxSize;
 
-                                    console.log(`Logo eingefügt (CD-Manual konform): ${CD_MANUAL_MEASURES.logoSizeMM}x${CD_MANUAL_MEASURES.logoSizeMM}mm`);
+                                    console.log('Logo eingefügt: Position 25mm von links, 12mm von oben, max. 30mm');
                                 } else {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
@@ -1386,7 +1392,6 @@
                     }
 
                     // === FOOTER MIT CD-MANUAL KONFORMEN MAßEN ===
-                    const footer = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
                     footer.clear();
 
                     if (!formData.anonym) {
@@ -1454,6 +1459,13 @@
                     await context.sync();
 
                     // === HAUPTINHALT MIT CD-MANUAL KONFORMEN POSITIONEN ===
+                    
+                    // Vertikaler Abstand bis zur Adresse (53mm von oben)
+                    // Header ist bereits bei 12mm + Logo ~30mm = ~42mm
+                    // Wir brauchen noch 11mm = ~31pt
+                    const spacerBeforeAddress = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    spacerBeforeAddress.spaceBefore = 31;
+                    spacerBeforeAddress.spaceAfter = 0;
 
                     // Empfängeradresse
                     if (formData.adresse) {
@@ -1461,8 +1473,8 @@
                         const addressTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
                         addressTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
                         
-                        // Erste Spalte als Spacer (122mm - 72pt Seitenrand = 50mm = 141pt)
-                        addressTable.columns.getFirst().width = 141; 
+                        // Erste Spalte als Spacer: 122mm - 25mm (linker Rand) = 97mm = 275pt
+                        addressTable.columns.getFirst().width = 275; 
                         
                         // Zweite Spalte für Adresse
                         const addressCell = addressTable.getCell(0, 1);
@@ -1472,8 +1484,7 @@
                         adresseParagraph.font.size = 11;
                         adresseParagraph.font.bold = false;
                         
-                        // Abstand nach Adresse
-                        await context.sync();
+                        // Abstand nach Adresse - ohne zusätzlichen sync
                         const spacerAfterAddress = context.document.body.insertParagraph('', Word.InsertLocation.end);
                         spacerAfterAddress.spaceAfter = 40;
                     }
@@ -1625,8 +1636,6 @@
                         
                         signatureTable.font.name = 'Dreyfus Sans';
                         signatureTable.font.size = 11;
-                        
-                        await context.sync();
                         
                         // Abstand nach Tabelle
                         const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
