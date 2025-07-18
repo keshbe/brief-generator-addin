@@ -1127,7 +1127,7 @@
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== DREYFUS BRIEF ADD-IN INFO (V3: OFFIZIELLE WORD.JS API) ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO (V3: OFFIZIELLE API + SYNC-FIX) ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
             console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
@@ -1320,7 +1320,7 @@
                     emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
                 };
 
-                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix (Offizielle API) + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
+                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix (Offizielle API + Sync-Fix) + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1552,6 +1552,9 @@
                                 para2.alignment = Word.Alignment.left;
                             }
                             
+                            // Synchronisation nach Text-Einfügung
+                            await context.sync();
+                            
                             // Abstand nach Tabelle
                             const hasFunktionen = formData.funktion1 || formData.funktion2;
                             const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
@@ -1608,6 +1611,9 @@
                                 para2.font.size = 10;
                                 para2.alignment = Word.Alignment.left;
                             }
+                            
+                            // Synchronisation nach Text-Einfügung
+                            await context.sync();
                             
                             // Abstand nach Tabelle
                             const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
@@ -1684,6 +1690,9 @@
                                     para2.font.size = 10;
                                     para2.alignment = Word.Alignment.left;
                                 }
+                                
+                                // Synchronisation nach Text-Einfügung
+                                await context.sync();
                                 
                                 // Leerer Paragraph für Abstand
                                 const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
