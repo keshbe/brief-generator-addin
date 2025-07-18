@@ -50,7 +50,7 @@
         }
 
         .header-bar {
-            background-color: #7c7c7c; /* RGB(124, 124, 124) */
+            background-color: #7c7c7c; /* DSC Dunkelgrau */
             color: white;
             padding: 10px 15px;
             margin: 0;
@@ -572,6 +572,40 @@
             get bottomMargin() { return this.mmToPt(this.bottomMarginMM); },
             get leftMargin() { return this.mmToPt(this.leftMarginMM); },
             get rightMargin() { return this.mmToPt(this.rightMarginMM); }
+        };
+
+        // === DSC FARBEN ===
+        const DSC_COLORS = {
+            GRAU: '#7C7C7C',      // DSC Grau (HEX #7C7C7C, RGB 124,124,124)
+            BRAUN: '#B18963',     // DSC Braun (HEX #B18963, RGB 177,137,99, PMS 7504, CMYK 30,45,60,10)
+            DUNKELGRAU: '#7c7c7c' // Header-Grau (identisch mit DSC Grau)
+        };
+
+        // === SCHRIFTGRÖSSEN UND ABSTÄNDE ===
+        const FONT_SIZES = {
+            GRUNDTEXT: {
+                size: 10.5,        // 10.5pt
+                lineSpacing: 1.24  // 13pt Zeilenabstand (13/10.5)
+            },
+            BETREFF: {
+                size: 10.5,        // 10.5pt
+                lineSpacing: 1.24, // 13pt Zeilenabstand
+                bold: true
+            },
+            ADRESSE: {
+                size: 9,           // 9pt
+                lineSpacing: 1.33  // 12pt Zeilenabstand (12/9)
+            },
+            FOOTER: {
+                size: 9,           // 9pt
+                lineSpacing: 1.33  // 12pt Zeilenabstand
+            },
+            PAGINA: {
+                size: 7            // 7pt für Seitenzahlen
+            },
+            BEILAGEN: {
+                size: 10           // 10pt für Beilagen (etwas kleiner)
+            }
         };
 
         // === EXTERNE DATENLADUNG MIT RETRY-LOGIC ===
@@ -1104,7 +1138,7 @@
         }
 
         function logEnvironmentInfo() {
-            const debugText = `Seitenränder: L${CD_MANUAL_MEASURES.leftMarginMM}mm O${CD_MANUAL_MEASURES.topMarginMM}mm R${CD_MANUAL_MEASURES.rightMarginMM}mm U${CD_MANUAL_MEASURES.bottomMarginMM}mm | Logo: ${CD_MANUAL_MEASURES.logoSizeMM}mm | Word: ${wordLanguageInfo.displayLanguage}`;
+            const debugText = `Seitenränder: L${CD_MANUAL_MEASURES.leftMarginMM}mm O${CD_MANUAL_MEASURES.topMarginMM}mm R${CD_MANUAL_MEASURES.rightMarginMM}mm U${CD_MANUAL_MEASURES.bottomMarginMM}mm | Logo: ${CD_MANUAL_MEASURES.logoSizeMM}mm | Text: 10.5pt/13pt | Footer: 9pt/12pt | Word: ${wordLanguageInfo.displayLanguage}`;
             document.getElementById('debugText').textContent = debugText;
 
             console.log('=== DREYFUS BRIEF ADD-IN INFO (CD-MANUAL KONFORM MIT TABELLEN) ===');
@@ -1118,6 +1152,13 @@
             console.log(`- Größe: ${CD_MANUAL_MEASURES.logoSizeMM}x${CD_MANUAL_MEASURES.logoSizeMM}mm`);
             console.log(`- Adresse: ${CD_MANUAL_MEASURES.addressLeftMM}mm von links, ${CD_MANUAL_MEASURES.addressTopMM}mm von oben`);
             console.log(`- Unterschriften-Abstand: ${CD_MANUAL_MEASURES.signatureSpacingMM}mm`);
+            console.log('Schriftgrößen:');
+            console.log('- Grundtexte: Dreyfus Sans Regular, 10.5pt/13pt');
+            console.log('- Betreff: Dreyfus Sans Bold, 10.5pt/13pt');
+            console.log('- Adresse: Dreyfus Sans Regular, 9pt/12pt');
+            console.log('Footer:');
+            console.log('- Adresse: Dreyfus Sans Regular, 9pt/12pt, DSC Grau (#7C7C7C)');
+            console.log('- Claim: Dreyfus Sans Regular, 9pt, DSC Braun (#B18963)');
             console.log('Word Sprache:', wordLanguageInfo.displayLanguage);
             console.log('Datenquelle:', dataSourceInfo);
             console.log('===================================');
@@ -1335,7 +1376,7 @@
 
                     // Standard-Schriftart setzen
                     context.document.body.font.name = 'Dreyfus Sans';
-                    context.document.body.font.size = 11;
+                    context.document.body.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtexte 10.5pt
 
                     // Seitenränder einstellen (Standard A4)
                     const sections = context.document.sections;
@@ -1399,12 +1440,12 @@
                                 } else {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
-                                    logoParagraph.font.color = '#666666';
+                                    logoParagraph.font.color = DSC_COLORS.GRAU;
                                     logoParagraph.font.size = 10;
                                 }
                             } catch (imgError) {
                                 logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
-                                logoParagraph.font.color = '#666666';
+                                logoParagraph.font.color = DSC_COLORS.GRAU;
                                 logoParagraph.font.size = 10;
                                 console.log('Logo als Platzhalter eingefügt:', imgError);
                             }
@@ -1414,6 +1455,9 @@
                     }
 
                     // === FOOTER MIT CD-MANUAL KONFORMEN MAßEN ===
+                    // Footer-Format: 
+                    // - Adresse: Dreyfus Sans Regular, 9pt/12pt, DSC Grau
+                    // - Claim: Dreyfus Sans Regular, 9pt, DSC Braun
                     const footer = currentSection.getFooter(Word.HeaderFooterType.primary);
                     footer.clear();
 
@@ -1445,32 +1489,33 @@
                                 footerData.email
                             ];
 
-                            // Footer-Zeilen einfügen
+                            // Footer-Zeilen einfügen (Adresse)
                             footerLines.forEach((line, index) => {
                                 const footerParagraph = footer.insertParagraph(line, Word.InsertLocation.end);
                                 footerParagraph.font.name = 'Dreyfus Sans';
-                                footerParagraph.font.size = 6;
-                                footerParagraph.font.color = '#7a7a7a';
+                                footerParagraph.font.size = FONT_SIZES.FOOTER.size;  // 9pt
+                                footerParagraph.font.color = DSC_COLORS.GRAU;  // DSC Grau
                                 footerParagraph.alignment = Word.Alignment.center;
                                 footerParagraph.spaceAfter = 0;
                                 footerParagraph.spaceBefore = 0;
-                                footerParagraph.lineSpacing = 0.8;
+                                footerParagraph.lineSpacing = FONT_SIZES.FOOTER.lineSpacing;  // 12pt Zeilenabstand bei 9pt Schrift
                             });
 
-                            // Tagline
+                            // Tagline (Claim Spruch)
                             const tagline = footerTaglines[sprachCode];
                             if (tagline) {
                                 const emptyParagraph = footer.insertParagraph('\u00A0', Word.InsertLocation.end);
-                                emptyParagraph.font.size = 4;
+                                emptyParagraph.font.size = 6;
+                                emptyParagraph.lineSpacing = 1.0;
 
                                 const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.name = 'Dreyfus Sans';
-                                taglineParagraph.font.size = 6;
-                                taglineParagraph.font.color = '#7a7a7a';
+                                taglineParagraph.font.size = 9;  // 9pt
+                                taglineParagraph.font.color = DSC_COLORS.BRAUN;  // DSC Braun
                                 taglineParagraph.alignment = Word.Alignment.center;
-                                taglineParagraph.lineSpacing = 0.8;
+                                taglineParagraph.lineSpacing = 1.33;  // 12pt Zeilenabstand bei 9pt Schrift
                                 taglineParagraph.spaceAfter = 0;
-                                taglineParagraph.spaceBefore = 2;
+                                taglineParagraph.spaceBefore = 0;
                             }
                         }
                     }
@@ -1488,6 +1533,7 @@
                     spacerPara.spaceBefore = CD_MANUAL_MEASURES.mmToPt(11);
                     spacerPara.spaceAfter = 0;
                     spacerPara.font.size = 1;
+                    spacerPara.lineSpacing = 1;
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
@@ -1518,13 +1564,15 @@
                             spacerCell.body.clear();
                             const spacerPara = spacerCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
                             spacerPara.font.size = 1;
+                            spacerPara.lineSpacing = 1;
                             
                             // Zweite Spalte für Adresse
                             const addressCell = addressTable.getCell(0, 1);
                             addressCell.body.clear();
                             const addressPara = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
                             addressPara.font.name = 'Dreyfus Sans';
-                            addressPara.font.size = 11;
+                            addressPara.font.size = FONT_SIZES.ADRESSE.size;  // Adresse 9pt
+                            addressPara.lineSpacing = FONT_SIZES.ADRESSE.lineSpacing;  // 12pt Zeilenabstand bei 9pt
                             
                             await context.sync();
                             
@@ -1532,13 +1580,15 @@
                             const afterAddressPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             afterAddressPara.spaceAfter = 40;
                             afterAddressPara.font.size = 1;
+                            afterAddressPara.lineSpacing = 1;
                             
                         } catch (addressError) {
                             console.error('Fehler bei der Adresstabelle:', addressError);
                             // Fallback: Normale Adresse ohne Tabelle
                             const addressPara = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
                             addressPara.font.name = 'Dreyfus Sans';
-                            addressPara.font.size = 11;
+                            addressPara.font.size = FONT_SIZES.ADRESSE.size;  // Adresse 9pt
+                            addressPara.lineSpacing = FONT_SIZES.ADRESSE.lineSpacing;  // 12pt Zeilenabstand bei 9pt
                             addressPara.spaceAfter = 40;
                         }
                     }
@@ -1560,7 +1610,8 @@
                         ortDatumPara.alignment = Word.Alignment.right;
                         ortDatumPara.spaceAfter = 30;
                         ortDatumPara.font.name = 'Dreyfus Sans';
-                        ortDatumPara.font.size = 11;
+                        ortDatumPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
+                        ortDatumPara.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
                     }
 
                     // Betreff
@@ -1569,8 +1620,9 @@
                         betreffPara.alignment = Word.Alignment.left;
                         betreffPara.spaceAfter = 12;
                         betreffPara.font.name = 'Dreyfus Sans';
-                        betreffPara.font.size = 11;
-                        betreffPara.font.bold = true;
+                        betreffPara.font.size = FONT_SIZES.BETREFF.size;  // Betreff 10.5pt
+                        betreffPara.font.bold = FONT_SIZES.BETREFF.bold;   // Bold
+                        betreffPara.lineSpacing = FONT_SIZES.BETREFF.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
                     }
 
                     // Anrede
@@ -1579,8 +1631,9 @@
                         anredePara.alignment = Word.Alignment.left;
                         anredePara.spaceAfter = 20;
                         anredePara.font.name = 'Dreyfus Sans';
-                        anredePara.font.size = 11;
+                        anredePara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                         anredePara.font.bold = false;
+                        anredePara.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
                     }
 
                     // Leerer Absatz für Brieftext
@@ -1588,8 +1641,9 @@
                     textPara.alignment = Word.Alignment.left;
                     textPara.spaceAfter = 40;
                     textPara.font.name = 'Dreyfus Sans';
-                    textPara.font.size = 11;
+                    textPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                     textPara.font.bold = false;
+                    textPara.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
 
                     // Grussformel
                     if (formData.gruss) {
@@ -1597,8 +1651,9 @@
                         grussPara.alignment = Word.Alignment.left;
                         grussPara.spaceAfter = 6;
                         grussPara.font.name = 'Dreyfus Sans';
-                        grussPara.font.size = 11;
+                        grussPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                         grussPara.font.bold = false;
+                        grussPara.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
 
                         // Firmenname
                         if (!formData.anonym) {
@@ -1610,8 +1665,9 @@
                                 firmaPara.alignment = Word.Alignment.left;
                                 firmaPara.spaceAfter = 40;
                                 firmaPara.font.name = 'Dreyfus Sans';
-                                firmaPara.font.size = 11;
+                                firmaPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                                 firmaPara.font.bold = false;
+                                firmaPara.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
                             }
                         }
                     }
@@ -1679,7 +1735,7 @@
                             
                             // Font für gesamte Tabelle
                             signatureTable.font.name = 'Dreyfus Sans';
-                            signatureTable.font.size = 11;
+                            signatureTable.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt für Unterschriften
                             
                             // Rahmen entfernen nach Microsoft-Dokumentation
                             // getBorder ist korrekt für einzelne Locations
@@ -1707,6 +1763,7 @@
                             const spacingPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacingPara.spaceAfter = 30;
                             spacingPara.font.size = 1;
+                            spacingPara.lineSpacing = 1;
                             
                         } catch (tableError) {
                             console.error('Fehler bei der Unterschriften-Tabelle:', tableError);
@@ -1714,7 +1771,8 @@
                             if (formData.unterschrift1) {
                                 const sig1Para = context.document.body.insertParagraph(formData.unterschrift1, Word.InsertLocation.end);
                                 sig1Para.font.name = 'Dreyfus Sans';
-                                sig1Para.font.size = 11;
+                                sig1Para.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
+                                sig1Para.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
                                 sig1Para.spaceAfter = 20;
                             }
                         }
@@ -1745,9 +1803,10 @@
                             const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacerPara.spaceAfter = 15;
                             spacerPara.font.size = 1;
+                            spacerPara.lineSpacing = 1;
 
                             const beilagenPara = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
-                            beilagenPara.font.size = 10;
+                            beilagenPara.font.size = FONT_SIZES.BEILAGEN.size;  // Beilagen 10pt
                             beilagenPara.font.name = 'Dreyfus Sans';
                             beilagenPara.alignment = Word.Alignment.left;
                         }
