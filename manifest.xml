@@ -60,11 +60,11 @@
                     
                     <!-- Ribbon Extension -->
                     <ExtensionPoint xsi:type="PrimaryCommandSurface">
-                        <CustomTab id="tabBrief">
+                        <CustomTab id="tabDreyfus">
                             
-                            <!-- Eine Gruppe mit zwei Buttons -->
-                            <Group id="grpMain">
-                                <Label resid="Group.Label" />
+                            <!-- Brief Gruppe -->
+                            <Group id="grpBrief">
+                                <Label resid="GroupBrief.Label" />
                                 <Icon>
                                     <bt:Image size="16" resid="Icon.16x16"/>
                                     <bt:Image size="32" resid="Icon.32x32"/>
@@ -88,6 +88,16 @@
                                         <SourceLocation resid="Taskpane.Url"/>
                                     </Action>
                                 </Control>
+                            </Group>
+                            
+                            <!-- Inkasso Gruppe -->
+                            <Group id="grpInkasso">
+                                <Label resid="GroupInkasso.Label" />
+                                <Icon>
+                                    <bt:Image size="16" resid="Icon.16x16"/>
+                                    <bt:Image size="32" resid="Icon.32x32"/>
+                                    <bt:Image size="80" resid="Icon.80x80"/>
+                                </Icon>
                                 
                                 <!-- Inkasso Button -->
                                 <Control xsi:type="Button" id="btnInkasso">
@@ -106,7 +116,6 @@
                                         <SourceLocation resid="Inkasso.Url"/>
                                     </Action>
                                 </Control>
-                                
                             </Group>
                             
                             <Label resid="Tab.Label" />
@@ -138,25 +147,32 @@
                     <bt:Override Locale="it-IT" Value="DREYFUS" />
                 </bt:String>
                 
-                <!-- Group Label -->
-                <bt:String id="Group.Label" DefaultValue="Dokumente">
-                    <bt:Override Locale="en-US" Value="Documents" />
-                    <bt:Override Locale="fr-FR" Value="Documents" />
-                    <bt:Override Locale="it-IT" Value="Documenti" />
-                </bt:String>
-                
-                <!-- Brief Button Label -->
-                <bt:String id="ButtonBrief.Label" DefaultValue="Brief">
+                <!-- Brief Group Label -->
+                <bt:String id="GroupBrief.Label" DefaultValue="Brief">
                     <bt:Override Locale="en-US" Value="Letter" />
                     <bt:Override Locale="fr-FR" Value="Lettre" />
                     <bt:Override Locale="it-IT" Value="Lettera" />
                 </bt:String>
                 
-                <!-- Inkasso Button Label -->
-                <bt:String id="ButtonInkasso.Label" DefaultValue="Inkasso">
+                <!-- Inkasso Group Label -->
+                <bt:String id="GroupInkasso.Label" DefaultValue="Inkasso">
                     <bt:Override Locale="en-US" Value="Collection" />
                     <bt:Override Locale="fr-FR" Value="Encaissement" />
                     <bt:Override Locale="it-IT" Value="Riscossione" />
+                </bt:String>
+                
+                <!-- Brief Button Label -->
+                <bt:String id="ButtonBrief.Label" DefaultValue="Brief erstellen">
+                    <bt:Override Locale="en-US" Value="Create Letter" />
+                    <bt:Override Locale="fr-FR" Value="Créer lettre" />
+                    <bt:Override Locale="it-IT" Value="Crea lettera" />
+                </bt:String>
+                
+                <!-- Inkasso Button Label -->
+                <bt:String id="ButtonInkasso.Label" DefaultValue="Inkasso erstellen">
+                    <bt:Override Locale="en-US" Value="Create Collection" />
+                    <bt:Override Locale="fr-FR" Value="Créer encaissement" />
+                    <bt:Override Locale="it-IT" Value="Crea riscossione" />
                 </bt:String>
             </bt:ShortStrings>
             
