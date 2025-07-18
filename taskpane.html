@@ -1039,18 +1039,20 @@
                 return isWeb;
             },
 
-            // Logo-Größen für identische Druckausgabe
+            // *** KORRIGIERTE LOGO-GRÖSSBEN FÜR PROFESSIONELLES BRIEFFORMAT ***
             getLogo: (variant = '42') => {
                 const isWeb = ADAPTIVE_SIZING.detectEnvironment();
 
                 if (variant.startsWith('30')) {
+                    // 30pt Logos - noch kompakter
                     return isWeb
-                        ? { width: 34, height: 13 }  // Web: 85% kleiner
-                        : { width: 40, height: 15 }; // Desktop: Referenz
+                        ? { width: 17, height: 6.5 }  // Web: Sehr klein
+                        : { width: 20, height: 7.5 }; // Desktop: Klein
                 } else { // 42pt
+                    // 42pt Logos - kompakte Größe für Briefkopf
                     return isWeb
-                        ? { width: 47, height: 18 }  // Web: 84% kleiner
-                        : { width: 56, height: 21 }; // Desktop: Referenz
+                        ? { width: 24, height: 9 }    // Web: Kompakt
+                        : { width: 28, height: 10.5 };// Desktop: Etwas größer
                 }
             },
 
@@ -1062,18 +1064,18 @@
                     : { fontSize: 7, lineSpacing: 0.9 };  // Desktop: Standard
             },
 
-            // Abstände für identische Druckausgabe
+            // *** REDUZIERTE ABSTÄNDE FÜR KOMPAKTERES LAYOUT ***
             getSpacing: (type) => {
                 const isWeb = ADAPTIVE_SIZING.detectEnvironment();
                 const webFactor = 0.85; // Web: 15% kleiner
 
                 const baseSpacing = {
-                    logoAfter: 30,        // Abstand nach Logo
-                    addressAfter: 60,     // Abstand nach Adresse
-                    greetingAfter: 40,    // Abstand nach Anrede
-                    textAfter: 60,        // Abstand nach Textbereich
-                    signatureAfter: 60,   // Abstand nach Gruss
-                    emptyBefore: 20       // Abstand vor Beilagen
+                    logoAfter: 18,        // Abstand nach Logo (reduziert von 30)
+                    addressAfter: 40,     // Abstand nach Adresse (reduziert von 60)
+                    greetingAfter: 25,    // Abstand nach Anrede (reduziert von 40)
+                    textAfter: 40,        // Abstand nach Textbereich (reduziert von 60)
+                    signatureAfter: 40,   // Abstand nach Gruss (reduziert von 60)
+                    emptyBefore: 15       // Abstand vor Beilagen (reduziert von 20)
                 };
 
                 return Math.round(isWeb ? baseSpacing[type] * webFactor : baseSpacing[type]);
@@ -1125,14 +1127,14 @@
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== DREYFUS BRIEF ADD-IN INFO ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO (KORRIGIERT) ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
             console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
-            console.log('Logo 42pt:', logoSize);
+            console.log('Logo 42pt (KORRIGIERT):', logoSize);
             console.log('Footer:', footerSize);
             console.log('Datenquelle:', dataSourceInfo);
-            console.log('================================');
+            console.log('===================================');
         }
 
         function initializeEventHandlers() {
@@ -1318,7 +1320,7 @@
                     emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
                 };
 
-                console.log('Adaptive Sizing verwendet:', { logoSize, footerSize, spacing });
+                console.log('Korrigierte Adaptive Sizing verwendet:', { logoSize, footerSize, spacing });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1374,7 +1376,7 @@
                         section.rightMargin = 72;  // 2.54 cm
                     }
 
-                    // === HEADER MIT ADAPTIVEM LOGO ===
+                    // === HEADER MIT KORRIGIERTEM LOGO ===
                     const header = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
                     header.clear();
 
@@ -1391,24 +1393,24 @@
                                 if (base64Logo) {
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
 
-                                    // === ADAPTIVE LOGO-GRÖSSE ===
+                                    // === KORRIGIERTE LOGO-GRÖSSE FÜR PROFESSIONELLES LAYOUT ===
                                     logo.width = logoSize.width;
                                     logo.height = logoSize.height;
 
-                                    // Adaptive Abstände
+                                    // Korrigierte Abstände
                                     logoParagraph.spaceAfter = spacing.logoAfter;
 
-                                    console.log(`Logo eingefügt: ${logoSize.width}x${logoSize.height}px, Abstand: ${spacing.logoAfter}pt`);
+                                    console.log(`Logo eingefügt (KORRIGIERT): ${logoSize.width}x${logoSize.height}px, Abstand: ${spacing.logoAfter}pt`);
                                 } else {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
                                     logoParagraph.font.color = '#666666';
-                                    logoParagraph.font.size = 14;
+                                    logoParagraph.font.size = 10; // Kleinerer Platzhalter
                                 }
                             } catch (imgError) {
                                 logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
                                 logoParagraph.font.color = '#666666';
-                                logoParagraph.font.size = 14;
+                                logoParagraph.font.size = 10; // Kleinerer Platzhalter
                                 console.log('Logo als Platzhalter eingefügt:', imgError);
                             }
                         } catch (logoError) {
@@ -1416,7 +1418,7 @@
                         }
                     }
 
-                    // === HAUPTINHALT MIT ADAPTIVEN ABSTÄNDEN ===
+                    // === HAUPTINHALT MIT KORRIGIERTEN ABSTÄNDEN ===
 
                     // Empfängeradresse
                     if (formData.adresse) {
@@ -1440,7 +1442,7 @@
                     if (ortDatumText) {
                         const ortDatumParagraph = context.document.body.insertParagraph(ortDatumText, Word.InsertLocation.end);
                         ortDatumParagraph.alignment = Word.Alignment.right;
-                        ortDatumParagraph.spaceAfter = 40;
+                        ortDatumParagraph.spaceAfter = 30; // Kompakter Abstand
                     }
 
                     // Betreff
@@ -1505,7 +1507,7 @@
                         const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
                             (formData.abteilung2 && formData.abteilung2 !== '1');
 
-                        unterschriftenParagraph.spaceAfter = (hasFunktionen || hasAbteilungen) ? 2 : 30;
+                        unterschriftenParagraph.spaceAfter = (hasFunktionen || hasAbteilungen) ? 2 : 20; // Kompakter
                     }
 
                     // Funktionen
@@ -1526,7 +1528,7 @@
 
                         const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
                             (formData.abteilung2 && formData.abteilung2 !== '1');
-                        funktionenParagraph.spaceAfter = hasAbteilungen ? 2 : 30;
+                        funktionenParagraph.spaceAfter = hasAbteilungen ? 2 : 20; // Kompakter
                     }
 
                     // Abteilungen
@@ -1556,7 +1558,7 @@
                         }
 
                         abteilungenParagraph.insertText(abteilungenText, Word.InsertLocation.start);
-                        abteilungenParagraph.spaceAfter = 30;
+                        abteilungenParagraph.spaceAfter = 20; // Kompakter
                     }
 
                     // Beilagen
