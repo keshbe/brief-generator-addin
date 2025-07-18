@@ -7,7 +7,7 @@
 
     <!-- Basis-Informationen -->
     <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
-    <Version>1.0.0.2</Version>
+    <Version>1.0.0.1</Version>
     <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
     <DefaultLocale>de-DE</DefaultLocale>
     
@@ -18,10 +18,10 @@
         <Override Locale="it-IT" Value="Generatore lettere Dreyfus" />
     </DisplayName>
     
-    <Description DefaultValue="Brief Generator und Inkasso Add-in">
-        <Override Locale="en-US" Value="Letter Generator and Collection Add-in" />
-        <Override Locale="fr-FR" Value="Générateur de lettres et Add-in d'encaissement" />
-        <Override Locale="it-IT" Value="Generatore lettere e Add-in di riscossione" />
+    <Description DefaultValue="Vereinfachtes Add-in mit einem Button">
+        <Override Locale="en-US" Value="Simplified Add-in with one button" />
+        <Override Locale="fr-FR" Value="Add-in simplifié avec un bouton" />
+        <Override Locale="it-IT" Value="Add-in semplificato con un pulsante" />
     </Description>
     
     <!-- Icons -->
@@ -48,7 +48,7 @@
     
     <Permissions>ReadWriteDocument</Permissions>
     
-    <!-- Version Overrides für Ribbon Buttons -->
+    <!-- Version Overrides für Ribbon Button -->
     <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
         
         <Hosts>
@@ -60,23 +60,23 @@
                     
                     <!-- Ribbon Extension -->
                     <ExtensionPoint xsi:type="PrimaryCommandSurface">
-                        <CustomTab id="tabDreyfus">
+                        <CustomTab id="tabBrief">
                             
-                            <!-- Brief Gruppe -->
-                            <Group id="grpBrief">
-                                <Label resid="GroupBrief.Label" />
+                            <!-- Eine Gruppe mit einem Button -->
+                            <Group id="grpMain">
+                                <Label resid="Group.Label" />
                                 <Icon>
                                     <bt:Image size="16" resid="Icon.16x16"/>
                                     <bt:Image size="32" resid="Icon.32x32"/>
                                     <bt:Image size="80" resid="Icon.80x80"/>
                                 </Icon>
                                 
-                                <!-- Brief Generator Button -->
-                                <Control xsi:type="Button" id="btnBrief">
-                                    <Label resid="ButtonBrief.Label" />
+                                <!-- Der einzige Button -->
+                                <Control xsi:type="Button" id="btnMain">
+                                    <Label resid="Button.Label" />
                                     <Supertip>
-                                        <Title resid="ButtonBrief.Label" />
-                                        <Description resid="ButtonBrief.Tooltip" />
+                                        <Title resid="Button.Label" />
+                                        <Description resid="Button.Tooltip" />
                                     </Supertip>
                                     <Icon>
                                         <bt:Image size="16" resid="Icon.16x16"/>
@@ -84,38 +84,11 @@
                                         <bt:Image size="80" resid="Icon.80x80"/>
                                     </Icon>
                                     <Action xsi:type="ShowTaskpane">
-                                        <TaskpaneId>BriefTaskpane</TaskpaneId>
+                                        <TaskpaneId>MainTaskpane</TaskpaneId>
                                         <SourceLocation resid="Taskpane.Url"/>
                                     </Action>
                                 </Control>
-                            </Group>
-                            
-                            <!-- Inkasso Gruppe -->
-                            <Group id="grpInkasso">
-                                <Label resid="GroupInkasso.Label" />
-                                <Icon>
-                                    <bt:Image size="16" resid="Icon.16x16"/>
-                                    <bt:Image size="32" resid="Icon.32x32"/>
-                                    <bt:Image size="80" resid="Icon.80x80"/>
-                                </Icon>
                                 
-                                <!-- Inkasso Button -->
-                                <Control xsi:type="Button" id="btnInkasso">
-                                    <Label resid="ButtonInkasso.Label" />
-                                    <Supertip>
-                                        <Title resid="ButtonInkasso.Label" />
-                                        <Description resid="ButtonInkasso.Tooltip" />
-                                    </Supertip>
-                                    <Icon>
-                                        <bt:Image size="16" resid="Icon.16x16"/>
-                                        <bt:Image size="32" resid="Icon.32x32"/>
-                                        <bt:Image size="80" resid="Icon.80x80"/>
-                                    </Icon>
-                                    <Action xsi:type="ShowTaskpane">
-                                        <TaskpaneId>InkassoTaskpane</TaskpaneId>
-                                        <SourceLocation resid="Inkasso.Url"/>
-                                    </Action>
-                                </Control>
                             </Group>
                             
                             <Label resid="Tab.Label" />
@@ -135,7 +108,6 @@
             
             <bt:Urls>
                 <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
-                <bt:Url id="Inkasso.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/inkasso.html" />
             </bt:Urls>
             
             <!-- Alle Short Strings in einem Abschnitt konsolidiert -->
@@ -147,49 +119,28 @@
                     <bt:Override Locale="it-IT" Value="DREYFUS" />
                 </bt:String>
                 
-                <!-- Brief Group Label -->
-                <bt:String id="GroupBrief.Label" DefaultValue="Brief">
-                    <bt:Override Locale="en-US" Value="Letter" />
-                    <bt:Override Locale="fr-FR" Value="Lettre" />
-                    <bt:Override Locale="it-IT" Value="Lettera" />
+                <!-- Group Label -->
+                <bt:String id="Group.Label" DefaultValue="Brief Generator">
+                    <bt:Override Locale="en-US" Value="Letter Generator" />
+                    <bt:Override Locale="fr-FR" Value="Générateur de lettres" />
+                    <bt:Override Locale="it-IT" Value="Generatore lettere" />
                 </bt:String>
                 
-                <!-- Inkasso Group Label -->
-                <bt:String id="GroupInkasso.Label" DefaultValue="Inkasso">
-                    <bt:Override Locale="en-US" Value="Collection" />
-                    <bt:Override Locale="fr-FR" Value="Encaissement" />
-                    <bt:Override Locale="it-IT" Value="Riscossione" />
-                </bt:String>
-                
-                <!-- Brief Button Label -->
-                <bt:String id="ButtonBrief.Label" DefaultValue="Brief erstellen">
+                <!-- Button Label -->
+                <bt:String id="Button.Label" DefaultValue="Brief erstellen">
                     <bt:Override Locale="en-US" Value="Create Letter" />
                     <bt:Override Locale="fr-FR" Value="Créer lettre" />
                     <bt:Override Locale="it-IT" Value="Crea lettera" />
-                </bt:String>
-                
-                <!-- Inkasso Button Label -->
-                <bt:String id="ButtonInkasso.Label" DefaultValue="Inkasso erstellen">
-                    <bt:Override Locale="en-US" Value="Create Collection" />
-                    <bt:Override Locale="fr-FR" Value="Créer encaissement" />
-                    <bt:Override Locale="it-IT" Value="Crea riscossione" />
                 </bt:String>
             </bt:ShortStrings>
             
             <!-- Alle Long Strings in einem Abschnitt konsolidiert -->
             <bt:LongStrings>
-                <!-- Brief Button Tooltip -->
-                <bt:String id="ButtonBrief.Tooltip" DefaultValue="Öffnet den Dreyfus Brief Generator">
+                <!-- Button Tooltip -->
+                <bt:String id="Button.Tooltip" DefaultValue="Öffnet den Dreyfus Brief Generator">
                     <bt:Override Locale="en-US" Value="Opens the Dreyfus letter generator" />
                     <bt:Override Locale="fr-FR" Value="Ouvre le générateur de lettres Dreyfus" />
                     <bt:Override Locale="it-IT" Value="Apre il generatore di lettere Dreyfus" />
-                </bt:String>
-                
-                <!-- Inkasso Button Tooltip -->
-                <bt:String id="ButtonInkasso.Tooltip" DefaultValue="Öffnet den Dreyfus Inkasso Generator">
-                    <bt:Override Locale="en-US" Value="Opens the Dreyfus collection generator" />
-                    <bt:Override Locale="fr-FR" Value="Ouvre le générateur d'encaissement Dreyfus" />
-                    <bt:Override Locale="it-IT" Value="Apre il generatore di riscossione Dreyfus" />
                 </bt:String>
             </bt:LongStrings>
         </Resources>
