@@ -1127,7 +1127,7 @@
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== DREYFUS BRIEF ADD-IN INFO (V3: OFFIZIELLE API + SYNC-FIX) ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO (V4: FOOTER-FIX NACH MICROSOFT-DOKUMENTATION) ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
             console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
@@ -1320,7 +1320,7 @@
                     emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
                 };
 
-                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix (Offizielle API + Sync-Fix) + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
+                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix (Offizielle API) + Footer-Fix + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1417,6 +1417,73 @@
                             console.error('Logo konnte nicht eingefügt werden:', logoError);
                         }
                     }
+
+                    // === FOOTER MIT KORRIGIERTER IMPLEMENTIERUNG (NACH MICROSOFT-DOKUMENTATION) ===
+                    const footer = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
+                    footer.clear();
+
+                    if (!formData.anonym) {
+                        const sprachCode = sprachen[formData.sprache].code.split('-')[0];
+                        const firmenName = firmenNamen[sprachCode];
+                        
+                        // Verwende footerInfo aus den geladenen Daten
+                        let footerData = null;
+                        switch (formData.absender) {
+                            case '1':
+                            case '2':
+                                footerData = footerInfo.basel?.[sprachCode];
+                                break;
+                            case '3':
+                                footerData = footerInfo.zuerich?.[sprachCode];
+                                break;
+                            case '4':
+                                footerData = footerInfo.lugano?.[sprachCode];
+                                break;
+                        }
+
+                        if (footerData && firmenName) {
+                            const footerLines = [
+                                firmenName,
+                                footerData.buero,
+                                footerData.adresse,
+                                footerData.telefon,
+                                footerData.email
+                            ];
+
+                            // Footer-Zeilen einfügen (nach Microsoft-Dokumentation)
+                            footerLines.forEach((line, index) => {
+                                const footerParagraph = footer.insertParagraph(line, Word.InsertLocation.end);
+                                footerParagraph.font.name = 'Dreyfus Sans';
+                                footerParagraph.font.size = footerSize.fontSize;
+                                footerParagraph.font.color = '#7a7a7a';
+                                footerParagraph.alignment = Word.Alignment.center;
+                                footerParagraph.spaceAfter = 0;
+                                footerParagraph.spaceBefore = 0;
+                                footerParagraph.lineSpacing = footerSize.lineSpacing;
+                            });
+
+                            // Tagline mit adaptiver Formatierung
+                            const tagline = footerTaglines[sprachCode];
+                            if (tagline) {
+                                const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
+                                emptyParagraph.font.size = 4;
+
+                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
+                                taglineParagraph.font.name = 'Dreyfus Sans';
+                                taglineParagraph.font.size = footerSize.fontSize;
+                                taglineParagraph.font.color = '#7a7a7a';
+                                taglineParagraph.alignment = Word.Alignment.center;
+                                taglineParagraph.lineSpacing = footerSize.lineSpacing;
+                                taglineParagraph.spaceAfter = 0;
+                                taglineParagraph.spaceBefore = 2;
+                            }
+
+                            console.log(`Footer formatiert: ${footerSize.fontSize}pt, Spacing: ${footerSize.lineSpacing}`);
+                        }
+                    }
+
+                    // Header und Footer synchronisieren
+                    await context.sync();
 
                     // === HAUPTINHALT MIT KORRIGIERTEN ABSTÄNDEN ===
 
@@ -1737,73 +1804,6 @@
                             const beilagenContent = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
                             beilagenContent.font.size = 10;
                             beilagenContent.alignment = Word.Alignment.left;
-                        }
-                    }
-
-                    // === FOOTER MIT ADAPTIVER FORMATIERUNG ===
-                    const footer = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
-                    footer.clear();
-
-                    if (!formData.anonym) {
-                        const sprachCode = sprachen[formData.sprache].code.split('-')[0];
-                        const firmenName = firmenNamen[sprachCode];
-                        let footerLines = [];
-
-                        // Verwende footerInfo aus den geladenen Daten
-                        let footerData = null;
-                        switch (formData.absender) {
-                            case '1':
-                            case '2':
-                                footerData = footerInfo.basel?.[sprachCode];
-                                break;
-                            case '3':
-                                footerData = footerInfo.zuerich?.[sprachCode];
-                                break;
-                            case '4':
-                                footerData = footerInfo.lugano?.[sprachCode];
-                                break;
-                        }
-
-                        if (footerData && firmenName) {
-                            footerLines = [
-                                firmenName,
-                                footerData.buero,
-                                footerData.adresse,
-                                footerData.telefon,
-                                footerData.email
-                            ];
-                        }
-
-                        if (footerLines.length > 0) {
-                            // === ADAPTIVE FOOTER-FORMATIERUNG ===
-                            footerLines.forEach((line, index) => {
-                                const footerParagraph = footer.insertParagraph(line, Word.InsertLocation.end);
-                                footerParagraph.font.name = 'Dreyfus Sans';  // WICHTIG: Schriftart setzen
-                                footerParagraph.font.size = footerSize.fontSize;
-                                footerParagraph.font.color = '#7a7a7a';
-                                footerParagraph.alignment = Word.Alignment.center;
-                                footerParagraph.spaceAfter = 0;
-                                footerParagraph.spaceBefore = 0;
-                                footerParagraph.lineSpacing = footerSize.lineSpacing;
-                            });
-
-                            // Tagline mit adaptiver Formatierung
-                            const tagline = footerTaglines[sprachCode];
-                            if (tagline) {
-                                const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
-                                emptyParagraph.font.size = 4;
-
-                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
-                                taglineParagraph.font.name = 'Dreyfus Sans';  // WICHTIG: Schriftart setzen
-                                taglineParagraph.font.size = footerSize.fontSize;
-                                taglineParagraph.font.color = '#7a7a7a';
-                                taglineParagraph.alignment = Word.Alignment.center;
-                                taglineParagraph.lineSpacing = footerSize.lineSpacing;
-                                taglineParagraph.spaceAfter = 0;
-                                taglineParagraph.spaceBefore = 2;
-                            }
-
-                            console.log(`Footer formatiert: ${footerSize.fontSize}pt, Spacing: ${footerSize.lineSpacing}`);
                         }
                     }
 
