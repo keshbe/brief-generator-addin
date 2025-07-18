@@ -1339,13 +1339,16 @@
 
                     // Seitenränder einstellen (Standard A4)
                     const sections = context.document.sections;
-                    sections.load('items');
-
+                    context.load(sections, 'items');
+                    
                     await context.sync();
 
                     let currentSection = null;
-                    if (sections.items.length > 0) {
+                    if (sections.items && sections.items.length > 0) {
                         currentSection = sections.items[0];
+                        context.load(currentSection);
+                        await context.sync();
+                        
                         // Seitenränder für CD-Manual Konformität
                         currentSection.topMargin = 34;     // 12mm für Logo-Position
                         currentSection.bottomMargin = 72;  // Standard 2.54cm
@@ -1354,15 +1357,19 @@
                         
                         // Header-Abstand vom Seitenrand
                         currentSection.headerDistance = 34; // 12mm
+                        
+                        await context.sync();
                     } else {
-                        // Falls keine Section vorhanden, eine erstellen
-                        console.error('Keine Sections gefunden');
+                        // Falls keine Section vorhanden, Fehler
+                        throw new Error('Keine Document Sections gefunden');
                     }
 
-                    await context.sync();
-
                     // === HEADER MIT CD-MANUAL KONFORMEM LOGO ===
-                    const header = currentSection ? currentSection.getHeader(Word.HeaderFooterType.primary) : context.document.sections.items[0].getHeader(Word.HeaderFooterType.primary);
+                    if (!currentSection) {
+                        throw new Error('Keine Section für Header verfügbar');
+                    }
+                    
+                    const header = currentSection.getHeader(Word.HeaderFooterType.primary);
                     header.clear();
 
                     if (!formData.anonym && formData.absender !== '9' && formData.absender !== '') {
@@ -1371,7 +1378,7 @@
                             const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
 
                             // Logo direkt im Header (Position durch Seitenränder bereits korrekt)
-                            const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
+                            const logoParagraph = header.insertParagraph('\u00A0', Word.InsertLocation.start);
                             logoParagraph.alignment = Word.Alignment.left;
                             logoParagraph.spaceBefore = 0;
                             logoParagraph.spaceAfter = 20;
@@ -1407,7 +1414,7 @@
                     }
 
                     // === FOOTER MIT CD-MANUAL KONFORMEN MAßEN ===
-                    const footer = context.document.sections.getFirst().getFooter(Word.HeaderFooterType.primary);
+                    const footer = currentSection.getFooter(Word.HeaderFooterType.primary);
                     footer.clear();
 
                     if (!formData.anonym) {
@@ -1453,7 +1460,7 @@
                             // Tagline
                             const tagline = footerTaglines[sprachCode];
                             if (tagline) {
-                                const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
+                                const emptyParagraph = footer.insertParagraph('\u00A0', Word.InsertLocation.end);
                                 emptyParagraph.font.size = 4;
 
                                 const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
@@ -1477,36 +1484,63 @@
                     // Logo endet bei: 12mm (Seitenrand) + 30mm (Logo) = 42mm
                     // Adresse soll bei 53mm beginnen
                     // Benötigter Abstand: 53mm - 42mm = 11mm
-                    const spacerPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                     spacerPara.spaceBefore = CD_MANUAL_MEASURES.mmToPt(11);
                     spacerPara.spaceAfter = 0;
+                    spacerPara.font.size = 1;
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
-                        // Tabelle mit 1 Zeile, 2 Spalten
-                        const addressTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
-                        
-                        // Rahmen entfernen
-                        addressTable.borderInsideHorizontal.type = Word.BorderType.none;
-                        addressTable.borderInsideVertical.type = Word.BorderType.none;
-                        addressTable.borderOutside.type = Word.BorderType.none;
-                        
-                        // Erste Spalte als Spacer
-                        // 122mm von links minus 25mm Seitenrand = 97mm
-                        const spacerWidth = CD_MANUAL_MEASURES.addressLeft - CD_MANUAL_MEASURES.leftMargin;
-                        const spacerCell = addressTable.getCell(0, 0);
-                        spacerCell.width = spacerWidth;
-                        
-                        // Zweite Spalte für Adresse
-                        const addressCell = addressTable.getCell(0, 1);
-                        addressCell.body.clear();
-                        const addressPara = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
-                        addressPara.font.name = 'Dreyfus Sans';
-                        addressPara.font.size = 11;
-                        
-                        // Spacer nach Adresse
-                        const afterAddressPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                        afterAddressPara.spaceAfter = 40;
+                        try {
+                            // Tabelle mit 1 Zeile, 2 Spalten
+                            const addressTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
+                            
+                            // Rahmen entfernen nach Microsoft-Dokumentation
+                            addressTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
+                            addressTable.getBorder(Word.BorderLocation.bottom).type = Word.BorderType.none;
+                            addressTable.getBorder(Word.BorderLocation.left).type = Word.BorderType.none;
+                            addressTable.getBorder(Word.BorderLocation.right).type = Word.BorderType.none;
+                            addressTable.getBorder(Word.BorderLocation.insideHorizontal).type = Word.BorderType.none;
+                            addressTable.getBorder(Word.BorderLocation.insideVertical).type = Word.BorderType.none;
+                            
+                            await context.sync();
+                            
+                            // Erste Spalte als Spacer
+                            // 122mm von links minus 25mm Seitenrand = 97mm
+                            const spacerWidth = CD_MANUAL_MEASURES.addressLeft - CD_MANUAL_MEASURES.leftMargin;
+                            const spacerCell = addressTable.getCell(0, 0);
+                            spacerCell.width = spacerWidth;
+                            
+                            // Clear und füge non-breaking space ein
+                            context.load(spacerCell, 'body');
+                            await context.sync();
+                            
+                            spacerCell.body.clear();
+                            const spacerPara = spacerCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
+                            spacerPara.font.size = 1;
+                            
+                            // Zweite Spalte für Adresse
+                            const addressCell = addressTable.getCell(0, 1);
+                            addressCell.body.clear();
+                            const addressPara = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
+                            addressPara.font.name = 'Dreyfus Sans';
+                            addressPara.font.size = 11;
+                            
+                            await context.sync();
+                            
+                            // Spacer nach Adresse
+                            const afterAddressPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
+                            afterAddressPara.spaceAfter = 40;
+                            afterAddressPara.font.size = 1;
+                            
+                        } catch (addressError) {
+                            console.error('Fehler bei der Adresstabelle:', addressError);
+                            // Fallback: Normale Adresse ohne Tabelle
+                            const addressPara = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
+                            addressPara.font.name = 'Dreyfus Sans';
+                            addressPara.font.size = 11;
+                            addressPara.spaceAfter = 40;
+                        }
                     }
 
                     // Ort, Datum und Absenderkürzel
@@ -1531,15 +1565,12 @@
 
                     // Betreff
                     if (formData.betreff) {
-                        const betreffPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                        const betreffPara = context.document.body.insertParagraph(formData.betreff, Word.InsertLocation.end);
                         betreffPara.alignment = Word.Alignment.left;
                         betreffPara.spaceAfter = 12;
-                        
-                        // Nur den Betreff-Text fett machen
-                        const betreffRange = betreffPara.insertText(formData.betreff, Word.InsertLocation.start);
-                        betreffRange.font.bold = true;
-                        betreffRange.font.name = 'Dreyfus Sans';
-                        betreffRange.font.size = 11;
+                        betreffPara.font.name = 'Dreyfus Sans';
+                        betreffPara.font.size = 11;
+                        betreffPara.font.bold = true;
                     }
 
                     // Anrede
@@ -1553,7 +1584,7 @@
                     }
 
                     // Leerer Absatz für Brieftext
-                    const textPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const textPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                     textPara.alignment = Word.Alignment.left;
                     textPara.spaceAfter = 40;
                     textPara.font.name = 'Dreyfus Sans';
@@ -1587,81 +1618,106 @@
 
                     // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle
                     if (formData.unterschrift1 || formData.unterschrift2) {
-                        // Sammle alle Daten für die Tabelle
-                        const tableData = [];
-                        
-                        // ZEILE 1: Unterschriften
-                        const unterschriftRow = [
-                            formData.unterschrift1 || '',
-                            (formData.unterschrift2 && !formData.anonym) ? formData.unterschrift2 : ''
-                        ];
-                        tableData.push(unterschriftRow);
-                        
-                        // ZEILE 2: Funktionen (falls vorhanden)
-                        const hasFunktionen = formData.funktion1 || formData.funktion2;
-                        if (hasFunktionen) {
-                            const funktionRow = [
-                                formData.funktion1 || '',
-                                (formData.funktion2 && !formData.anonym) ? formData.funktion2 : ''
+                        try {
+                            // Sammle alle Daten für die Tabelle
+                            const tableData = [];
+                            
+                            // ZEILE 1: Unterschriften
+                            const unterschriftRow = [
+                                formData.unterschrift1 || '',
+                                (formData.unterschrift2 && !formData.anonym) ? formData.unterschrift2 : ''
                             ];
-                            tableData.push(funktionRow);
-                        }
-                        
-                        // ZEILE 3: Abteilungen (falls vorhanden)
-                        const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
-                            (formData.abteilung2 && formData.abteilung2 !== '1');
-                        
-                        if (hasAbteilungen) {
-                            let abt1Text = '';
-                            let abt2Text = '';
+                            tableData.push(unterschriftRow);
                             
-                            if (formData.abteilung1 && formData.abteilung1 !== '1') {
-                                const abt1Selected = document.getElementById('abteilung1').selectedOptions[0].text;
-                                if (abt1Selected !== getText('form.none')) {
-                                    abt1Text = abt1Selected;
-                                }
+                            // ZEILE 2: Funktionen (falls vorhanden)
+                            const hasFunktionen = formData.funktion1 || formData.funktion2;
+                            if (hasFunktionen) {
+                                const funktionRow = [
+                                    formData.funktion1 || '',
+                                    (formData.funktion2 && !formData.anonym) ? formData.funktion2 : ''
+                                ];
+                                tableData.push(funktionRow);
                             }
                             
-                            if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
-                                const abt2Selected = document.getElementById('abteilung2').selectedOptions[0].text;
-                                if (abt2Selected !== getText('form.none')) {
-                                    abt2Text = abt2Selected;
+                            // ZEILE 3: Abteilungen (falls vorhanden)
+                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
+                                (formData.abteilung2 && formData.abteilung2 !== '1');
+                            
+                            if (hasAbteilungen) {
+                                let abt1Text = '';
+                                let abt2Text = '';
+                                
+                                if (formData.abteilung1 && formData.abteilung1 !== '1') {
+                                    const abt1Selected = document.getElementById('abteilung1').selectedOptions[0].text;
+                                    if (abt1Selected !== getText('form.none')) {
+                                        abt1Text = abt1Selected;
+                                    }
                                 }
+                                
+                                if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
+                                    const abt2Selected = document.getElementById('abteilung2').selectedOptions[0].text;
+                                    if (abt2Selected !== getText('form.none')) {
+                                        abt2Text = abt2Selected;
+                                    }
+                                }
+                                
+                                const abteilungRow = [abt1Text, abt2Text];
+                                tableData.push(abteilungRow);
                             }
                             
-                            const abteilungRow = [abt1Text, abt2Text];
-                            tableData.push(abteilungRow);
+                            // Tabelle mit Daten erstellen
+                            const signatureTable = context.document.body.insertTable(
+                                tableData.length,  // Anzahl Zeilen
+                                2,                 // Anzahl Spalten
+                                Word.InsertLocation.end,
+                                tableData         // Daten direkt mitgeben
+                            );
+                            
+                            // Tabelle konfigurieren nach Microsoft-Dokumentation
+                            signatureTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
+                            signatureTable.horizontalAlignment = Word.Alignment.left;
+                            
+                            // Font für gesamte Tabelle
+                            signatureTable.font.name = 'Dreyfus Sans';
+                            signatureTable.font.size = 11;
+                            
+                            // Rahmen entfernen nach Microsoft-Dokumentation
+                            // getBorder ist korrekt für einzelne Locations
+                            signatureTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
+                            signatureTable.getBorder(Word.BorderLocation.bottom).type = Word.BorderType.none;
+                            signatureTable.getBorder(Word.BorderLocation.left).type = Word.BorderType.none;
+                            signatureTable.getBorder(Word.BorderLocation.right).type = Word.BorderType.none;
+                            signatureTable.getBorder(Word.BorderLocation.insideHorizontal).type = Word.BorderType.none;
+                            signatureTable.getBorder(Word.BorderLocation.insideVertical).type = Word.BorderType.none;
+                            
+                            // Spaltenbreiten über Zellen setzen (da columns Collection nicht direkt zugänglich)
+                            const columnWidth = CD_MANUAL_MEASURES.signatureSpacing;
+                            
+                            for (let i = 0; i < tableData.length; i++) {
+                                const cell1 = signatureTable.getCell(i, 0);
+                                const cell2 = signatureTable.getCell(i, 1);
+                                cell1.width = columnWidth;
+                                cell2.width = columnWidth;
+                            }
+                            
+                            // Synchronisation nach Formatierung
+                            await context.sync();
+                            
+                            // Abstand nach der kombinierten Tabelle
+                            const spacingPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
+                            spacingPara.spaceAfter = 30;
+                            spacingPara.font.size = 1;
+                            
+                        } catch (tableError) {
+                            console.error('Fehler bei der Unterschriften-Tabelle:', tableError);
+                            // Fallback: Einfache Textausgabe
+                            if (formData.unterschrift1) {
+                                const sig1Para = context.document.body.insertParagraph(formData.unterschrift1, Word.InsertLocation.end);
+                                sig1Para.font.name = 'Dreyfus Sans';
+                                sig1Para.font.size = 11;
+                                sig1Para.spaceAfter = 20;
+                            }
                         }
-                        
-                        // Tabelle mit Daten erstellen
-                        const signatureTable = context.document.body.insertTable(
-                            tableData.length,  // Anzahl Zeilen
-                            2,                 // Anzahl Spalten
-                            Word.InsertLocation.end,
-                            tableData         // Daten direkt mitgeben
-                        );
-                        
-                        // Tabelle konfigurieren
-                        signatureTable.horizontalAlignment = Word.Alignment.left;
-                        signatureTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
-                        signatureTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
-                        
-                        // Spaltenbreiten setzen (85mm = 241pt)
-                        const columnWidth = CD_MANUAL_MEASURES.signatureSpacing;
-                        signatureTable.columns.getFirst().width = columnWidth;
-                        signatureTable.columns.getLast().width = columnWidth;
-                        
-                        // Tabelle mit Standardformatierung setzen
-                        signatureTable.font.name = 'Dreyfus Sans';
-                        signatureTable.font.size = 11;
-                        signatureTable.horizontalAlignment = Word.Alignment.left;
-                        
-                        // Synchronisation nach Formatierung
-                        await context.sync();
-                        
-                        // Abstand nach der kombinierten Tabelle
-                        const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                        spacingPara.spaceAfter = 30;
                     }
 
                     // Beilagen
@@ -1686,8 +1742,9 @@
                         }
 
                         if (beilagenText) {
-                            const spacerPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                            const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacerPara.spaceAfter = 15;
+                            spacerPara.font.size = 1;
 
                             const beilagenPara = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
                             beilagenPara.font.size = 10;
@@ -1701,8 +1758,13 @@
 
                     // Cursor im Textbereich positionieren
                     if (textPara) {
-                        textPara.getRange().select();
-                        await context.sync();
+                        try {
+                            const range = textPara.getRange();
+                            range.select();
+                            await context.sync();
+                        } catch (e) {
+                            console.log('Cursor konnte nicht positioniert werden:', e);
+                        }
                     }
                 });
 
