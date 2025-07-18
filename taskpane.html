@@ -21,25 +21,6 @@
             font-style: normal;
         }
 
-        // === AUTOMATISCHE UI-ÜBERSETZUNG IN WORD-SPRACHE ===
-        function autoTranslateToWordLanguage() {
-            // Einfache Logik: Versuche Word-Sprache, sonst Deutsch
-            const wordLang = wordLanguageInfo.displayLanguage;
-            
-            // Word-Sprachcode auf UI-Sprache mappen
-            const languageMapping = {
-                'de': 'de', 'de-DE': 'de', 'de-CH': 'de', 'de-AT': 'de',
-                'en': 'en', 'en-US': 'en', 'en-GB': 'en',
-                'fr': 'fr', 'fr-FR': 'fr', 'fr-CH': 'fr', 'fr-CA': 'fr',
-                'it': 'it', 'it-IT': 'it', 'it-CH': 'it'
-            };
-
-            const uiLanguage = languageMapping[wordLang] || 'de'; // Einfach: Deutsch als Fallback
-            
-            translateUI(uiLanguage);
-            console.log(`UI-Sprache: ${wordLang ? `Word "${wordLang}"` : 'Standard'} → "${uiLanguage}"`);
-        }
-
         @font-face {
             font-family: 'Dreyfus Sans';
             src: url('https://keshbe.github.io/brief-generator-addin/fonts/DreyfusSans-Bold.ttf') format('truetype');
@@ -260,11 +241,6 @@
     </div>
 
     <div class="container content hidden" id="mainContent">
-        <!-- Word Language Indicator -->
-        <div class="data-source-indicator" id="wordLanguageIndicator">
-            Word Sprache: Wird ermittelt...
-        </div>
-
         <!-- Data Source Indicator -->
         <div class="data-source-indicator" id="dataSourceIndicator">
             Datenquelle: Wird ermittelt...
@@ -466,7 +442,6 @@
         const DATA_CONFIG = {
             // Primäre Datenquelle (GitHub Pages - automatisches CORS)
             PRIMARY_URL: 'https://keshbe.github.io/brief-generator-addin/data.json',
-            TRANSLATIONS_URL: 'https://keshbe.github.io/brief-generator-addin/translations.json',
             
             // Fallback URLs (optional)
             FALLBACK_URLS: [
@@ -496,51 +471,262 @@
         let footerInfo = {};
         let logoVarianten = [];
         let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
-        let wordLanguageInfo = { displayLanguage: 'unknown', contentLanguage: 'unknown', timestamp: null };
 
-        // === EXTERNE ÜBERSETZUNGEN ===
-        let translations = {}; // Wird von translations.json geladen
-        let translationsLoaded = false;
+        // === ÜBERSETZUNGEN ===
+        const translations = {
+            de: {
+                subHeaderText: 'Dreyfus Brief',
+                label_sprache: 'Sprache',
+                option_pleaseSelect: '-- Bitte wählen --',
+                option_pleaseSelectSender: '-- Bitte wählen --',
+                label_absender: 'Absender',
+                option_officeBasel: 'Büro Basel',
+                option_officeZurich: 'Büro Zürich',
+                option_officeLugano: 'Büro Lugano',
+                option_neutral: 'Neutral',
+                label_anonymous: 'Anonym (nur Adresse, ohne Dreyfus)',
+                anonymWarning: 'NICHT für Briefe mit vorgedruckten Dreyfus-Papier!',
+                section_logoOptions: 'Logo-Optionen',
+                label_logoVariant: 'Logo-Variante',
+                option_standardColor: 'Standard (42pt, Farbe)',
+                option_standardGray: 'Standard (42pt, Grau)',
+                option_smallColor: 'Klein (30pt, Farbe)',
+                option_smallGray: 'Klein (30pt, Grau)',
+                logoNote: 'Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern',
+                section_address: 'Adresse',
+                label_address: 'Adresse',
+                btn_paste: 'Aus Zwischenablage einfügen',
+                label_place: 'Ort',
+                label_date: 'Datum',
+                label_senderInitials: 'Absenderkürzel',
+                section_letter: 'Brief',
+                label_subject: 'Betreff',
+                label_salutation: 'Anrede',
+                section_complimentaryClose: 'Gruss',
+                label_complimentaryClose: 'Gruss',
+                section_signatures: 'Unterschriften',
+                label_signature1: 'Unterschrift 1',
+                label_signature2: 'Unterschrift 2',
+                label_function1: 'Funktion 1',
+                label_function2: 'Funktion 2',
+                section_departments: 'Abteilungen',
+                label_department1: 'Abteilung 1',
+                label_department2: 'Abteilung 2',
+                section_enclosures: 'Beilagen',
+                label_enclosure: 'Beilagen',
+                label_attachments: 'Anlagen',
+                none: '-- Keine --',
+                btn_ok: 'OK',
+                btn_close: 'Schließen',
+                statusCreating: 'Brief wird erstellt...',
+                statusSuccess: 'Brief wurde erfolgreich erstellt!',
+                statusCancelled: 'Aktion abgebrochen. Ihre Eingaben bleiben erhalten.',
+                statusClipboardInserted: 'Adresse eingefügt',
+                statusClipboardError: 'Bitte fügen Sie die Adresse manuell mit Strg+V ein.',
+                errorSelectLanguage: 'Bitte wählen Sie eine Sprache aus.',
+                errorSelectSender: 'Bitte wählen Sie einen Absender aus.',
+                loadingData: 'Daten werden geladen...',
+                loadingFromGitHub: 'Lade von GitHub...',
+                loadingRetry: 'Wiederhole Versuch...',
+                dataSourceExternal: 'Externe Daten (GitHub) - Aktuell',
+                dataSourceCached: 'Zwischengespeicherte Daten',
+                dataSourceError: 'Fehler beim Laden - Offline-Modus',
+                errorLoadingData: 'Fehler beim Laden der Daten. Verwende Offline-Modus.'
+            },
+            en: {
+                subHeaderText: 'Dreyfus Letter',
+                label_sprache: 'Language',
+                option_pleaseSelect: '-- Please select --',
+                option_pleaseSelectSender: '-- Please select --',
+                label_absender: 'Sender',
+                option_officeBasel: 'Basel Office',
+                option_officeZurich: 'Zurich Office',
+                option_officeLugano: 'Lugano Office',
+                option_neutral: 'Neutral',
+                label_anonymous: 'Anonymous (address only, without Dreyfus)',
+                anonymWarning: 'NOT for letters with pre-printed Dreyfus paper!',
+                section_logoOptions: 'Logo Options',
+                label_logoVariant: 'Logo Variant',
+                option_standardColor: 'Standard (42pt, Color)',
+                option_standardGray: 'Standard (42pt, Gray)',
+                option_smallColor: 'Small (30pt, Color)',
+                option_smallGray: 'Small (30pt, Gray)',
+                logoNote: 'Logo is only displayed when not anonymous and with Dreyfus senders',
+                section_address: 'Address',
+                label_address: 'Address',
+                btn_paste: 'Paste from clipboard',
+                label_place: 'Place',
+                label_date: 'Date',
+                label_senderInitials: 'Sender initials',
+                section_letter: 'Letter',
+                label_subject: 'Subject',
+                label_salutation: 'Salutation',
+                section_complimentaryClose: 'Complimentary close',
+                label_complimentaryClose: 'Complimentary close',
+                section_signatures: 'Signatures',
+                label_signature1: 'Signature 1',
+                label_signature2: 'Signature 2',
+                label_function1: 'Function 1',
+                label_function2: 'Function 2',
+                section_departments: 'Departments',
+                label_department1: 'Department 1',
+                label_department2: 'Department 2',
+                section_enclosures: 'Enclosures',
+                label_enclosure: 'Enclosures',
+                label_attachments: 'Attachments',
+                none: '-- None --',
+                btn_ok: 'OK',
+                btn_close: 'Close',
+                statusCreating: 'Creating letter...',
+                statusSuccess: 'Letter created successfully!',
+                statusCancelled: 'Action cancelled. Your entries remain saved.',
+                statusClipboardInserted: 'Address inserted',
+                statusClipboardError: 'Please paste the address manually with Ctrl+V.',
+                errorSelectLanguage: 'Please select a language.',
+                errorSelectSender: 'Please select a sender.',
+                loadingData: 'Loading data...',
+                loadingFromGitHub: 'Loading from GitHub...',
+                loadingRetry: 'Retrying...',
+                dataSourceExternal: 'External data (GitHub) - Current',
+                dataSourceCached: 'Cached data',
+                dataSourceError: 'Loading error - Offline mode',
+                errorLoadingData: 'Error loading data. Using offline mode.'
+            },
+            fr: {
+                subHeaderText: 'Lettre Dreyfus',
+                label_sprache: 'Langue',
+                option_pleaseSelect: '-- Veuillez sélectionner --',
+                option_pleaseSelectSender: '-- Veuillez sélectionner --',
+                label_absender: 'Expéditeur',
+                option_officeBasel: 'Bureau de Bâle',
+                option_officeZurich: 'Bureau de Zurich',
+                option_officeLugano: 'Bureau de Lugano',
+                option_neutral: 'Neutre',
+                label_anonymous: 'Anonyme (adresse uniquement, sans Dreyfus)',
+                anonymWarning: 'PAS pour les lettres avec papier Dreyfus pré-imprimé!',
+                section_logoOptions: 'Options du logo',
+                label_logoVariant: 'Variante du logo',
+                option_standardColor: 'Standard (42pt, Couleur)',
+                option_standardGray: 'Standard (42pt, Gris)',
+                option_smallColor: 'Petit (30pt, Couleur)',
+                option_smallGray: 'Petit (30pt, Gris)',
+                logoNote: 'Le logo n\'est affiché que si non anonyme et avec expéditeurs Dreyfus',
+                section_address: 'Adresse',
+                label_address: 'Adresse',
+                btn_paste: 'Coller depuis le presse-papiers',
+                label_place: 'Lieu',
+                label_date: 'Date',
+                label_senderInitials: 'Initiales de l\'expéditeur',
+                section_letter: 'Lettre',
+                label_subject: 'Objet',
+                label_salutation: 'Formule d\'appel',
+                section_complimentaryClose: 'Formule de politesse',
+                label_complimentaryClose: 'Formule de politesse',
+                section_signatures: 'Signatures',
+                label_signature1: 'Signature 1',
+                label_signature2: 'Signature 2',
+                label_function1: 'Fonction 1',
+                label_function2: 'Fonction 2',
+                section_departments: 'Départements',
+                label_department1: 'Département 1',
+                label_department2: 'Département 2',
+                section_enclosures: 'Pièces jointes',
+                label_enclosure: 'Pièces jointes',
+                label_attachments: 'Annexes',
+                none: '-- Aucune --',
+                btn_ok: 'OK',
+                btn_close: 'Fermer',
+                statusCreating: 'Création de la lettre en cours...',
+                statusSuccess: 'Lettre créée avec succès!',
+                statusCancelled: 'Action annulée. Vos entrées sont conservées.',
+                statusClipboardInserted: 'Adresse insérée',
+                statusClipboardError: 'Veuillez coller l\'adresse manuellement avec Ctrl+V.',
+                errorSelectLanguage: 'Veuillez sélectionner une langue.',
+                errorSelectSender: 'Veuillez sélectionner un expéditeur.',
+                loadingData: 'Chargement des données...',
+                loadingFromGitHub: 'Chargement depuis GitHub...',
+                loadingRetry: 'Nouvelle tentative...',
+                dataSourceExternal: 'Données externes (GitHub) - Actuelles',
+                dataSourceCached: 'Données en cache',
+                dataSourceError: 'Erreur de chargement - Mode hors ligne',
+                errorLoadingData: 'Erreur lors du chargement des données. Utilisation du mode hors ligne.'
+            },
+            it: {
+                subHeaderText: 'Lettera Dreyfus',
+                label_sprache: 'Lingua',
+                option_pleaseSelect: '-- Si prega di selezionare --',
+                option_pleaseSelectSender: '-- Si prega di selezionare --',
+                label_absender: 'Mittente',
+                option_officeBasel: 'Ufficio Basilea',
+                option_officeZurich: 'Ufficio Zurigo',
+                option_officeLugano: 'Ufficio Lugano',
+                option_neutral: 'Neutrale',
+                label_anonymous: 'Anonimo (solo indirizzo, senza Dreyfus)',
+                anonymWarning: 'NON per lettere con carta Dreyfus prestampata!',
+                section_logoOptions: 'Opzioni logo',
+                label_logoVariant: 'Variante logo',
+                option_standardColor: 'Standard (42pt, Colore)',
+                option_standardGray: 'Standard (42pt, Grigio)',
+                option_smallColor: 'Piccolo (30pt, Colore)',
+                option_smallGray: 'Piccolo (30pt, Grigio)',
+                logoNote: 'Il logo viene visualizzato solo se non anonimo e con mittenti Dreyfus',
+                section_address: 'Indirizzo',
+                label_address: 'Indirizzo',
+                btn_paste: 'Incolla dagli appunti',
+                label_place: 'Luogo',
+                label_date: 'Data',
+                label_senderInitials: 'Iniziali del mittente',
+                section_letter: 'Lettera',
+                label_subject: 'Oggetto',
+                label_salutation: 'Formula di apertura',
+                section_complimentaryClose: 'Formula di chiusura',
+                label_complimentaryClose: 'Formula di chiusura',
+                section_signatures: 'Firme',
+                label_signature1: 'Firma 1',
+                label_signature2: 'Firma 2',
+                label_function1: 'Funzione 1',
+                label_function2: 'Funzione 2',
+                section_departments: 'Dipartimenti',
+                label_department1: 'Dipartimento 1',
+                label_department2: 'Dipartimento 2',
+                section_enclosures: 'Allegati',
+                label_enclosure: 'Allegati',
+                label_attachments: 'Documenti',
+                none: '-- Nessuno --',
+                btn_ok: 'OK',
+                btn_close: 'Chiudi',
+                statusCreating: 'Creazione lettera in corso...',
+                statusSuccess: 'Lettera creata con successo!',
+                statusCancelled: 'Azione annullata. Le tue voci rimangono salvate.',
+                statusClipboardInserted: 'Indirizzo inserito',
+                statusClipboardError: 'Si prega di incollare l\'indirizzo manualmente con Ctrl+V.',
+                errorSelectLanguage: 'Si prega di selezionare una lingua.',
+                errorSelectSender: 'Si prega di selezionare un mittente.',
+                loadingData: 'Caricamento dati...',
+                loadingFromGitHub: 'Caricamento da GitHub...',
+                loadingRetry: 'Tentativo di ripetizione...',
+                dataSourceExternal: 'Dati esterni (GitHub) - Attuali',
+                dataSourceCached: 'Dati memorizzati nella cache',
+                dataSourceError: 'Errore di caricamento - Modalità offline',
+                errorLoadingData: 'Errore nel caricamento dei dati. Utilizzo della modalità offline.'
+            }
+        };
 
         // Aktuelle Sprache
         let currentLanguage = 'de';
 
-        // === FALLBACK ÜBERSETZUNGEN (nur für Notfälle) ===
-        const fallbackTranslations = {
-            de: {
-                subHeaderText: 'Dreyfus Brief',
-                label_sprache: 'Sprache',
-                label_absender: 'Absender',
-                label_address: 'Adresse',
-                btn_paste: 'Aus Zwischenablage einfügen',
-                btn_ok: 'OK',
-                btn_close: 'Schließen',
-                errorLoadingData: 'Fehler beim Laden der Daten.'
-            },
-            en: {
-                subHeaderText: 'Dreyfus Letter',
-                label_sprache: 'Language', 
-                label_absender: 'Sender',
-                label_address: 'Address',
-                btn_paste: 'Paste from clipboard',
-                btn_ok: 'OK',
-                btn_close: 'Close',
-                errorLoadingData: 'Error loading data.'
-            }
-        };
-
         // === CACHE-SYSTEM ===
         class DataCache {
-            constructor(prefix = 'dreyfus_data') {
-                this.cacheKey = `${prefix}_cache`;
-                this.timestampKey = `${prefix}_timestamp`;
+            constructor() {
+                this.cacheKey = 'dreyfus_data_cache';
+                this.timestampKey = 'dreyfus_data_timestamp';
             }
 
             set(data) {
                 try {
                     sessionStorage.setItem(this.cacheKey, JSON.stringify(data));
                     sessionStorage.setItem(this.timestampKey, Date.now().toString());
-                    console.log(`Cache gespeichert: ${this.cacheKey}`);
+                    console.log('Daten im Cache gespeichert');
                 } catch (error) {
                     console.warn('Cache-Speicherung fehlgeschlagen:', error);
                 }
@@ -553,14 +739,14 @@
 
                     const age = Date.now() - parseInt(timestamp);
                     if (age > DATA_CONFIG.CACHE_DURATION) {
-                        console.log(`Cache-Daten sind veraltet: ${this.cacheKey}`);
+                        console.log('Cache-Daten sind veraltet');
                         this.clear();
                         return null;
                     }
 
                     const data = sessionStorage.getItem(this.cacheKey);
                     if (data) {
-                        console.log(`Daten aus Cache geladen: ${this.cacheKey}`);
+                        console.log('Daten aus Cache geladen');
                         return JSON.parse(data);
                     }
                 } catch (error) {
@@ -581,7 +767,6 @@
         }
 
         const dataCache = new DataCache();
-        const translationsCache = new DataCache('translations'); // Separater Cache für Übersetzungen
 
         // === EXTERNE DATENLADUNG MIT RETRY-LOGIC ===
         async function fetchWithTimeout(url, options = {}) {
@@ -626,7 +811,7 @@
                     throw new Error('Unvollständige Datenstruktur');
                 }
                 
-                console.log('✅ Externe Daten erfolgreich geladen und validiert');
+                console.log('Externe Daten erfolgreich geladen');
                 dataCache.set(data);
                 dataSourceInfo = { 
                     source: 'external', 
@@ -638,7 +823,7 @@
                 return data;
                 
             } catch (error) {
-                console.warn(`❌ Versuch ${attempt} fehlgeschlagen:`, error.message);
+                console.warn(`Versuch ${attempt} fehlgeschlagen:`, error.message);
                 
                 if (attempt < DATA_CONFIG.MAX_RETRIES) {
                     updateLoadingStatus(`loadingRetry`);
@@ -650,89 +835,7 @@
             }
         }
 
-        // === ÜBERSETZUNGEN LADEN ===
-        async function loadTranslations() {
-            try {
-                console.log('🌐 Lade Übersetzungen...');
-                
-                // 1. Versuche externe Übersetzungen zu laden
-                try {
-                    const response = await fetchWithTimeout(DATA_CONFIG.TRANSLATIONS_URL);
-                    const translationData = await response.json();
-                    
-                    if (translationData && typeof translationData === 'object') {
-                        translations = translationData;
-                        translationsCache.set(translationData);
-                        translationsLoaded = true;
-                        console.log('✅ Übersetzungen erfolgreich geladen');
-                        return true;
-                    }
-                } catch (error) {
-                    console.log('Externe Übersetzungen fehlgeschlagen:', error.message);
-                }
-                
-                // 2. Versuche Cache
-                const cachedTranslations = translationsCache.get();
-                if (cachedTranslations) {
-                    translations = cachedTranslations;
-                    translationsLoaded = true;
-                    console.log('✅ Übersetzungen aus Cache geladen');
-                    return true;
-                }
-                
-                // 3. Fallback auf eingebettete Übersetzungen
-                translations = fallbackTranslations;
-                translationsLoaded = true;
-                console.log('⚠️ Verwende Fallback-Übersetzungen');
-                return true;
-                
-            } catch (error) {
-                console.error('Übersetzungen laden fehlgeschlagen:', error);
-                translations = fallbackTranslations;
-                translationsLoaded = true;
-                return false;
-            }
-        }
-
         async function loadData() {
-            try {
-                showLoading(true);
-                updateLoadingStatus('loadingFromGitHub');
-                
-                // Parallel laden: Daten und Übersetzungen
-                const [dataResult, translationsResult] = await Promise.allSettled([
-                    loadMainData(),
-                    loadTranslations()
-                ]);
-                
-                console.log('📊 Laden abgeschlossen:', {
-                    data: dataResult.status,
-                    translations: translationsResult.status
-                });
-                
-                // UI initialisieren wenn mindestens die Basisdaten da sind
-                if (dataResult.status === 'fulfilled' || Object.keys(sprachen).length > 0) {
-                    initializeUI();
-                    showLoading(false);
-                    updateDataSourceIndicator();
-                    updateWordLanguageIndicator();
-                } else {
-                    throw new Error('Keine Basisdaten verfügbar');
-                }
-                
-            } catch (error) {
-                console.error('❌ Laden fehlgeschlagen:', error);
-                showLoading(false);
-                
-                // Fallback auf minimale UI
-                const trans = translations[currentLanguage] || fallbackTranslations.de;
-                showStatus(trans.errorLoadingData || 'Fehler beim Laden der Daten', 'error');
-                updateDataSourceIndicator();
-                updateWordLanguageIndicator();
-            }
-        }
-
-        async function loadMainData() {
             try {
                 showLoading(true);
                 updateLoadingStatus('loadingFromGitHub');
@@ -744,8 +847,6 @@
                     initializeUI();
                     showLoading(false);
                     updateDataSourceIndicator();
-                    updateWordLanguageIndicator();
-                    console.log('✅ Daten erfolgreich geladen und UI initialisiert');
                     return;
                 } catch (error) {
                     console.log('Primäre URL fehlgeschlagen, versuche Fallbacks...');
@@ -758,8 +859,6 @@
                             initializeUI();
                             showLoading(false);
                             updateDataSourceIndicator();
-                            updateWordLanguageIndicator();
-                            console.log('✅ Daten erfolgreich von Fallback geladen');
                             return;
                         } catch (fallbackError) {
                             console.log(`Fallback ${fallbackUrl} fehlgeschlagen:`, fallbackError.message);
@@ -780,47 +879,20 @@
                     initializeUI();
                     showLoading(false);
                     updateDataSourceIndicator();
-                    updateWordLanguageIndicator();
-                    console.log('✅ Daten aus Cache geladen');
                     return;
                 }
                 
-                // 4. Nur HIER ist es wirklich ein Fehler
+                // 4. Letzter Ausweg: Verwende eingebettete Fallback-Daten
                 throw new Error('Keine Datenquelle verfügbar');
                 
             } catch (error) {
-                console.error('❌ Datenladen fehlgeschlagen:', error);
+                console.error('Datenladen fehlgeschlagen:', error);
                 showLoading(false);
-                
-                // DEBUG: Prüfen ob Daten trotzdem da sind
-                console.log('🔍 DEBUG - Prüfe ob Daten trotzdem geladen wurden:');
-                console.log('- sprachen:', Object.keys(sprachen).length, 'Einträge');
-                console.log('- absenderData:', Object.keys(absenderData).length, 'Einträge'); 
-                console.log('- logoVarianten:', logoVarianten.length, 'Einträge');
-                
-                // Wenn Daten da sind, trotzdem UI initialisieren
-                if (Object.keys(sprachen).length > 0 && Object.keys(absenderData).length > 0) {
-                    console.log('🎯 Daten sind verfügbar! Status-Anzeige war falsch - korrigiere...');
-                    
-                    dataSourceInfo = { 
-                        source: 'external', // Korrigiert von 'error' zu 'external'
-                        timestamp: new Date(), 
-                        error: null 
-                    };
-                    
-                    initializeUI();
-                    updateDataSourceIndicator();
-                    updateWordLanguageIndicator();
-                    return;
-                }
-                
-                // Nur HIER ist es wirklich ein Fehler
                 dataSourceInfo = { source: 'error', timestamp: new Date(), error: error.message };
                 
                 const trans = translations[currentLanguage] || translations.de;
                 showStatus(trans.errorLoadingData, 'error');
                 updateDataSourceIndicator();
-                updateWordLanguageIndicator();
                 
                 // Zeige Retry-Button
                 document.getElementById('retryDataLoad').classList.remove('d-none');
@@ -888,111 +960,6 @@
             }
         }
 
-        // === WORD LANGUAGE DETECTION ===
-        function detectWordLanguage() {
-            try {
-                if (typeof Office !== 'undefined' && Office.context) {
-                    // Display Language (UI Sprache von Word)
-                    const displayLanguage = Office.context.displayLanguage || 'unknown';
-                    
-                    // Content Language (falls verfügbar)
-                    const contentLanguage = Office.context.contentLanguage || displayLanguage;
-                    
-                    wordLanguageInfo = {
-                        displayLanguage: displayLanguage,
-                        contentLanguage: contentLanguage,
-                        timestamp: new Date()
-                    };
-                    
-                    console.log('Word Sprachen erkannt:', wordLanguageInfo);
-                    
-                    // UI SOFORT übersetzen, unabhängig vom Datenladen-Status
-                    autoTranslateToWordLanguage();
-                    updateWordLanguageIndicator();
-                } else {
-                    // Fallback für Browser-Test
-                    wordLanguageInfo = {
-                        displayLanguage: 'browser-test',
-                        contentLanguage: 'browser-test',
-                        timestamp: new Date()
-                    };
-                    
-                    // UI auch im Browser-Test übersetzen (auf Deutsch)
-                    autoTranslateToWordLanguage();
-                    updateWordLanguageIndicator();
-                }
-            } catch (error) {
-                console.warn('Fehler beim Ermitteln der Word-Sprache:', error);
-                wordLanguageInfo = {
-                    displayLanguage: 'error',
-                    contentLanguage: 'error',
-                    timestamp: new Date(),
-                    error: error.message
-                };
-                
-                // Auch bei Fehlern: UI auf Deutsch übersetzen
-                autoTranslateToWordLanguage();
-                updateWordLanguageIndicator();
-            }
-        }
-
-        function updateWordLanguageIndicator() {
-            const indicator = document.getElementById('wordLanguageIndicator');
-            
-            let statusText = '';
-            let statusClass = '';
-            let detailText = '';
-            
-            if (wordLanguageInfo.displayLanguage === 'unknown') {
-                statusText = 'Word Sprache: Wird ermittelt...';
-                statusClass = 'text-muted';
-            } else if (wordLanguageInfo.displayLanguage === 'error') {
-                statusText = 'Word Sprache: Fehler beim Ermitteln';
-                statusClass = 'text-danger';
-                detailText = wordLanguageInfo.error ? ` (${wordLanguageInfo.error})` : '';
-            } else if (wordLanguageInfo.displayLanguage === 'browser-test') {
-                statusText = 'Word Sprache: Browser-Test-Modus';
-                statusClass = 'text-warning';
-            } else {
-                // Normale Anzeige
-                const displayLang = wordLanguageInfo.displayLanguage;
-                const contentLang = wordLanguageInfo.contentLanguage;
-                
-                // Sprach-Codes in lesbare Namen umwandeln
-                const languageNames = {
-                    'de-DE': 'Deutsch (Deutschland)',
-                    'de-CH': 'Deutsch (Schweiz)',
-                    'de-AT': 'Deutsch (Österreich)',
-                    'en-US': 'English (United States)',
-                    'en-GB': 'English (United Kingdom)',
-                    'fr-FR': 'Français (France)',
-                    'fr-CH': 'Français (Suisse)',
-                    'it-IT': 'Italiano (Italia)',
-                    'it-CH': 'Italiano (Svizzera)',
-                    'de': 'Deutsch',
-                    'en': 'English',
-                    'fr': 'Français',
-                    'it': 'Italiano'
-                };
-                
-                const displayName = languageNames[displayLang] || displayLang;
-                const contentName = languageNames[contentLang] || contentLang;
-                
-                if (displayLang === contentLang) {
-                    statusText = `Word Sprache: ${displayName}`;
-                } else {
-                    statusText = `Word Sprache: ${displayName} | Inhalt: ${contentName}`;
-                }
-                
-                statusClass = 'text-primary';
-                detailText = ` (${wordLanguageInfo.timestamp.toLocaleTimeString()})`;
-            }
-            
-            indicator.innerHTML = `
-                <span class="${statusClass}">${statusText}</span>${detailText}
-            `;
-        }
-
         function initializeDataFromSource(data) {
             // Globale Variablen aus Datenquelle setzen
             sprachen = data.sprachen || {};
@@ -1036,16 +1003,6 @@
             
             // Standardwerte setzen
             setDefaultValues();
-            
-            // UI-Übersetzung hier NICHT mehr nötig - passiert bereits in detectWordLanguage()
-            // autoTranslateToWordLanguage(); // ENTFERNT
-            
-            // Indikatoren aktualisieren
-            updateWordLanguageIndicator();
-            updateDataSourceIndicator();
-            
-            // Debug-Info anzeigen (erst nach erfolgreichem UI-Setup)
-            logEnvironmentInfo();
             
             console.log('UI erfolgreich initialisiert');
         }
@@ -1101,20 +1058,10 @@
             });
         }
 
-        // Funktion zum Übersetzen der UI - EXTERNE ÜBERSETZUNGEN
+        // Funktion zum Übersetzen der UI - EINFACHER ANSATZ
         function translateUI(languageCode) {
             currentLanguage = languageCode;
-            
-            // Fallback falls Übersetzungen noch nicht geladen sind
-            const trans = (translationsLoaded && translations[languageCode]) 
-                ? translations[languageCode] 
-                : fallbackTranslations[languageCode] || fallbackTranslations.de;
-
-            console.log(`🌐 Übersetze UI zu "${languageCode}"`, {
-                loaded: translationsLoaded,
-                hasTranslation: !!translations[languageCode],
-                usingFallback: !translationsLoaded || !translations[languageCode]
-            });
+            const trans = translations[languageCode] || translations.de;
 
             // Direkt alle Elemente mit IDs übersetzen
             for (const [key, value] of Object.entries(trans)) {
@@ -1124,25 +1071,13 @@
                 }
             }
             
-            // Spezielle Behandlung für Buttons (falls IDs anders sind)
-            const cancelBtn = document.getElementById('cancelBtn');
-            if (cancelBtn && trans.btn_close) {
-                cancelBtn.textContent = trans.btn_close;
-            }
+            // Spezielle Behandlung für Buttons
+            document.getElementById('cancelBtn').textContent = trans.btn_close;
+            document.getElementById('anonymWarning').textContent = trans.anonymWarning;
+            document.getElementById('logoNote').textContent = trans.logoNote;
             
-            const anonymWarning = document.getElementById('anonymWarning');
-            if (anonymWarning && trans.anonymWarning) {
-                anonymWarning.textContent = trans.anonymWarning;
-            }
-            
-            const logoNote = document.getElementById('logoNote');
-            if (logoNote && trans.logoNote) {
-                logoNote.textContent = trans.logoNote;
-            }
-            
-            // Update Indicators
+            // Update Data Source Indicator
             updateDataSourceIndicator();
-            updateWordLanguageIndicator();
         }
 
         // === ADAPTIVE SIZING SYSTEM für identische Druckausgabe ===
@@ -1206,10 +1141,10 @@
                 if (info.host === Office.HostType.Word) {
                     console.log('Dreyfus Brief Add-In ist bereit');
 
-                    // Word-Sprache ermitteln (nach Office.onReady)
-                    detectWordLanguage();
+                    // Debug-Info anzeigen
+                    logEnvironmentInfo();
 
-                    // Daten laden (das startet den Hauptprozess)
+                    // Daten laden
                     loadData();
                 } else {
                     showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
@@ -1219,9 +1154,6 @@
             // Fallback für Browser-Test (ohne Word)
             document.addEventListener('DOMContentLoaded', () => {
                 console.log('Browser-Test-Modus (ohne Word)');
-                
-                // Word-Sprache ermitteln (Browser-Fallback)
-                detectWordLanguage();
                 
                 // Daten laden
                 loadData();
@@ -1239,18 +1171,11 @@
             const logoSize = ADAPTIVE_SIZING.getLogo('42');
             const footerSize = ADAPTIVE_SIZING.getFooter();
 
-            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
-            
-            // Nur setzen wenn Element existiert
-            const debugElement = document.getElementById('debugText');
-            if (debugElement) {
-                debugElement.textContent = debugText;
-            }
+            const debugText = `${isWeb ? 'Web' : 'Desktop'} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
+            document.getElementById('debugText').textContent = debugText;
 
             console.log('=== DREYFUS BRIEF ADD-IN INFO ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
-            console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
-            console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
             console.log('Logo 42pt:', logoSize);
             console.log('Footer:', footerSize);
             console.log('Datenquelle:', dataSourceInfo);
