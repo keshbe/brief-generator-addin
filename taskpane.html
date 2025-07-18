@@ -1532,9 +1532,11 @@
                     // === HAUPTINHALT ===
                     
                     // Vertikaler Abstand bis zur Adresse
-                    // Von oben: 53mm - 12mm (Header) - 30mm (Logo) = ~11mm = 31pt
+                    // Logo endet bei: 12mm (Seitenrand) + 30mm (Logo) = 42mm
+                    // Adresse soll bei 53mm beginnen
+                    // Benötigter Abstand: 53mm - 42mm = 11mm
                     const spacerPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                    spacerPara.spaceBefore = 31;
+                    spacerPara.spaceBefore = CD_MANUAL_MEASURES.mmToPt(11);
                     spacerPara.spaceAfter = 0;
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
@@ -1547,9 +1549,11 @@
                         addressTable.borderInsideVertical.type = Word.BorderType.none;
                         addressTable.borderOutside.type = Word.BorderType.none;
                         
-                        // Erste Spalte als Spacer (122mm von links - 25mm Seitenrand = 97mm = 275pt)
+                        // Erste Spalte als Spacer
+                        // 122mm von links minus 25mm Seitenrand = 97mm
+                        const spacerWidth = CD_MANUAL_MEASURES.addressLeft - CD_MANUAL_MEASURES.leftMargin;
                         const spacerCell = addressTable.getCell(0, 0);
-                        spacerCell.width = 275;
+                        spacerCell.width = spacerWidth;
                         
                         // Zweite Spalte für Adresse
                         const addressCell = addressTable.getCell(0, 1);
@@ -1684,11 +1688,12 @@
                         sigTable.borderOutside.type = Word.BorderType.none;
                         
                         // Spaltenbreiten setzen (85mm = 241pt)
+                        const columnWidth = CD_MANUAL_MEASURES.signatureSpacing;
                         for (let i = 0; i < sigTable.rowCount; i++) {
                             const cell1 = sigTable.getCell(i, 0);
                             const cell2 = sigTable.getCell(i, 1);
-                            cell1.width = 241;
-                            cell2.width = 241;
+                            cell1.width = columnWidth;
+                            cell2.width = columnWidth;
                             
                             // Daten einfügen
                             cell1.body.clear();
