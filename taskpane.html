@@ -221,35 +221,35 @@
 </head>
 <body>
     <div class="header-bar">
-        <h5 class="mb-0">Dreyfus Söhne & Cie AG, Banquiers</h5>
+        <h5 class="mb-0" data-i18n="header.company">...</h5>
     </div>
     <div class="sub-header">
-        <small id="subHeaderText">Dreyfus Brief</small>
+        <small data-i18n="header.subtitle">...</small>
     </div>
 
     <!-- Loading Indicator -->
     <div id="loadingIndicator" class="loading">
-        <div id="loadingText">Daten werden geladen...</div>
+        <div data-i18n="loading.dataLoading">...</div>
         <div class="mt-2">
             <div class="spinner-border spinner-border-sm" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
         </div>
         <div class="mt-2">
-            <small id="loadingDetails">Verbinde zu GitHub...</small>
+            <small id="loadingDetails" data-i18n="loading.connectingGithub">...</small>
         </div>
     </div>
 
     <div class="container content hidden" id="mainContent">
         <!-- Word Language Indicator -->
         <div class="data-source-indicator" id="wordLanguageIndicator">
-            Word Sprache: Wird ermittelt...
+            <span data-i18n="indicators.wordLanguage">...</span>: <span data-i18n="indicators.determining">...</span>
         </div>
 
         <!-- Data Source Indicator -->
         <div class="data-source-indicator" id="dataSourceIndicator">
-            Datenquelle: Wird ermittelt...
-            <button type="button" class="retry-btn d-none" id="retryDataLoad">🔄 Neu laden</button>
+            <span data-i18n="indicators.dataSource">...</span>: <span data-i18n="indicators.determining">...</span>
+            <button type="button" class="retry-btn d-none" id="retryDataLoad">🔄 <span data-i18n="buttons.reload">...</span></button>
         </div>
 
         <form id="briefForm">
@@ -257,17 +257,17 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="sprache" class="form-label" id="label_sprache">Sprache</label>
+                        <label for="sprache" class="form-label" data-i18n="form.language">...</label>
                         <select class="form-select" id="sprache" required>
-                            <option value="" id="option_pleaseSelect">-- Bitte wählen --</option>
+                            <option value="" data-i18n="form.pleaseSelect">...</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="absender" class="form-label" id="label_absender">Absender</label>
+                        <label for="absender" class="form-label" data-i18n="form.sender">...</label>
                         <select class="form-select" id="absender" required>
-                            <option value="" id="option_pleaseSelectSender">-- Bitte wählen --</option>
+                            <option value="" data-i18n="form.pleaseSelectSender">...</option>
                         </select>
                     </div>
                 </div>
@@ -276,35 +276,31 @@
             <!-- Logo-Optionen -->
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="anonym">
-                <label class="form-check-label" for="anonym" id="label_anonymous">
-                    Anonym (nur Adresse, ohne Dreyfus)
-                </label>
-                <div class="anonym-warning" id="anonymWarning">
-                    NICHT für Briefe mit vorgedruckten Dreyfus-Papier!
-                </div>
+                <label class="form-check-label" for="anonym" data-i18n="form.anonymous">...</label>
+                <div class="anonym-warning" id="anonymWarning" data-i18n="form.anonymousWarning">...</div>
             </div>
 
             <!-- Logo-Variante -->
-            <div class="section-title" id="section_logoOptions">Logo-Optionen</div>
+            <div class="section-title" data-i18n="sections.logoOptions">...</div>
             <div class="row mb-3">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="logoVariante" class="form-label" id="label_logoVariant">Logo-Variante</label>
+                        <label for="logoVariante" class="form-label" data-i18n="form.logoVariant">...</label>
                         <select class="form-select" id="logoVariante">
                         </select>
-                        <small class="text-muted" id="logoNote">Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern</small>
+                        <small class="text-muted" data-i18n="form.logoNote">...</small>
                     </div>
                 </div>
             </div>
 
-            <div class="section-title" id="section_address">Adresse</div>
+            <div class="section-title" data-i18n="sections.address">...</div>
 
             <!-- Adresse -->
             <div class="form-group">
                 <label for="adresse" class="form-label">
-                    <span id="label_address">Adresse</span>
+                    <span data-i18n="form.address">...</span>
                     <button type="button" class="copy-btn" id="pasteAddress">
-                        <span id="btn_paste">Aus Zwischenablage einfügen</span>
+                        <span data-i18n="buttons.pasteFromClipboard">...</span>
                     </button>
                 </label>
                 <textarea class="form-control" id="adresse" rows="4"></textarea>
@@ -314,57 +310,57 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="ort" class="form-label" id="label_place">Ort</label>
+                        <label for="ort" class="form-label" data-i18n="form.place">...</label>
                         <input type="text" class="form-control" id="ort">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="datum" class="form-label" id="label_date">Datum</label>
+                        <label for="datum" class="form-label" data-i18n="form.date">...</label>
                         <input type="text" class="form-control" id="datum">
                     </div>
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="absenderKuerzel" class="form-label" id="label_senderInitials">Absenderkürzel</label>
+                <label for="absenderKuerzel" class="form-label" data-i18n="form.senderInitials">...</label>
                 <input type="text" class="form-control" id="absenderKuerzel">
             </div>
 
-            <div class="section-title" id="section_letter">Brief</div>
+            <div class="section-title" data-i18n="sections.letter">...</div>
 
             <!-- Betreff und Anrede -->
             <div class="form-group">
-                <label for="betreff" class="form-label" id="label_subject">Betreff</label>
+                <label for="betreff" class="form-label" data-i18n="form.subject">...</label>
                 <input type="text" class="form-control" id="betreff">
             </div>
 
             <div class="form-group">
-                <label for="anrede" class="form-label" id="label_salutation">Anrede</label>
+                <label for="anrede" class="form-label" data-i18n="form.salutation">...</label>
                 <input type="text" class="form-control" id="anrede">
             </div>
 
-            <div class="section-title" id="section_complimentaryClose">Gruss</div>
+            <div class="section-title" data-i18n="sections.complimentaryClose">...</div>
 
             <!-- Grussformel -->
             <div class="form-group">
-                <label for="gruss" class="form-label" id="label_complimentaryClose">Gruss</label>
+                <label for="gruss" class="form-label" data-i18n="form.complimentaryClose">...</label>
                 <textarea class="form-control" id="gruss" rows="3"></textarea>
             </div>
 
-            <div class="section-title" id="section_signatures">Unterschriften</div>
+            <div class="section-title" data-i18n="sections.signatures">...</div>
 
             <!-- Unterschrift 1 -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="unterschrift1" class="form-label" id="label_signature1">Unterschrift 1</label>
+                        <label for="unterschrift1" class="form-label" data-i18n="form.signature1">...</label>
                         <input type="text" class="form-control" id="unterschrift1">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="funktion1" class="form-label" id="label_function1">Funktion 1</label>
+                        <label for="funktion1" class="form-label" data-i18n="form.function1">...</label>
                         <input type="text" class="form-control" id="funktion1">
                     </div>
                 </div>
@@ -374,63 +370,63 @@
             <div class="row" id="unterschrift2Row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="unterschrift2" class="form-label" id="label_signature2">Unterschrift 2</label>
+                        <label for="unterschrift2" class="form-label" data-i18n="form.signature2">...</label>
                         <input type="text" class="form-control" id="unterschrift2">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="funktion2" class="form-label" id="label_function2">Funktion 2</label>
+                        <label for="funktion2" class="form-label" data-i18n="form.function2">...</label>
                         <input type="text" class="form-control" id="funktion2">
                     </div>
                 </div>
             </div>
 
-            <div class="section-title" id="section_departments">Abteilungen</div>
+            <div class="section-title" data-i18n="sections.departments">...</div>
 
             <!-- Abteilungen -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="abteilung1" class="form-label" id="label_department1">Abteilung 1</label>
+                        <label for="abteilung1" class="form-label" data-i18n="form.department1">...</label>
                         <select class="form-select" id="abteilung1">
-                            <option value="">-- Keine --</option>
+                            <option value="" data-i18n="form.none">...</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6" id="abteilung2Row">
                     <div class="form-group">
-                        <label for="abteilung2" class="form-label" id="label_department2">Abteilung 2</label>
+                        <label for="abteilung2" class="form-label" data-i18n="form.department2">...</label>
                         <select class="form-select" id="abteilung2">
-                            <option value="">-- Keine --</option>
+                            <option value="" data-i18n="form.none">...</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <div class="section-title" id="section_enclosures">Beilagen</div>
+            <div class="section-title" data-i18n="sections.enclosures">...</div>
 
             <!-- Beilagen -->
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="beilage" class="form-label" id="label_enclosure">Beilagen</label>
+                        <label for="beilage" class="form-label" data-i18n="form.enclosure">...</label>
                         <select class="form-select" id="beilage">
-                            <option value="">-- Keine --</option>
+                            <option value="" data-i18n="form.none">...</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="anlagen" class="form-label" id="label_attachments">Anlagen</label>
+                        <label for="anlagen" class="form-label" data-i18n="form.attachments">...</label>
                         <input type="text" class="form-control" id="anlagen">
                     </div>
                 </div>
             </div>
 
             <div class="d-grid gap-2 mt-4">
-                <button type="submit" class="btn btn-primary" id="btn_ok">OK</button>
-                <button type="button" class="btn btn-secondary" id="cancelBtn">Schließen</button>
+                <button type="submit" class="btn btn-primary" data-i18n="buttons.ok">...</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn" data-i18n="buttons.close">...</button>
             </div>
         </form>
 
@@ -447,6 +443,7 @@
         const DATA_CONFIG = {
             // Primäre Datenquelle (GitHub Pages - automatisches CORS)
             PRIMARY_URL: 'https://keshbe.github.io/brief-generator-addin/data.json',
+            LANGUAGE_URL: 'https://keshbe.github.io/brief-generator-addin/language.json',
             
             // Fallback URLs (optional)
             FALLBACK_URLS: [
@@ -466,6 +463,7 @@
 
         // === GLOBALE DATEN-VARIABLEN ===
         let appData = null;
+        let translations = null;
         let sprachen = {};
         let absenderData = {};
         let abteilungen = {};
@@ -478,261 +476,21 @@
         let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
         let wordLanguageInfo = { displayLanguage: 'unknown', contentLanguage: 'unknown', timestamp: null };
 
-        // === ÜBERSETZUNGEN ===
-        const translations = {
-            de: {
-                subHeaderText: 'Dreyfus Brief',
-                label_sprache: 'Sprache',
-                option_pleaseSelect: '-- Bitte wählen --',
-                option_pleaseSelectSender: '-- Bitte wählen --',
-                label_absender: 'Absender',
-                option_officeBasel: 'Büro Basel',
-                option_officeZurich: 'Büro Zürich',
-                option_officeLugano: 'Büro Lugano',
-                option_neutral: 'Neutral',
-                label_anonymous: 'Anonym (nur Adresse, ohne Dreyfus)',
-                anonymWarning: 'NICHT für Briefe mit vorgedruckten Dreyfus-Papier!',
-                section_logoOptions: 'Logo-Optionen',
-                label_logoVariant: 'Logo-Variante',
-                option_standardColor: 'Standard (42pt, Farbe)',
-                option_standardGray: 'Standard (42pt, Grau)',
-                option_smallColor: 'Klein (30pt, Farbe)',
-                option_smallGray: 'Klein (30pt, Grau)',
-                logoNote: 'Logo wird nur angezeigt wenn nicht anonym und bei Dreyfus-Absendern',
-                section_address: 'Adresse',
-                label_address: 'Adresse',
-                btn_paste: 'Aus Zwischenablage einfügen',
-                label_place: 'Ort',
-                label_date: 'Datum',
-                label_senderInitials: 'Absenderkürzel',
-                section_letter: 'Brief',
-                label_subject: 'Betreff',
-                label_salutation: 'Anrede',
-                section_complimentaryClose: 'Gruss',
-                label_complimentaryClose: 'Gruss',
-                section_signatures: 'Unterschriften',
-                label_signature1: 'Unterschrift 1',
-                label_signature2: 'Unterschrift 2',
-                label_function1: 'Funktion 1',
-                label_function2: 'Funktion 2',
-                section_departments: 'Abteilungen',
-                label_department1: 'Abteilung 1',
-                label_department2: 'Abteilung 2',
-                section_enclosures: 'Beilagen',
-                label_enclosure: 'Beilagen',
-                label_attachments: 'Anlagen',
-                none: '-- Keine --',
-                btn_ok: 'OK',
-                btn_close: 'Schließen',
-                statusCreating: 'Brief wird erstellt...',
-                statusSuccess: 'Brief wurde erfolgreich erstellt!',
-                statusCancelled: 'Aktion abgebrochen. Ihre Eingaben bleiben erhalten.',
-                statusClipboardInserted: 'Adresse eingefügt',
-                statusClipboardError: 'Bitte fügen Sie die Adresse manuell mit Strg+V ein.',
-                errorSelectLanguage: 'Bitte wählen Sie eine Sprache aus.',
-                errorSelectSender: 'Bitte wählen Sie einen Absender aus.',
-                loadingData: 'Daten werden geladen...',
-                loadingFromGitHub: 'Lade von GitHub...',
-                loadingRetry: 'Wiederhole Versuch...',
-                dataSourceExternal: 'Externe Daten (GitHub) - Aktuell',
-                dataSourceCached: 'Zwischengespeicherte Daten',
-                dataSourceError: 'Fehler beim Laden - Offline-Modus',
-                errorLoadingData: 'Fehler beim Laden der Daten. Verwende Offline-Modus.'
-            },
-            en: {
-                subHeaderText: 'Dreyfus Letter',
-                label_sprache: 'Language',
-                option_pleaseSelect: '-- Please select --',
-                option_pleaseSelectSender: '-- Please select --',
-                label_absender: 'Sender',
-                option_officeBasel: 'Basel Office',
-                option_officeZurich: 'Zurich Office',
-                option_officeLugano: 'Lugano Office',
-                option_neutral: 'Neutral',
-                label_anonymous: 'Anonymous (address only, without Dreyfus)',
-                anonymWarning: 'NOT for letters with pre-printed Dreyfus paper!',
-                section_logoOptions: 'Logo Options',
-                label_logoVariant: 'Logo Variant',
-                option_standardColor: 'Standard (42pt, Color)',
-                option_standardGray: 'Standard (42pt, Gray)',
-                option_smallColor: 'Small (30pt, Color)',
-                option_smallGray: 'Small (30pt, Gray)',
-                logoNote: 'Logo is only displayed when not anonymous and with Dreyfus senders',
-                section_address: 'Address',
-                label_address: 'Address',
-                btn_paste: 'Paste from clipboard',
-                label_place: 'Place',
-                label_date: 'Date',
-                label_senderInitials: 'Sender initials',
-                section_letter: 'Letter',
-                label_subject: 'Subject',
-                label_salutation: 'Salutation',
-                section_complimentaryClose: 'Complimentary close',
-                label_complimentaryClose: 'Complimentary close',
-                section_signatures: 'Signatures',
-                label_signature1: 'Signature 1',
-                label_signature2: 'Signature 2',
-                label_function1: 'Function 1',
-                label_function2: 'Function 2',
-                section_departments: 'Departments',
-                label_department1: 'Department 1',
-                label_department2: 'Department 2',
-                section_enclosures: 'Enclosures',
-                label_enclosure: 'Enclosures',
-                label_attachments: 'Attachments',
-                none: '-- None --',
-                btn_ok: 'OK',
-                btn_close: 'Close',
-                statusCreating: 'Creating letter...',
-                statusSuccess: 'Letter created successfully!',
-                statusCancelled: 'Action cancelled. Your entries remain saved.',
-                statusClipboardInserted: 'Address inserted',
-                statusClipboardError: 'Please paste the address manually with Ctrl+V.',
-                errorSelectLanguage: 'Please select a language.',
-                errorSelectSender: 'Please select a sender.',
-                loadingData: 'Loading data...',
-                loadingFromGitHub: 'Loading from GitHub...',
-                loadingRetry: 'Retrying...',
-                dataSourceExternal: 'External data (GitHub) - Current',
-                dataSourceCached: 'Cached data',
-                dataSourceError: 'Loading error - Offline mode',
-                errorLoadingData: 'Error loading data. Using offline mode.'
-            },
-            fr: {
-                subHeaderText: 'Lettre Dreyfus',
-                label_sprache: 'Langue',
-                option_pleaseSelect: '-- Veuillez sélectionner --',
-                option_pleaseSelectSender: '-- Veuillez sélectionner --',
-                label_absender: 'Expéditeur',
-                option_officeBasel: 'Bureau de Bâle',
-                option_officeZurich: 'Bureau de Zurich',
-                option_officeLugano: 'Bureau de Lugano',
-                option_neutral: 'Neutre',
-                label_anonymous: 'Anonyme (adresse uniquement, sans Dreyfus)',
-                anonymWarning: 'PAS pour les lettres avec papier Dreyfus pré-imprimé!',
-                section_logoOptions: 'Options du logo',
-                label_logoVariant: 'Variante du logo',
-                option_standardColor: 'Standard (42pt, Couleur)',
-                option_standardGray: 'Standard (42pt, Gris)',
-                option_smallColor: 'Petit (30pt, Couleur)',
-                option_smallGray: 'Petit (30pt, Gris)',
-                logoNote: 'Le logo n\'est affiché que si non anonyme et avec expéditeurs Dreyfus',
-                section_address: 'Adresse',
-                label_address: 'Adresse',
-                btn_paste: 'Coller depuis le presse-papiers',
-                label_place: 'Lieu',
-                label_date: 'Date',
-                label_senderInitials: 'Initiales de l\'expéditeur',
-                section_letter: 'Lettre',
-                label_subject: 'Objet',
-                label_salutation: 'Formule d\'appel',
-                section_complimentaryClose: 'Formule de politesse',
-                label_complimentaryClose: 'Formule de politesse',
-                section_signatures: 'Signatures',
-                label_signature1: 'Signature 1',
-                label_signature2: 'Signature 2',
-                label_function1: 'Fonction 1',
-                label_function2: 'Fonction 2',
-                section_departments: 'Départements',
-                label_department1: 'Département 1',
-                label_department2: 'Département 2',
-                section_enclosures: 'Pièces jointes',
-                label_enclosure: 'Pièces jointes',
-                label_attachments: 'Annexes',
-                none: '-- Aucune --',
-                btn_ok: 'OK',
-                btn_close: 'Fermer',
-                statusCreating: 'Création de la lettre en cours...',
-                statusSuccess: 'Lettre créée avec succès!',
-                statusCancelled: 'Action annulée. Vos entrées sont conservées.',
-                statusClipboardInserted: 'Adresse insérée',
-                statusClipboardError: 'Veuillez coller l\'adresse manuellement avec Ctrl+V.',
-                errorSelectLanguage: 'Veuillez sélectionner une langue.',
-                errorSelectSender: 'Veuillez sélectionner un expéditeur.',
-                loadingData: 'Chargement des données...',
-                loadingFromGitHub: 'Chargement depuis GitHub...',
-                loadingRetry: 'Nouvelle tentative...',
-                dataSourceExternal: 'Données externes (GitHub) - Actuelles',
-                dataSourceCached: 'Données en cache',
-                dataSourceError: 'Erreur de chargement - Mode hors ligne',
-                errorLoadingData: 'Erreur lors du chargement des données. Utilisation du mode hors ligne.'
-            },
-            it: {
-                subHeaderText: 'Lettera Dreyfus',
-                label_sprache: 'Lingua',
-                option_pleaseSelect: '-- Si prega di selezionare --',
-                option_pleaseSelectSender: '-- Si prega di selezionare --',
-                label_absender: 'Mittente',
-                option_officeBasel: 'Ufficio Basilea',
-                option_officeZurich: 'Ufficio Zurigo',
-                option_officeLugano: 'Ufficio Lugano',
-                option_neutral: 'Neutrale',
-                label_anonymous: 'Anonimo (solo indirizzo, senza Dreyfus)',
-                anonymWarning: 'NON per lettere con carta Dreyfus prestampata!',
-                section_logoOptions: 'Opzioni logo',
-                label_logoVariant: 'Variante logo',
-                option_standardColor: 'Standard (42pt, Colore)',
-                option_standardGray: 'Standard (42pt, Grigio)',
-                option_smallColor: 'Piccolo (30pt, Colore)',
-                option_smallGray: 'Piccolo (30pt, Grigio)',
-                logoNote: 'Il logo viene visualizzato solo se non anonimo e con mittenti Dreyfus',
-                section_address: 'Indirizzo',
-                label_address: 'Indirizzo',
-                btn_paste: 'Incolla dagli appunti',
-                label_place: 'Luogo',
-                label_date: 'Data',
-                label_senderInitials: 'Iniziali del mittente',
-                section_letter: 'Lettera',
-                label_subject: 'Oggetto',
-                label_salutation: 'Formula di apertura',
-                section_complimentaryClose: 'Formula di chiusura',
-                label_complimentaryClose: 'Formula di chiusura',
-                section_signatures: 'Firme',
-                label_signature1: 'Firma 1',
-                label_signature2: 'Firma 2',
-                label_function1: 'Funzione 1',
-                label_function2: 'Funzione 2',
-                section_departments: 'Dipartimenti',
-                label_department1: 'Dipartimento 1',
-                label_department2: 'Dipartimento 2',
-                section_enclosures: 'Allegati',
-                label_enclosure: 'Allegati',
-                label_attachments: 'Documenti',
-                none: '-- Nessuno --',
-                btn_ok: 'OK',
-                btn_close: 'Chiudi',
-                statusCreating: 'Creazione lettera in corso...',
-                statusSuccess: 'Lettera creata con successo!',
-                statusCancelled: 'Azione annullata. Le tue voci rimangono salvate.',
-                statusClipboardInserted: 'Indirizzo inserito',
-                statusClipboardError: 'Si prega di incollare l\'indirizzo manualmente con Ctrl+V.',
-                errorSelectLanguage: 'Si prega di selezionare una lingua.',
-                errorSelectSender: 'Si prega di selezionare un mittente.',
-                loadingData: 'Caricamento dati...',
-                loadingFromGitHub: 'Caricamento da GitHub...',
-                loadingRetry: 'Tentativo di ripetizione...',
-                dataSourceExternal: 'Dati esterni (GitHub) - Attuali',
-                dataSourceCached: 'Dati memorizzati nella cache',
-                dataSourceError: 'Errore di caricamento - Modalità offline',
-                errorLoadingData: 'Errore nel caricamento dei dati. Utilizzo della modalità offline.'
-            }
-        };
-
         // Aktuelle Sprache
         let currentLanguage = 'de';
 
         // === CACHE-SYSTEM ===
         class DataCache {
-            constructor() {
-                this.cacheKey = 'dreyfus_data_cache';
-                this.timestampKey = 'dreyfus_data_timestamp';
+            constructor(type) {
+                this.cacheKey = `dreyfus_${type}_cache`;
+                this.timestampKey = `dreyfus_${type}_timestamp`;
             }
 
             set(data) {
                 try {
                     sessionStorage.setItem(this.cacheKey, JSON.stringify(data));
                     sessionStorage.setItem(this.timestampKey, Date.now().toString());
-                    console.log('Daten im Cache gespeichert');
+                    console.log(`${this.cacheKey} im Cache gespeichert`);
                 } catch (error) {
                     console.warn('Cache-Speicherung fehlgeschlagen:', error);
                 }
@@ -745,14 +503,14 @@
 
                     const age = Date.now() - parseInt(timestamp);
                     if (age > DATA_CONFIG.CACHE_DURATION) {
-                        console.log('Cache-Daten sind veraltet');
+                        console.log(`${this.cacheKey} Cache-Daten sind veraltet`);
                         this.clear();
                         return null;
                     }
 
                     const data = sessionStorage.getItem(this.cacheKey);
                     if (data) {
-                        console.log('Daten aus Cache geladen');
+                        console.log(`${this.cacheKey} aus Cache geladen`);
                         return JSON.parse(data);
                     }
                 } catch (error) {
@@ -772,7 +530,8 @@
             }
         }
 
-        const dataCache = new DataCache();
+        const dataCache = new DataCache('data');
+        const languageCache = new DataCache('language');
 
         // === EXTERNE DATENLADUNG MIT RETRY-LOGIC ===
         async function fetchWithTimeout(url, options = {}) {
@@ -812,27 +571,13 @@
                 const response = await fetchWithTimeout(url);
                 const data = await response.json();
                 
-                // Validiere die geladenen Daten
-                if (!data || !data.sprachen || !data.absenderData) {
-                    throw new Error('Unvollständige Datenstruktur');
-                }
-                
                 console.log('Externe Daten erfolgreich geladen');
-                dataCache.set(data);
-                dataSourceInfo = { 
-                    source: 'external', 
-                    timestamp: new Date(), 
-                    error: null,
-                    url: url 
-                };
-                
                 return data;
                 
             } catch (error) {
                 console.warn(`Versuch ${attempt} fehlgeschlagen:`, error.message);
                 
                 if (attempt < DATA_CONFIG.MAX_RETRIES) {
-                    updateLoadingStatus(`loadingRetry`);
                     await new Promise(resolve => setTimeout(resolve, DATA_CONFIG.RETRY_DELAY));
                     return loadExternalData(url, attempt + 1);
                 }
@@ -841,66 +586,59 @@
             }
         }
 
+        async function loadLanguages() {
+            try {
+                // Versuche Sprachen zu laden
+                const languageData = await loadExternalData(DATA_CONFIG.LANGUAGE_URL);
+                languageCache.set(languageData);
+                translations = languageData;
+                console.log('Übersetzungen geladen:', Object.keys(translations));
+                return languageData;
+            } catch (error) {
+                console.error('Sprachen konnten nicht geladen werden:', error);
+                throw new Error('Übersetzungen nicht verfügbar');
+            }
+        }
+
         async function loadData() {
             try {
                 showLoading(true);
-                updateLoadingStatus('loadingFromGitHub');
                 
-                // 1. Versuche externe Daten zu laden
+                // 1. Lade Übersetzungen
+                await loadLanguages();
+                
+                // 2. Lade App-Daten
                 try {
                     const data = await loadExternalData(DATA_CONFIG.PRIMARY_URL);
+                    
+                    // Validiere die geladenen Daten
+                    if (!data || !data.sprachen || !data.absenderData) {
+                        throw new Error('Unvollständige Datenstruktur');
+                    }
+                    
+                    dataCache.set(data);
+                    dataSourceInfo = { 
+                        source: 'external', 
+                        timestamp: new Date(), 
+                        error: null,
+                        url: DATA_CONFIG.PRIMARY_URL 
+                    };
+                    
                     initializeDataFromSource(data);
                     initializeUI();
                     showLoading(false);
-                    updateDataSourceIndicator();
-                    updateWordLanguageIndicator();
                     return;
                 } catch (error) {
-                    console.log('Primäre URL fehlgeschlagen, versuche Fallbacks...');
-                    
-                    // 2. Versuche Fallback-URLs
-                    for (const fallbackUrl of DATA_CONFIG.FALLBACK_URLS) {
-                        try {
-                            const data = await loadExternalData(fallbackUrl);
-                            initializeDataFromSource(data);
-                            initializeUI();
-                            showLoading(false);
-                            updateDataSourceIndicator();
-                            updateWordLanguageIndicator();
-                            return;
-                        } catch (fallbackError) {
-                            console.log(`Fallback ${fallbackUrl} fehlgeschlagen:`, fallbackError.message);
-                        }
-                    }
+                    console.error('Daten konnten nicht geladen werden:', error);
+                    throw new Error('App-Daten nicht verfügbar');
                 }
-                
-                // 3. Verwende Cache falls verfügbar
-                const cachedData = dataCache.get();
-                if (cachedData) {
-                    console.log('Verwende zwischengespeicherte Daten');
-                    initializeDataFromSource(cachedData);
-                    dataSourceInfo = { 
-                        source: 'cache', 
-                        timestamp: new Date(parseInt(sessionStorage.getItem('dreyfus_data_timestamp'))), 
-                        error: 'Externe Daten nicht verfügbar' 
-                    };
-                    initializeUI();
-                    showLoading(false);
-                    updateDataSourceIndicator();
-                    updateWordLanguageIndicator();
-                    return;
-                }
-                
-                // 4. Letzter Ausweg: Verwende eingebettete Fallback-Daten
-                throw new Error('Keine Datenquelle verfügbar');
                 
             } catch (error) {
                 console.error('Datenladen fehlgeschlagen:', error);
                 showLoading(false);
                 dataSourceInfo = { source: 'error', timestamp: new Date(), error: error.message };
                 
-                const trans = translations[currentLanguage] || translations.de;
-                showStatus(trans.errorLoadingData, 'error');
+                showStatus(getText('status.errorLoadingData'), 'error');
                 updateDataSourceIndicator();
                 updateWordLanguageIndicator();
                 
@@ -909,55 +647,61 @@
             }
         }
 
-        function updateLoadingStatus(key) {
-            const trans = translations[currentLanguage] || translations.de;
-            const loadingText = document.getElementById('loadingText');
-            const loadingDetails = document.getElementById('loadingDetails');
+        function getText(key) {
+            if (!translations || !currentLanguage) {
+                return '...';
+            }
             
-            if (loadingText) loadingText.textContent = trans[key] || trans.loadingData;
-            if (loadingDetails) {
-                switch(key) {
-                    case 'loadingFromGitHub':
-                        loadingDetails.textContent = 'Verbinde zu GitHub...';
-                        break;
-                    case 'loadingRetry':
-                        loadingDetails.textContent = 'Wiederhole Verbindung...';
-                        break;
-                    default:
-                        loadingDetails.textContent = '';
+            const keys = key.split('.');
+            let value = translations[currentLanguage];
+            
+            for (const k of keys) {
+                if (value && typeof value === 'object' && k in value) {
+                    value = value[k];
+                } else {
+                    return '...';
                 }
+            }
+            
+            return typeof value === 'string' ? value : '...';
+        }
+
+        function updateLoadingStatus(key) {
+            const loadingDetails = document.getElementById('loadingDetails');
+            if (loadingDetails) {
+                const text = getText(`loading.${key}`);
+                loadingDetails.textContent = text !== '...' ? text : 'Loading...';
             }
         }
 
         function updateDataSourceIndicator() {
             const indicator = document.getElementById('dataSourceIndicator');
-            const trans = translations[currentLanguage] || translations.de;
             
             let statusText = '';
             let statusClass = '';
             
             switch(dataSourceInfo.source) {
                 case 'external':
-                    statusText = trans.dataSourceExternal;
+                    statusText = getText('indicators.dataSourceExternal');
                     statusClass = 'text-success';
                     break;
                 case 'cache':
-                    statusText = trans.dataSourceCached;
+                    statusText = getText('indicators.dataSourceCached');
                     statusClass = 'text-warning';
                     break;
                 case 'error':
-                    statusText = trans.dataSourceError;
+                    statusText = getText('indicators.dataSourceError');
                     statusClass = 'text-danger';
                     break;
                 default:
-                    statusText = 'Datenquelle: Unbekannt';
+                    statusText = getText('indicators.dataSourceUnknown');
                     statusClass = 'text-muted';
             }
             
             indicator.innerHTML = `
-                <span class="${statusClass}">Datenquelle: ${statusText}</span>
+                <span class="${statusClass}">${getText('indicators.dataSource')}: ${statusText}</span>
                 ${dataSourceInfo.timestamp ? ` (${dataSourceInfo.timestamp.toLocaleTimeString()})` : ''}
-                <button type="button" class="retry-btn ${dataSourceInfo.source === 'error' ? '' : 'd-none'}" id="retryDataLoad">🔄 Neu laden</button>
+                <button type="button" class="retry-btn ${dataSourceInfo.source === 'error' ? '' : 'd-none'}" id="retryDataLoad">🔄 ${getText('buttons.reload')}</button>
             `;
             
             // Event Listener für Retry-Button
@@ -1017,14 +761,14 @@
             let detailText = '';
             
             if (wordLanguageInfo.displayLanguage === 'unknown') {
-                statusText = 'Word Sprache: Wird ermittelt...';
+                statusText = getText('indicators.determining');
                 statusClass = 'text-muted';
             } else if (wordLanguageInfo.displayLanguage === 'error') {
-                statusText = 'Word Sprache: Fehler beim Ermitteln';
+                statusText = getText('indicators.error');
                 statusClass = 'text-danger';
                 detailText = wordLanguageInfo.error ? ` (${wordLanguageInfo.error})` : '';
             } else if (wordLanguageInfo.displayLanguage === 'browser-test') {
-                statusText = 'Word Sprache: Browser-Test-Modus';
+                statusText = getText('indicators.browserTest');
                 statusClass = 'text-warning';
             } else {
                 // Normale Anzeige
@@ -1052,9 +796,9 @@
                 const contentName = languageNames[contentLang] || contentLang;
                 
                 if (displayLang === contentLang) {
-                    statusText = `Word Sprache: ${displayName}`;
+                    statusText = displayName;
                 } else {
-                    statusText = `Word Sprache: ${displayName} | Inhalt: ${contentName}`;
+                    statusText = `${displayName} | ${getText('indicators.content')}: ${contentName}`;
                 }
                 
                 statusClass = 'text-primary';
@@ -1062,7 +806,7 @@
             }
             
             indicator.innerHTML = `
-                <span class="${statusClass}">${statusText}</span>${detailText}
+                <span class="${statusClass}">${getText('indicators.wordLanguage')}: ${statusText}</span>${detailText}
             `;
         }
 
@@ -1095,6 +839,9 @@
         }
 
         function initializeUI() {
+            // UI Übersetzungen anwenden
+            translateUI();
+            
             // Sprachen Dropdown befüllen
             populateLanguageSelect();
             
@@ -1168,23 +915,26 @@
             });
         }
 
-        // Funktion zum Übersetzen der UI - EINFACHER ANSATZ
-        function translateUI(languageCode) {
-            currentLanguage = languageCode;
-            const trans = translations[languageCode] || translations.de;
-
-            // Direkt alle Elemente mit IDs übersetzen
-            for (const [key, value] of Object.entries(trans)) {
-                const element = document.getElementById(key);
-                if (element) {
-                    element.textContent = value;
-                }
+        // Funktion zum Übersetzen der UI
+        function translateUI(languageCode = null) {
+            if (languageCode) {
+                currentLanguage = languageCode;
             }
             
-            // Spezielle Behandlung für Buttons
-            document.getElementById('cancelBtn').textContent = trans.btn_close;
-            document.getElementById('anonymWarning').textContent = trans.anonymWarning;
-            document.getElementById('logoNote').textContent = trans.logoNote;
+            if (!translations || !currentLanguage) {
+                console.warn('Übersetzungen nicht verfügbar');
+                return;
+            }
+
+            // Alle Elemente mit data-i18n Attribut übersetzen
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const text = getText(key);
+                if (text !== '...') {
+                    element.textContent = text;
+                }
+            });
             
             // Update Indicators
             updateDataSourceIndicator();
@@ -1261,7 +1011,7 @@
                     // Daten laden
                     loadData();
                 } else {
-                    showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
+                    showStatus(getText('errors.onlyWord'), 'error');
                 }
             });
         } else {
@@ -1304,8 +1054,7 @@
         function initializeEventHandlers() {
             document.getElementById('briefForm').addEventListener('submit', erstelleBrief);
             document.getElementById('cancelBtn').addEventListener('click', () => {
-                const trans = translations[currentLanguage] || translations.de;
-                showStatus(trans.statusCancelled, 'info');
+                showStatus(getText('status.cancelled'), 'info');
             });
             document.getElementById('sprache').addEventListener('change', onSpracheChange);
             document.getElementById('absender').addEventListener('change', onAbsenderChange);
@@ -1412,8 +1161,8 @@
 
         function updateSelectOptions(selectId, options) {
             const select = document.getElementById(selectId);
-            const trans = translations[currentLanguage] || translations.de;
-            select.innerHTML = `<option value="">${trans.none}</option>`;
+            const noneText = getText('form.none');
+            select.innerHTML = `<option value="">${noneText}</option>`;
             options.forEach(opt => {
                 const option = document.createElement('option');
                 option.value = opt.id;
@@ -1423,18 +1172,17 @@
         }
 
         async function pasteFromClipboard() {
-            const trans = translations[currentLanguage] || translations.de;
             try {
                 if (!navigator.clipboard || !navigator.clipboard.readText) {
-                    showStatus('Zwischenablage ist in dieser Umgebung nicht verfügbar.', 'error');
+                    showStatus(getText('status.clipboardNotAvailable'), 'error');
                     return;
                 }
 
                 const text = await navigator.clipboard.readText();
                 document.getElementById('adresse').value = text;
-                showStatus(trans.statusClipboardInserted, 'success');
+                showStatus(getText('status.clipboardInserted'), 'success');
             } catch (err) {
-                showStatus(trans.statusClipboardError, 'info');
+                showStatus(getText('status.clipboardError'), 'info');
             }
         }
 
@@ -1453,16 +1201,15 @@
 
         async function erstelleBrief(event) {
             event.preventDefault();
-            const trans = translations[currentLanguage] || translations.de;
 
             // Prüfe ob Word verfügbar ist
             if (typeof Word === 'undefined') {
-                showStatus('⚠️ Brief-Erstellung funktioniert nur in Microsoft Word!', 'error');
+                showStatus(getText('errors.onlyInWord'), 'error');
                 return;
             }
 
             try {
-                showStatus(trans.statusCreating, 'info');
+                showStatus(getText('status.creating'), 'info');
 
                 // === ADAPTIVE SIZING ERMITTELN ===
                 const logoSize = ADAPTIVE_SIZING.getLogo(document.getElementById('logoVariante').value);
@@ -1502,11 +1249,11 @@
 
                 // Validierung
                 if (!formData.sprache) {
-                    showStatus(trans.errorSelectLanguage, 'error');
+                    showStatus(getText('errors.selectLanguage'), 'error');
                     return;
                 }
                 if (!formData.absender) {
-                    showStatus(trans.errorSelectSender, 'error');
+                    showStatus(getText('errors.selectSender'), 'error');
                     return;
                 }
 
@@ -1693,14 +1440,14 @@
                         let abteilungenText = '';
                         if (formData.abteilung1 && formData.abteilung1 !== '1') {
                             const abt1Text = document.getElementById('abteilung1').selectedOptions[0].text;
-                            if (abt1Text !== '--') {
+                            if (abt1Text !== getText('form.none')) {
                                 abteilungenText = abt1Text;
                             }
                         }
 
                         if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
                             const abt2Text = document.getElementById('abteilung2').selectedOptions[0].text;
-                            if (abt2Text !== '--') {
+                            if (abt2Text !== getText('form.none')) {
                                 if (abteilungenText) {
                                     abteilungenText += '\t\t\t' + abt2Text;
                                 } else {
@@ -1720,7 +1467,7 @@
 
                         if (formData.beilage) {
                             const beilage = document.getElementById('beilage').selectedOptions[0].text;
-                            if (beilage !== translations[currentLanguage].none) {
+                            if (beilage !== getText('form.none')) {
                                 beilagenText += beilage;
                                 hasBeilage = true;
                             }
@@ -1816,11 +1563,11 @@
                     await context.sync();
                 });
 
-                showStatus(trans.statusSuccess, 'success');
+                showStatus(getText('status.success'), 'success');
 
             } catch (error) {
                 console.error('Fehler beim Erstellen des Briefes:', error);
-                showStatus('Fehler beim Erstellen des Briefes: ' + error.message, 'error');
+                showStatus(getText('errors.creatingLetter') + ': ' + error.message, 'error');
             }
         }
 
