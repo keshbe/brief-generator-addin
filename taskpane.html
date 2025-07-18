@@ -1351,14 +1351,12 @@
                             const logoVariante = formData.logoVariante || '42_Farbe';
                             const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
 
-                            // Logo-Paragraph mit exakter Position
+                            // Logo-Paragraph
                             const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
-                            
-                            // CD-Manual konforme Positionierung
                             logoParagraph.alignment = Word.Alignment.left;
-                            logoParagraph.leftIndent = CD_MANUAL_MEASURES.logoLeft; // 25mm von links
-                            logoParagraph.spaceBefore = CD_MANUAL_MEASURES.logoTop; // 12mm von oben
-                            logoParagraph.spaceAfter = 0;
+                            // Vereinfachte Positionierung
+                            logoParagraph.leftIndent = 71; // ~25mm von links
+                            logoParagraph.spaceAfter = 20;
 
                             try {
                                 const base64Logo = await getImageAsBase64(logoUrl);
@@ -1366,8 +1364,8 @@
                                     const logo = logoParagraph.insertInlinePictureFromBase64(base64Logo, Word.InsertLocation.start);
 
                                     // CD-Manual konforme Logo-Größe: 30mm x 30mm
-                                    logo.width = CD_MANUAL_MEASURES.logoSize;
-                                    logo.height = CD_MANUAL_MEASURES.logoSize;
+                                    logo.width = 85;  // ~30mm
+                                    logo.height = 85; // ~30mm
 
                                     console.log(`Logo eingefügt (CD-Manual konform): ${CD_MANUAL_MEASURES.logoSizeMM}x${CD_MANUAL_MEASURES.logoSizeMM}mm`);
                                 } else {
@@ -1457,26 +1455,27 @@
 
                     // === HAUPTINHALT MIT CD-MANUAL KONFORMEN POSITIONEN ===
 
-                    // Berechne vertikale Position für Adresse
-                    // CD-Manual: 53mm von oben, aber Header nimmt bereits Platz ein
-                    const addressTopOffset = CD_MANUAL_MEASURES.addressTop - CD_MANUAL_MEASURES.logoTop - CD_MANUAL_MEASURES.logoSize;
-                    
-                    // Leerzeile(n) vor Adresse um Position zu erreichen
-                    const spacerBeforeAddress = context.document.body.insertParagraph('', Word.InsertLocation.end);
-                    spacerBeforeAddress.spaceAfter = addressTopOffset;
-
-                    // Empfängeradresse mit CD-Manual Position
+                    // Empfängeradresse
                     if (formData.adresse) {
-                        const adresseParagraph = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
-                        adresseParagraph.alignment = Word.Alignment.left;
-                        adresseParagraph.leftIndent = CD_MANUAL_MEASURES.addressLeft; // 122mm von links
+                        // Erstelle eine Tabelle für die Positionierung der Adresse
+                        const addressTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
+                        addressTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                        
+                        // Erste Spalte als Spacer (122mm - 72pt Seitenrand = 50mm = 141pt)
+                        addressTable.columns.getFirst().width = 141; 
+                        
+                        // Zweite Spalte für Adresse
+                        const addressCell = addressTable.getCell(0, 1);
+                        addressCell.body.clear();
+                        const adresseParagraph = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
                         adresseParagraph.font.name = 'Dreyfus Sans';
                         adresseParagraph.font.size = 11;
                         adresseParagraph.font.bold = false;
                         
-                        // Berechne Abstand bis Ort/Datum
-                        const addressToDateSpace = CD_MANUAL_MEASURES.dateTop - CD_MANUAL_MEASURES.addressTop - 60; // 60pt geschätzt für Adresshöhe
-                        adresseParagraph.spaceAfter = addressToDateSpace;
+                        // Abstand nach Adresse
+                        await context.sync();
+                        const spacerAfterAddress = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                        spacerAfterAddress.spaceAfter = 40;
                     }
 
                     // Ort, Datum und Absenderkürzel (CD-Manual: 95mm von oben)
@@ -1620,9 +1619,9 @@
                         signatureTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
                         signatureTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
                         
-                        // CD-Manual konformer Spaltenabstand: 85mm
-                        signatureTable.columns.getFirst().width = CD_MANUAL_MEASURES.signatureSpacing;
-                        signatureTable.columns.getLast().width = 200; // Rest der Seite
+                        // CD-Manual konformer Spaltenabstand: 85mm = ~240pt
+                        signatureTable.columns.getFirst().width = 240;
+                        signatureTable.columns.getLast().width = 240;
                         
                         signatureTable.font.name = 'Dreyfus Sans';
                         signatureTable.font.size = 11;
