@@ -1343,20 +1343,26 @@
 
                     await context.sync();
 
+                    let currentSection = null;
                     if (sections.items.length > 0) {
-                        const section = sections.items[0];
+                        currentSection = sections.items[0];
                         // Seitenränder für CD-Manual Konformität
-                        section.topMargin = 34;     // 12mm für Logo-Position
-                        section.bottomMargin = 72;  // Standard 2.54cm
-                        section.leftMargin = 71;    // 25mm genau
-                        section.rightMargin = 28;   // 10mm genau
+                        currentSection.topMargin = 34;     // 12mm für Logo-Position
+                        currentSection.bottomMargin = 72;  // Standard 2.54cm
+                        currentSection.leftMargin = 71;    // 25mm genau
+                        currentSection.rightMargin = 28;   // 10mm genau
                         
                         // Header-Abstand vom Seitenrand
-                        section.headerDistance = 34; // 12mm
+                        currentSection.headerDistance = 34; // 12mm
+                    } else {
+                        // Falls keine Section vorhanden, eine erstellen
+                        console.error('Keine Sections gefunden');
                     }
 
+                    await context.sync();
+
                     // === HEADER MIT CD-MANUAL KONFORMEM LOGO ===
-                    const header = context.document.sections.getFirst().getHeader(Word.HeaderFooterType.primary);
+                    const header = currentSection ? currentSection.getHeader(Word.HeaderFooterType.primary) : context.document.sections.items[0].getHeader(Word.HeaderFooterType.primary);
                     header.clear();
 
                     if (!formData.anonym && formData.absender !== '9' && formData.absender !== '') {
