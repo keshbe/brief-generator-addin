@@ -1127,7 +1127,7 @@
             const debugText = `${isWeb ? 'Web' : 'Desktop'} | Word: ${wordLanguageInfo.displayLanguage} | Logo: ${logoSize.width}x${logoSize.height} | Footer: ${footerSize.fontSize}pt | Data: ${dataSourceInfo.source}`;
             document.getElementById('debugText').textContent = debugText;
 
-            console.log('=== DREYFUS BRIEF ADD-IN INFO (V2: UNTERSCHRIFTEN + FETT-FIX) ===');
+            console.log('=== DREYFUS BRIEF ADD-IN INFO (V2: UNTERSCHRIFTEN 50/50 API-FIX) ===');
             console.log('Umgebung:', isWeb ? 'Web Word' : 'Desktop Word');
             console.log('Word Sprache (Display):', wordLanguageInfo.displayLanguage);
             console.log('Word Sprache (Content):', wordLanguageInfo.contentLanguage);
@@ -1320,7 +1320,7 @@
                     emptyBefore: ADAPTIVE_SIZING.getSpacing('emptyBefore')
                 };
 
-                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
+                console.log('Korrigierte Adaptive Sizing + Unterschriften-Fix 50/50 (API-Fix) + Fett-Fix verwendet:', { logoSize, footerSize, spacing });
 
                 const formData = {
                     sprache: document.getElementById('sprache').value,
@@ -1528,9 +1528,16 @@
                             // Tabelle unsichtbar machen
                             table.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
                             
-                            // Spaltenbreiten setzen
-                            table.columns.getFirst().width = 200; // Linke Spalte
-                            table.columns.getLast().width = 200;  // Rechte Spalte
+                            // Tabelle auf gesamte Seitenbreite setzen
+                            table.width = "100%";
+                            
+                            // Spalten laden und dann Breiten setzen
+                            table.columns.load();
+                            await context.sync();
+                            
+                            // 50/50 Aufteilung der Spalten
+                            table.columns.items[0].width = "50%";
+                            table.columns.items[1].width = "50%";
                             
                             // Erste Unterschrift (links)
                             if (formData.unterschrift1) {
@@ -1659,9 +1666,16 @@
                                 // Tabelle unsichtbar machen
                                 abteilungenTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
                                 
-                                // Spaltenbreiten setzen
-                                abteilungenTable.columns.getFirst().width = 200; // Linke Spalte
-                                abteilungenTable.columns.getLast().width = 200;  // Rechte Spalte
+                                // Tabelle auf gesamte Seitenbreite setzen
+                                abteilungenTable.width = "100%";
+                                
+                                // Spalten laden und dann Breiten setzen
+                                abteilungenTable.columns.load();
+                                await context.sync();
+                                
+                                // 50/50 Aufteilung der Spalten
+                                abteilungenTable.columns.items[0].width = "50%";
+                                abteilungenTable.columns.items[1].width = "50%";
                                 
                                 // Erste Abteilung (links)
                                 if (abt1Text) {
