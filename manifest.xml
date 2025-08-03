@@ -6,8 +6,8 @@
            xsi:type="TaskPaneApp">
 
     <!-- Add-In Identifikation und Metadaten -->
-    <Id>e560758a-242c-4dbc-8909-7aeddd75c296</Id>
-    <Version>1.0.1.0</Version>
+    <Id>e560758a-242c-4dbc-8908-7aeddd75c296</Id>
+    <Version>1.0.0.0</Version>
     <ProviderName>Dreyfus Söhne &amp; Cie AG</ProviderName>
     <DefaultLocale>de-DE</DefaultLocale>
     
@@ -86,6 +86,24 @@
                                     </Action>
                                 </Control>
                                 
+                                <!-- Inkasso Button -->
+                                <Control xsi:type="Button" id="btnInkasso">
+                                    <Label resid="Inkasso.Label" />
+                                    <Supertip>
+                                        <Title resid="Inkasso.Label" />
+                                        <Description resid="Inkasso.Tooltip" />
+                                    </Supertip>
+                                    <Icon>
+                                        <bt:Image size="16" resid="Icon.16x16"/>
+                                        <bt:Image size="32" resid="Icon.32x32"/>
+                                        <bt:Image size="80" resid="Icon.80x80"/>
+                                    </Icon>
+                                    <Action xsi:type="ShowTaskpane">
+                                        <TaskpaneId>InkassoTaskpane</TaskpaneId>
+                                        <SourceLocation resid="Inkasso.Url"/>
+                                    </Action>
+                                </Control>
+                                
                             </Group>
                             
                             <Label resid="Tab.Label" />
@@ -107,6 +125,7 @@
             <!-- URL-Referenzen -->
             <bt:Urls>
                 <bt:Url id="Taskpane.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/taskpane.html" />
+                <bt:Url id="Inkasso.Url" DefaultValue="https://keshbe.github.io/brief-generator-addin/inkasso.html" />
             </bt:Urls>
             
             <!-- Kurze Textstrings für Labels -->
@@ -127,6 +146,13 @@
                     <bt:Override Locale="fr-FR" Value="Lettre" />
                     <bt:Override Locale="it-IT" Value="Lettera" />
                 </bt:String>
+                
+                <!-- Inkasso Button-Beschriftung -->
+                <bt:String id="Inkasso.Label" DefaultValue="Inkasso">
+                    <bt:Override Locale="en-US" Value="Debt Collection" />
+                    <bt:Override Locale="fr-FR" Value="Recouvrement" />
+                    <bt:Override Locale="it-IT" Value="Incasso" />
+                </bt:String>
             </bt:ShortStrings>
             
             <!-- Längere Texte für Tooltips und Beschreibungen -->
@@ -136,6 +162,13 @@
                     <bt:Override Locale="en-US" Value="Opens the Dreyfus AddIn" />
                     <bt:Override Locale="fr-FR" Value="Ouvre l'AddIn Dreyfus" />
                     <bt:Override Locale="it-IT" Value="Apre l'AddIn Dreyfus" />
+                </bt:String>
+                
+                <!-- Tooltip-Text für den Inkasso Button -->
+                <bt:String id="Inkasso.Tooltip" DefaultValue="Öffnet das Inkasso Tool">
+                    <bt:Override Locale="en-US" Value="Opens the Debt Collection Tool" />
+                    <bt:Override Locale="fr-FR" Value="Ouvre l'outil de recouvrement" />
+                    <bt:Override Locale="it-IT" Value="Apre lo strumento di incasso" />
                 </bt:String>
             </bt:LongStrings>
         </Resources>
