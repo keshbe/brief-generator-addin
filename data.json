@@ -175,5 +175,31 @@
     { "value": "42_Grau", "text": "Standard (42pt, Grau)", "filename": "Dreyfus_Logo_42_Grau.png", "width": 56, "height": 21 },
     { "value": "30_Farbe", "text": "Klein (30pt, Farbe)", "filename": "Dreyfus_Logo_30_Farbe.png", "width": 40, "height": 15 },
     { "value": "30_Grau", "text": "Klein (30pt, Grau)", "filename": "Dreyfus_Logo_30_Grau.png", "width": 40, "height": 15 }
-  ]
+  ],
+  "inkassoPapierOptionen": {
+    "de": [
+      { "value": "Check", "text": "Check", "selected": true },
+      { "value": "Wechsel", "text": "Wechsel", "selected": false },
+      { "value": "Quittung", "text": "Quittung", "selected": false },
+      { "value": "Andere", "text": "Andere", "selected": false }
+    ],
+    "en": [
+      { "value": "Check", "text": "Check", "selected": true },
+      { "value": "BillOfExchange", "text": "Bill of Exchange", "selected": false },
+      { "value": "Receipt", "text": "Receipt", "selected": false },
+      { "value": "Other", "text": "Other", "selected": false }
+    ],
+    "fr": [
+      { "value": "Cheque", "text": "Chèque", "selected": true },
+      { "value": "LettreDuChange", "text": "Lettre de change", "selected": false },
+      { "value": "Quittance", "text": "Quittance", "selected": false },
+      { "value": "Autre", "text": "Autre", "selected": false }
+    ],
+    "it": [
+      { "value": "Assegno", "text": "Assegno", "selected": true },
+      { "value": "Cambiale", "text": "Cambiale", "selected": false },
+      { "value": "Ricevuta", "text": "Ricevuta", "selected": false },
+      { "value": "Altro", "text": "Altro", "selected": false }
+    ]
+  }
 }
