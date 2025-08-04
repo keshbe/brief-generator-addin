@@ -369,10 +369,10 @@
 
             <div class="section-title" data-i18n="sections.complimentaryClose">...</div>
 
-            <!-- Grussformel -->
+            // Grussformel-Feld
             <div class="form-group">
                 <label for="gruss" class="form-label" data-i18n="form.complimentaryClose">...</label>
-                <textarea class="form-control" id="gruss" rows="3"></textarea>
+                <textarea class="form-control" id="gruss" rows="3" style="white-space: pre-wrap;"></textarea>
             </div>
 
             <div class="section-title" data-i18n="sections.signatures">...</div>
@@ -1359,7 +1359,9 @@
             }
 
             if (grussformeln[sprachCode]) {
-                document.getElementById('gruss').value = grussformeln[sprachCode];
+                // Abruf der Grussformel mit Trim
+                const grussformelText = grussformeln[sprachCode] || '';
+                document.getElementById('gruss').value = grussformelText.trim();
             }
 
             const absenderId = document.getElementById('absender').value;
@@ -1845,7 +1847,7 @@
                     // Leerer Absatz für Brieftext
                     const textPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                     textPara.alignment = Word.Alignment.left;
-                    textPara.spaceAfter = FONT_SIZES.GRUNDTEXT.spaceAfter;  // 13pt Abstand nach unten
+                    textPara.spaceAfter = 40;  // Mehr Platz für den Brieftext (war 13pt)
                     textPara.font.name = 'Dreyfus Sans';
                     textPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                     textPara.font.bold = false;
@@ -1853,24 +1855,46 @@
 
                     // Grussformel
                     if (formData.gruss) {
-                        // Grussformel kann mehrzeilig sein
-                        const grussLines = formData.gruss.split('\n');
-                        grussLines.forEach((line, index) => {
-                            const grussPara = context.document.body.insertParagraph(line, Word.InsertLocation.end);
+                        // Debug-Log für Grussformel
+                        console.log('Grussformel:', formData.gruss);
+                        
+                        // Prüfen ob Grussformel mehrzeilig ist
+                        const hasLineBreaks = formData.gruss.includes('\n') || formData.gruss.includes('\r');
+                        
+                        if (hasLineBreaks) {
+                            // Mehrzeilige Grussformel
+                            const grussLines = formData.gruss.split(/\r?\n/);
+                            
+                            grussLines.forEach((line, index) => {
+                                // Leere Zeilen überspringen
+                                if (line.trim() === '') return;
+                                
+                                const grussPara = context.document.body.insertParagraph(line, Word.InsertLocation.end);
+                                grussPara.alignment = Word.Alignment.left;
+                                grussPara.font.name = 'Dreyfus Sans';
+                                grussPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
+                                grussPara.font.bold = false;
+                                grussPara.spaceBefore = 0;
+                                grussPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
+                                
+                                // Nach der letzten Zeile kleiner Abstand
+                                if (index === grussLines.length - 1) {
+                                    grussPara.spaceAfter = 6;
+                                } else {
+                                    grussPara.spaceAfter = 0;
+                                }
+                            });
+                        } else {
+                            // Einzeilige Grussformel
+                            const grussPara = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
                             grussPara.alignment = Word.Alignment.left;
                             grussPara.font.name = 'Dreyfus Sans';
                             grussPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                             grussPara.font.bold = false;
                             grussPara.spaceBefore = 0;
+                            grussPara.spaceAfter = 6;
                             grussPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
-                            
-                            // Nach der letzten Zeile kleiner Abstand
-                            if (index === grussLines.length - 1) {
-                                grussPara.spaceAfter = 6;
-                            } else {
-                                grussPara.spaceAfter = 0;
-                            }
-                        });
+                        }
 
                         // Firmenname
                         if (!formData.anonym) {
