@@ -1711,7 +1711,10 @@
                             const addressTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
                             
                             // Tabelle über gesamte Seitenbreite
-                            addressTable.width = 500; // Genug für A4
+                            addressTable.width = 600; // Erhöht von 500 auf 600 für mehr Platz
+                            
+                            // Zellpadding auf 0 setzen
+                            addressTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
                             
                             // Rahmen entfernen nach Microsoft-Dokumentation
                             addressTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
@@ -1724,10 +1727,11 @@
                             await context.sync();
                             
                             // Erste Spalte als Spacer
-                            // 122mm von links minus 25mm Seitenrand = 97mm
+                            // 122mm von links minus 25mm Seitenrand = 97mm = 275pt
                             const spacerWidth = CD_MANUAL_MEASURES.addressLeft - CD_MANUAL_MEASURES.leftMargin;
                             const spacerCell = addressTable.getCell(0, 0);
-                            spacerCell.width = spacerWidth;
+                            spacerCell.width = spacerWidth; // 275pt
+                            spacerCell.verticalAlignment = Word.VerticalAlignment.top;
                             
                             // Clear und füge non-breaking space ein
                             context.load(spacerCell, 'body');
@@ -1736,18 +1740,35 @@
                             spacerCell.body.clear();
                             const spacerPara = spacerCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
                             spacerPara.font.size = 1;
+                            spacerPara.spaceBefore = 0;
+                            spacerPara.spaceAfter = 0;
                             
                             // Zweite Spalte für Adresse - ab 122mm vom linken Rand
                             const addressCell = addressTable.getCell(0, 1);
-                            // Setze die Breite der Adresszelle auf den Rest der Seite
-                            addressCell.width = 200; // Genug Platz für die Adresse
+                            // Breite: Rest der Seite (600 - 275 = 325pt)
+                            addressCell.width = 325;
+                            addressCell.verticalAlignment = Word.VerticalAlignment.top; // Oben ausrichten
+                            
+                            // Load und clear
+                            context.load(addressCell, 'body');
+                            await context.sync();
+                            
                             addressCell.body.clear();
-                            const addressPara = addressCell.body.insertParagraph(formData.adresse, Word.InsertLocation.start);
-                            addressPara.font.name = 'Dreyfus Sans';
-                            addressPara.font.size = FONT_SIZES.ADRESSE.size;  // Adresse 10.5pt
-                            addressPara.alignment = Word.Alignment.left;  // In der Zelle linksbündig
-                            addressPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
-                            addressPara.spaceAfter = FONT_SIZES.ADRESSE.spaceAfter;  // 13pt Abstand nach unten
+                            
+                            // Mehrere Paragraphen für mehrzeilige Adresse
+                            const addressLines = formData.adresse.split('\n');
+                            addressLines.forEach((line, index) => {
+                                const para = addressCell.body.insertParagraph(line, Word.InsertLocation.end);
+                                para.font.name = 'Dreyfus Sans';
+                                para.font.size = FONT_SIZES.ADRESSE.size;  // Adresse 10.5pt
+                                para.alignment = Word.Alignment.left;
+                                para.spaceBefore = 0;
+                                para.spaceAfter = 0;
+                                // Nur nach der letzten Zeile Abstand
+                                if (index === addressLines.length - 1) {
+                                    para.spaceAfter = FONT_SIZES.ADRESSE.spaceAfter;  // 13pt Abstand nach unten
+                                }
+                            });
                             
                             await context.sync();
                             
@@ -1759,11 +1780,18 @@
                         } catch (addressError) {
                             console.error('Fehler bei der Adresstabelle:', addressError);
                             // Fallback: Normale Adresse ohne Tabelle
-                            const addressPara = context.document.body.insertParagraph(formData.adresse, Word.InsertLocation.end);
-                            addressPara.font.name = 'Dreyfus Sans';
-                            addressPara.font.size = FONT_SIZES.ADRESSE.size;  // Adresse 10.5pt
-                            addressPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
-                            addressPara.spaceAfter = FONT_SIZES.ADRESSE.spaceAfter;  // 13pt Abstand nach unten
+                            const addressLines = formData.adresse.split('\n');
+                            addressLines.forEach((line, index) => {
+                                const addressPara = context.document.body.insertParagraph(line, Word.InsertLocation.end);
+                                addressPara.font.name = 'Dreyfus Sans';
+                                addressPara.font.size = FONT_SIZES.ADRESSE.size;  // Adresse 10.5pt
+                                addressPara.alignment = Word.Alignment.left;
+                                addressPara.spaceBefore = 0;
+                                addressPara.spaceAfter = 0;
+                                if (index === addressLines.length - 1) {
+                                    addressPara.spaceAfter = FONT_SIZES.ADRESSE.spaceAfter;  // 13pt Abstand nach unten
+                                }
+                            });
                         }
                     }
 
@@ -1825,13 +1853,24 @@
 
                     // Grussformel
                     if (formData.gruss) {
-                        const grussPara = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
-                        grussPara.alignment = Word.Alignment.left;
-                        grussPara.spaceAfter = 6;
-                        grussPara.font.name = 'Dreyfus Sans';
-                        grussPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
-                        grussPara.font.bold = false;
-                        grussPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
+                        // Grussformel kann mehrzeilig sein
+                        const grussLines = formData.gruss.split('\n');
+                        grussLines.forEach((line, index) => {
+                            const grussPara = context.document.body.insertParagraph(line, Word.InsertLocation.end);
+                            grussPara.alignment = Word.Alignment.left;
+                            grussPara.font.name = 'Dreyfus Sans';
+                            grussPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
+                            grussPara.font.bold = false;
+                            grussPara.spaceBefore = 0;
+                            grussPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
+                            
+                            // Nach der letzten Zeile kleiner Abstand
+                            if (index === grussLines.length - 1) {
+                                grussPara.spaceAfter = 6;
+                            } else {
+                                grussPara.spaceAfter = 0;
+                            }
+                        });
 
                         // Firmenname
                         if (!formData.anonym) {
