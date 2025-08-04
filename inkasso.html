@@ -1017,16 +1017,18 @@
 
                     // Seitenränder einstellen
                     const sections = context.document.sections;
-                    sections.load('items');
+                    context.load(sections, 'items');
 
                     await context.sync();
 
-                    if (sections.items.length > 0) {
+                    if (sections.items && sections.items.length > 0) {
                         const section = sections.items[0];
                         section.topMargin = 72;    // 2.54 cm
                         section.bottomMargin = 72; // 2.54 cm
                         section.leftMargin = 72;   // 2.54 cm
                         section.rightMargin = 72;  // 2.54 cm
+                        
+                        await context.sync();
                     }
 
                     // Titel mit übersetzten Texten
@@ -1040,6 +1042,8 @@
                     
                     const kontoTable = context.document.body.insertTable(3, 2, Word.InsertLocation.end);
                     kontoTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    await context.sync(); // Sync nach Tabellenerstellung
                     
                     kontoTable.rows.items[0].cells.items[0].body.insertText(getText('form.accountNumber'), Word.InsertLocation.start);
                     kontoTable.rows.items[0].cells.items[1].body.insertText(formData.kontoNr, Word.InsertLocation.start);
@@ -1061,14 +1065,20 @@
                     context.document.body.insertParagraph('', Word.InsertLocation.end);
                     const inkassoTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
                     inkassoTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    await context.sync(); // Sync nach Tabellenerstellung
+                    
                     inkassoTable.rows.items[0].cells.items[0].body.insertText(getText('form.collectionPaper'), Word.InsertLocation.start);
                     inkassoTable.rows.items[0].cells.items[1].body.insertText(formData.inkassopapier, Word.InsertLocation.start);
 
                     context.document.body.insertParagraph('', Word.InsertLocation.end);
 
                     // Erstelle eine Tabelle für die Beträge
-                    const betragTable = context.document.body.insertTable(formData.betraege.length + 3, 2, Word.InsertLocation.end);
+                    const totalBetragRows = Math.max(formData.betraege.length + 2, 12); // Mindestens 12 Zeilen (Header + Linie + 10)
+                    const betragTable = context.document.body.insertTable(totalBetragRows, 2, Word.InsertLocation.end);
                     betragTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    await context.sync(); // Sync nach Tabellenerstellung
                     
                     // Header mit Linien
                     const headerRow = betragTable.rows.items[0];
@@ -1091,11 +1101,14 @@
 
                     // Füge leere Zeilen hinzu bis 10 Zeilen erreicht sind
                     const emptyRowsNeeded = 10 - formData.betraege.length;
-                    for (let i = 0; i < emptyRowsNeeded; i++) {
-                        const rowIndex = formData.betraege.length + 2 + i;
-                        if (rowIndex < betragTable.rows.items.length) {
-                            betragTable.rows.items[rowIndex].cells.items[0].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
-                            betragTable.rows.items[rowIndex].cells.items[1].body.insertText('', Word.InsertLocation.start);
+                    
+                    if (emptyRowsNeeded > 0) {
+                        for (let i = 0; i < emptyRowsNeeded; i++) {
+                            const rowIndex = formData.betraege.length + 2 + i;
+                            if (rowIndex < betragTable.rows.items.length) {
+                                betragTable.rows.items[rowIndex].cells.items[0].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
+                                betragTable.rows.items[rowIndex].cells.items[1].body.insertText('', Word.InsertLocation.start);
+                            }
                         }
                     }
 
@@ -1104,18 +1117,38 @@
                     const totalTable = context.document.body.insertTable(2, 3, Word.InsertLocation.end);
                     totalTable.styleBuiltIn = Word.Style.tableGrid;
                     
-                    // Trennlinie
-                    totalTable.rows.items[0].cells.items[0].body.insertText('────────────────────────────────────────────────────────────────────────', Word.InsertLocation.start);
-                    totalTable.rows.items[0].cells.items[0].mergeTo(totalTable.rows.items[0].cells.items[2]);
+                    // Trennlinie - über alle 3 Spalten
+                    const separatorRow = totalTable.rows.items[0];
+                    const separatorCell = separatorRow.cells.items[0];
+                    separatorCell.body.insertText('────────────────────────────────────────────────────────────────────────', Word.InsertLocation.start);
                     
-                    // Total
-                    totalTable.rows.items[1].cells.items[0].body.insertText(getText('form.total'), Word.InsertLocation.start);
-                    totalTable.rows.items[1].cells.items[0].body.paragraphs.items[0].font.bold = true;
-                    totalTable.rows.items[1].cells.items[1].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
-                    totalTable.rows.items[1].cells.items[1].body.paragraphs.items[0].font.bold = true;
-                    totalTable.rows.items[1].cells.items[2].body.insertText(formData.total, Word.InsertLocation.start);
-                    totalTable.rows.items[1].cells.items[2].body.paragraphs.items[0].font.bold = true;
-                    totalTable.rows.items[1].cells.items[2].body.paragraphs.items[0].alignment = Word.Alignment.right;
+                    // Versuche die Zellen zu mergen
+                    try {
+                        // Lade die Zellen für den Merge
+                        context.load(separatorRow, 'cells');
+                        await context.sync();
+                        
+                        if (separatorRow.cells.items.length >= 3) {
+                            separatorCell.mergeTo(separatorRow.cells.items[2]);
+                        }
+                    } catch (mergeError) {
+                        console.log('Merge nicht möglich, setze Colspan alternativ');
+                        // Falls Merge nicht funktioniert, fülle die anderen Zellen leer
+                        separatorRow.cells.items[1].body.insertText('', Word.InsertLocation.start);
+                        separatorRow.cells.items[2].body.insertText('', Word.InsertLocation.start);
+                    }
+                    
+                    // Total-Zeile
+                    await context.sync(); // Sicherstellen, dass die Tabelle erstellt wurde
+                    
+                    const totalRow = totalTable.rows.items[1];
+                    totalRow.cells.items[0].body.insertText(getText('form.total'), Word.InsertLocation.start);
+                    totalRow.cells.items[0].body.paragraphs.items[0].font.bold = true;
+                    totalRow.cells.items[1].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
+                    totalRow.cells.items[1].body.paragraphs.items[0].font.bold = true;
+                    totalRow.cells.items[2].body.insertText(formData.total, Word.InsertLocation.start);
+                    totalRow.cells.items[2].body.paragraphs.items[0].font.bold = true;
+                    totalRow.cells.items[2].body.paragraphs.items[0].alignment = Word.Alignment.right;
 
                     // Mitteilung / Weisungen
                     const mitteilungParagraph = context.document.body.insertParagraph(getText('sections.messageInstruction'), Word.InsertLocation.end);
@@ -1128,6 +1161,8 @@
                     context.document.body.insertParagraph('', Word.InsertLocation.end);
                     const mitteilungTable = context.document.body.insertTable(5, 2, Word.InsertLocation.end);
                     mitteilungTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    await context.sync(); // Sync nach Tabellenerstellung
                     
                     mitteilungTable.rows.items[0].cells.items[0].body.insertText(getText('form.missingEndorsement'), Word.InsertLocation.start);
                     mitteilungTable.rows.items[0].cells.items[1].body.insertText(formData.fehlendesIndossament ? getText('general.yes') : getText('general.no'), Word.InsertLocation.start);
@@ -1154,6 +1189,8 @@
                     context.document.body.insertParagraph('', Word.InsertLocation.end);
                     const footerTable = context.document.body.insertTable(2, 1, Word.InsertLocation.end);
                     footerTable.styleBuiltIn = Word.Style.tableGrid;
+                    
+                    await context.sync(); // Sync nach Tabellenerstellung
                     
                     footerTable.rows.items[0].cells.items[0].body.insertText('────────────────────────────────────────────────────────────────────────', Word.InsertLocation.start);
                     footerTable.rows.items[1].cells.items[0].body.insertText(`${formData.abteilung || 'EDV'}    ${formData.kuerzel || 'SO2'}    ${formData.telefon || '287'}                               ${formData.abteilung || 'EDV'} / ${formData.kuerzel || 'SO2'} / ${formData.telefon || '287'}`, Word.InsertLocation.start);
