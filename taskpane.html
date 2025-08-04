@@ -473,6 +473,8 @@
         let footerTaglines = {};
         let footerInfo = {};
         let logoVarianten = [];
+        let anreden = {};  // NEU: Für gendergerechte Anreden
+        let monate = {};   // NEU: Für Monatsnamen
         let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
         let wordLanguageInfo = { displayLanguage: 'unknown', contentLanguage: 'unknown', timestamp: null };
 
@@ -607,6 +609,82 @@
                 size: 10           // 10pt für Beilagen (etwas kleiner)
             }
         };
+
+        // === CI/CD KONFORME FUNKTIONEN ===
+        
+        // Zahlenformatierung gemäß CI/CD Richtlinien
+        function formatNumber(value, sprache) {
+            if (value === null || value === undefined || value === '') return '';
+            
+            const num = parseFloat(value);
+            if (isNaN(num)) return value;
+            
+            // Dezimaltrennzeichen basierend auf Sprache
+            const decimalSeparator = '.';  // Immer Punkt gemäß CI/CD
+            const thousandSeparator = (sprache === 'de' || sprache === 'fr' || sprache === 'it') ? "'" : ',';
+            
+            let formatted;
+            
+            // Ganzzahlige Werte: kein Punkt
+            if (Number.isInteger(num)) {
+                formatted = num.toString();
+            } else {
+                // Nachkommastellen ermitteln
+                const decimalPlaces = (num.toString().split('.')[1] || '').length;
+                
+                if (decimalPlaces <= 2) {
+                    // Immer genau zwei Nachkommastellen
+                    formatted = num.toFixed(2);
+                } else {
+                    // Mindestens zwei Nachkommastellen, aber alle behalten
+                    formatted = num.toString();
+                }
+            }
+            
+            // Tausendertrennzeichen hinzufügen
+            const parts = formatted.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator);
+            
+            return parts.join(decimalSeparator);
+        }
+
+        // CI/CD konforme Datumsformatierung mit ausgeschriebenem Monat
+        function formatDateCI(date, sprache) {
+            const day = date.getDate();
+            const month = date.getMonth(); // 0-basiert
+            const year = date.getFullYear();
+            
+            // Monate aus den geladenen Daten verwenden
+            const monthNames = monate[sprache] || [];
+            if (monthNames.length === 0) {
+                // Fallback auf einfaches Format
+                return formatDate(date, sprache);
+            }
+            
+            // Ordinalzahlen für Englisch
+            const getOrdinal = (n) => {
+                const s = ["th", "st", "nd", "rd"];
+                const v = n % 100;
+                return n + (s[(v - 20) % 10] || s[v] || s[0]);
+            };
+            
+            if (sprache === 'de') {
+                return `${day}. ${monthNames[month]} ${year}`;
+            } else if (sprache === 'fr') {
+                // Französisch mit "le" und "1er" für den ersten
+                if (day === 1) {
+                    return `le 1er ${monthNames[month]} ${year}`;
+                } else {
+                    return `le ${day} ${monthNames[month]} ${year}`;
+                }
+            } else if (sprache === 'en') {
+                return `${getOrdinal(day)} ${monthNames[month]} ${year}`;
+            } else if (sprache === 'it') {
+                return `${day} ${monthNames[month]} ${year}`;
+            }
+            
+            return formatDate(date, sprache);
+        }
 
         // === EXTERNE DATENLADUNG MIT RETRY-LOGIC ===
         async function fetchWithTimeout(url, options = {}) {
@@ -890,10 +968,16 @@
                     spracheSelect.value = key;
                     console.log('Sprachen-Dropdown automatisch ausgewählt:', key, language.name);
                     
-                    // Datum automatisch setzen
+                    // Datum automatisch setzen - CI/CD konform mit Monatsnamen
                     const datumField = document.getElementById('datum');
+                    const ort = document.getElementById('ort').value;
                     const heute = new Date();
-                    datumField.value = formatDate(heute, currentLanguage);
+                    
+                    if (ort) {
+                        datumField.value = ort + ', ' + formatDateCI(heute, currentLanguage);
+                    } else {
+                        datumField.value = formatDateCI(heute, currentLanguage);
+                    }
                     
                     // Grussformel automatisch setzen
                     if (grussformeln[currentLanguage]) {
@@ -978,6 +1062,8 @@
             footerTaglines = data.footerTaglines || {};
             footerInfo = data.footerInfo || {};
             logoVarianten = data.logoVarianten || [];
+            anreden = data.anreden || {};  // NEU
+            monate = data.monate || {};    // NEU
             
             console.log('Daten initialisiert:', Object.keys(data));
         }
@@ -1180,19 +1266,26 @@
             const datumField = document.getElementById('datum');
             
             if (currentLanguage) {
-                datumField.value = formatDate(heute, currentLanguage);
+                // CI/CD konforme Datumsformatierung verwenden
+                const ort = document.getElementById('ort').value;
+                if (ort) {
+                    datumField.value = ort + ', ' + formatDateCI(heute, currentLanguage);
+                } else {
+                    datumField.value = formatDateCI(heute, currentLanguage);
+                }
             }
         }
 
+        // Original formatDate Funktion für andere Zwecke beibehalten
         function formatDate(date, sprache) {
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
 
             if (sprache === 'en') {
-                return `${month}-${day}-${year}`;
+                return `${month}/${day}/${year}`;
             } else if (sprache === 'fr') {
-                return `le ${day}.${month}.${year}`;
+                return `${day}.${month}.${year}`;
             } else if (sprache === 'de' || sprache === 'it') {
                 return `${day}.${month}.${year}`;
             }
@@ -1216,7 +1309,14 @@
 
             const datumField = document.getElementById('datum');
             const heute = new Date();
-            datumField.value = formatDate(heute, sprachCode);
+            const ort = document.getElementById('ort').value;
+            
+            // CI/CD konformes Datum mit Ort
+            if (ort) {
+                datumField.value = ort + ', ' + formatDateCI(heute, sprachCode);
+            } else {
+                datumField.value = formatDateCI(heute, sprachCode);
+            }
 
             if (grussformeln[sprachCode]) {
                 document.getElementById('gruss').value = grussformeln[sprachCode];
@@ -1231,6 +1331,9 @@
                     ort = 'Basel';
                 }
                 document.getElementById('ort').value = ort;
+                
+                // Datum mit neuem Ort aktualisieren
+                datumField.value = ort + ', ' + formatDateCI(heute, sprachCode);
             }
 
             updateSelectOptions('abteilung1', abteilungen[sprachCode]);
@@ -1264,6 +1367,12 @@
             }
 
             document.getElementById('ort').value = ort;
+            
+            // Datum mit Ort aktualisieren
+            if (currentLanguage && ort) {
+                const heute = new Date();
+                document.getElementById('datum').value = ort + ', ' + formatDateCI(heute, currentLanguage);
+            }
         }
 
         function onAnonymChange() {
@@ -1595,12 +1704,19 @@
 
                     // Ort, Datum und Absenderkürzel
                     let ortDatumText = '';
-                    if (formData.ort) {
+                    if (formData.ort && formData.datum) {
+                        // Prüfen ob Ort bereits im Datum enthalten ist (CI/CD konform)
+                        if (formData.datum.startsWith(formData.ort)) {
+                            ortDatumText = formData.datum;
+                        } else {
+                            ortDatumText = formData.ort + ', ' + formData.datum;
+                        }
+                    } else if (formData.ort) {
                         ortDatumText = formData.ort;
+                    } else if (formData.datum) {
+                        ortDatumText = formData.datum;
                     }
-                    if (formData.datum) {
-                        ortDatumText += (ortDatumText ? ', ' : '') + formData.datum;
-                    }
+                    
                     if (formData.absenderKuerzel) {
                         ortDatumText += ' ' + formData.absenderKuerzel;
                     }
