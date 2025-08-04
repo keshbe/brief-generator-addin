@@ -78,6 +78,32 @@
     "fr": "Avec nos salutations les meilleures",
     "it": "Cordiali saluti"
   },
+  "anreden": {
+    "de": {
+      "neutral": "Sehr geehrte Kundin, sehr geehrter Kunde",
+      "weiblich": "Sehr geehrte Frau",
+      "maennlich": "Sehr geehrter Herr",
+      "mehrere": "Sehr geehrte Damen und Herren"
+    },
+    "en": {
+      "neutral": "Dear client",
+      "weiblich": "Dear Ms.",
+      "maennlich": "Dear Mr.",
+      "mehrere": "Dear Ladies and Gentlemen"
+    },
+    "fr": {
+      "neutral": "Chère cliente, cher client",
+      "weiblich": "Chère Madame",
+      "maennlich": "Cher Monsieur",
+      "mehrere": "Mesdames, Messieurs"
+    },
+    "it": {
+      "neutral": "Gentile cliente",
+      "weiblich": "Gentile Signora",
+      "maennlich": "Gentile Signore",
+      "mehrere": "Gentili Signore e Signori"
+    }
+  },
   "firmenNamen": {
     "de": "Dreyfus Söhne & Cie AG, Banquiers",
     "en": "Dreyfus Sons & Co Ltd, Banquiers",
@@ -94,26 +120,26 @@
     "basel": {
       "de": {
         "buero": "Büro Basel",
-        "adresse": "Aeschenvorstadt 16 | 4010 Basel | Schweiz",
-        "telefon": "Telefon +41 61 266 77 77",
+        "adresse": "Aeschenvorstadt 16 | 4002 Basel | Schweiz",
+        "telefon": "Telefon +41 61 286 66 66",
         "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
       },
       "en": {
         "buero": "Basel Office",
-        "adresse": "Aeschenvorstadt 16 | 4010 Basel | Switzerland",
-        "telefon": "Phone +41 61 266 77 77",
+        "adresse": "Aeschenvorstadt 16 | 4002 Basel | Switzerland",
+        "telefon": "Phone +41 61 286 66 66",
         "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
       },
       "fr": {
         "buero": "Bureau de Bâle",
-        "adresse": "Aeschenvorstadt 16 | 4010 Bâle | Suisse",
-        "telefon": "Téléphone +41 61 266 77 77",
+        "adresse": "Aeschenvorstadt 16 | 4002 Bâle | Suisse",
+        "telefon": "Téléphone +41 61 286 66 66",
         "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
       },
       "it": {
         "buero": "Ufficio Basilea",
-        "adresse": "Aeschenvorstadt 16 | 4010 Basilea | Svizzera",
-        "telefon": "Telefono +41 61 266 77 77",
+        "adresse": "Aeschenvorstadt 16 | 4002 Basilea | Svizzera",
+        "telefon": "Telefono +41 61 286 66 66",
         "email": "contact@dreyfusbank.ch | www.dreyfusbank.ch"
       }
     },
@@ -201,5 +227,11 @@
       { "value": "Ricevuta", "text": "Ricevuta", "selected": false },
       { "value": "Altro", "text": "Altro", "selected": false }
     ]
+  },
+  "monate": {
+    "de": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    "en": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "fr": ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
+    "it": ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"]
   }
 }
