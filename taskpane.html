@@ -1538,8 +1538,6 @@
                     // Standard-Schriftart setzen
                     context.document.body.font.name = 'Dreyfus Sans';
                     context.document.body.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtexte 10.5pt
-                    context.document.body.font.strikethrough = false;  // Keine Durchstreichung
-                    context.document.body.font.underline = Word.UnderlineType.none;  // Keine Unterstreichung
 
                     // Seitenränder einstellen (Standard A4)
                     const sections = context.document.sections;
@@ -1585,12 +1583,10 @@
                             const logoUrl = `https://keshbe.github.io/brief-generator-addin/Dreyfus_Logo_${logoVariante}.png`;
 
                             // Logo direkt im Header (Position durch Seitenränder bereits korrekt)
-                            const logoParagraph = header.insertParagraph('', Word.InsertLocation.start);
+                            const logoParagraph = header.insertParagraph('\u00A0', Word.InsertLocation.start);
                             logoParagraph.alignment = Word.Alignment.left;
                             logoParagraph.spaceBefore = 0;
                             logoParagraph.spaceAfter = 0;  // Kein Abstand nach Logo im Header
-                            logoParagraph.font.strikethrough = false;
-                            logoParagraph.font.underline = Word.UnderlineType.none;
 
                             try {
                                 const base64Logo = await getImageAsBase64(logoUrl);
@@ -1605,8 +1601,7 @@
                                     logo.height = maxSize;
 
                                     console.log('Logo eingefügt: Position 25mm von links, 12mm von oben, max. 30mm');
-                                para.font.strikethrough = false;
-                                para.font.underline = Word.UnderlineType.none; else {
+                                } else {
                                     // Fallback: Text-Platzhalter
                                     logoParagraph.insertText('[DREYFUS LOGO]', Word.InsertLocation.start);
                                     logoParagraph.font.color = DSC_COLORS.GRAU;
@@ -1653,7 +1648,7 @@
                             // Format: Dreyfus Söhne & Cie AG, Banquiers | Aeschenvorstadt 16 | Postfach | 4002 Basel | Schweiz
                             const addressParts = footerData.adresse.split(', ');
                             let addressLine = firmenName;
-                            if (footerData.buero && footerData.buero.trim() !== '') {
+                            if (footerData.buero) {
                                 addressLine += ', ' + footerData.buero;
                             }
                             addressLine += ' | ' + addressParts.join(' | ');
@@ -1665,8 +1660,6 @@
                             addressPara.alignment = Word.Alignment.center;
                             addressPara.spaceAfter = 0;
                             addressPara.spaceBefore = 0;
-                            addressPara.font.strikethrough = false;
-                            addressPara.font.underline = Word.UnderlineType.none;
                             
                             // Zweite Zeile: Telefon | E-Mail | Website
                             let contactLine = footerData.telefon + ' | ' + footerData.email;
@@ -1685,18 +1678,14 @@
                             contactPara.alignment = Word.Alignment.center;
                             contactPara.spaceAfter = 0;
                             contactPara.spaceBefore = 0;
-                            contactPara.font.strikethrough = false;
-                            contactPara.font.underline = Word.UnderlineType.none;
                             
                             // Tagline (Claim)
                             const tagline = footerTaglines[sprachCode];
                             if (tagline) {
-                                const emptyParagraph = footer.insertParagraph('', Word.InsertLocation.end);
+                                const emptyParagraph = footer.insertParagraph('\u00A0', Word.InsertLocation.end);
                                 emptyParagraph.font.size = 6;
                                 emptyParagraph.spaceAfter = 0;
                                 emptyParagraph.spaceBefore = 6;  // Kleiner Abstand vor Tagline
-                                emptyParagraph.font.strikethrough = false;
-                                emptyParagraph.font.underline = Word.UnderlineType.none;
 
                                 const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.name = 'Dreyfus Sans';
@@ -1705,8 +1694,6 @@
                                 taglineParagraph.alignment = Word.Alignment.center;
                                 taglineParagraph.spaceAfter = 0;
                                 taglineParagraph.spaceBefore = 0;
-                                taglineParagraph.font.strikethrough = false;
-                                taglineParagraph.font.underline = Word.UnderlineType.none;
                             }
                         }
                     }
@@ -1717,12 +1704,10 @@
                     // === HAUPTINHALT ===
                     
                     // 13pt Abstand nach dem Logo
-                    const spacerPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                     spacerPara.spaceBefore = 0;
                     spacerPara.spaceAfter = 13;  // 13pt Abstand nach unten
                     spacerPara.font.size = 1;
-                    spacerPara.font.strikethrough = false;
-                    spacerPara.font.underline = Word.UnderlineType.none;
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
@@ -1735,8 +1720,6 @@
                             
                             // Zellpadding auf 0 setzen
                             addressTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
-                            addressTable.font.strikethrough = false;
-                            addressTable.font.underline = Word.UnderlineType.none;
                             
                             // Rahmen entfernen nach Microsoft-Dokumentation
                             addressTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
@@ -1760,12 +1743,10 @@
                             await context.sync();
                             
                             spacerCell.body.clear();
-                            const spacerPara = spacerCell.body.insertParagraph('', Word.InsertLocation.start);
+                            const spacerPara = spacerCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
                             spacerPara.font.size = 1;
                             spacerPara.spaceBefore = 0;
                             spacerPara.spaceAfter = 0;
-                            spacerPara.font.strikethrough = false;
-                            spacerPara.font.underline = Word.UnderlineType.none;
                             
                             // Zweite Spalte für Adresse - ab 122mm vom linken Rand
                             const addressCell = addressTable.getCell(0, 1);
@@ -1788,8 +1769,6 @@
                                 para.alignment = Word.Alignment.left;
                                 para.spaceBefore = 0;
                                 para.spaceAfter = 0;
-                                para.font.strikethrough = false;
-                                para.font.underline = Word.UnderlineType.none;
                                 // Nur nach der letzten Zeile Abstand
                                 if (index === addressLines.length - 1) {
                                     para.spaceAfter = FONT_SIZES.ADRESSE.spaceAfter;  // 13pt Abstand nach unten
@@ -1799,11 +1778,9 @@
                             await context.sync();
                             
                             // Spacer nach der Adresstabelle
-                            const afterAddressPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                            const afterAddressPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             afterAddressPara.font.size = 1;
                             afterAddressPara.spaceAfter = 20;  // Abstand nach Adresse
-                            afterAddressPara.font.strikethrough = false;
-                            afterAddressPara.font.underline = Word.UnderlineType.none;
                             
                         } catch (addressError) {
                             console.error('Fehler bei der Adresstabelle:', addressError);
@@ -1816,8 +1793,6 @@
                                 addressPara.alignment = Word.Alignment.left;
                                 addressPara.spaceBefore = 0;
                                 addressPara.spaceAfter = 0;
-                                addressPara.font.strikethrough = false;
-                                addressPara.font.underline = Word.UnderlineType.none;
                                 if (index === addressLines.length - 1) {
                                     addressPara.spaceAfter = FONT_SIZES.ADRESSE.spaceAfter;  // 13pt Abstand nach unten
                                 }
@@ -1850,8 +1825,6 @@
                         ortDatumPara.spaceAfter = 13;  // 13pt Abstand zum Betreff
                         ortDatumPara.font.name = 'Dreyfus Sans';
                         ortDatumPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
-                        ortDatumPara.font.strikethrough = false;
-                        ortDatumPara.font.underline = Word.UnderlineType.none;
                     }
 
                     // Betreff
@@ -1862,8 +1835,6 @@
                         betreffPara.font.name = 'Dreyfus Sans';
                         betreffPara.font.size = FONT_SIZES.BETREFF.size;  // Betreff 10.5pt
                         betreffPara.font.bold = FONT_SIZES.BETREFF.bold;   // Bold
-                        betreffPara.font.strikethrough = false;
-                        betreffPara.font.underline = Word.UnderlineType.none;
                     }
 
                     // Anrede
@@ -1874,37 +1845,29 @@
                         anredePara.font.name = 'Dreyfus Sans';
                         anredePara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                         anredePara.font.bold = false;
-                        anredePara.font.strikethrough = false;  // Explizit keine Durchstreichung
-                        anredePara.font.underline = Word.UnderlineType.none;  // Keine Unterstreichung
                     }
 
                     // Leerer Absatz für Brieftext mit genug Platz
-                    const textPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                    const textPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                     textPara.alignment = Word.Alignment.left;
                     textPara.spaceAfter = 50;  // Noch mehr Platz für den Brieftext (war 40pt)
                     textPara.font.name = 'Dreyfus Sans';
                     textPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                     textPara.font.bold = false;
-                    textPara.font.strikethrough = false;
-                    textPara.font.underline = Word.UnderlineType.none;
                     textPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
 
                     // Grussformel - IMMER EINZEILIG
                     if (formData.gruss) {
                         // Extra Spacer vor Grussformel für genug Abstand
-                        const spacerBeforeGruss = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                        const spacerBeforeGruss = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                         spacerBeforeGruss.font.size = 1;
                         spacerBeforeGruss.spaceAfter = 20;
-                        spacerBeforeGruss.font.strikethrough = false;
-                        spacerBeforeGruss.font.underline = Word.UnderlineType.none;
                         
                         const grussPara = context.document.body.insertParagraph(formData.gruss, Word.InsertLocation.end);
                         grussPara.alignment = Word.Alignment.left;
                         grussPara.font.name = 'Dreyfus Sans';
                         grussPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                         grussPara.font.bold = false;
-                        grussPara.font.strikethrough = false;  // Explizit keine Durchstreichung
-                        grussPara.font.underline = Word.UnderlineType.none;  // Keine Unterstreichung
                         grussPara.spaceBefore = 0;
                         grussPara.spaceAfter = 6;
                         grussPara.lineSpacing = 1.24;  // ~13pt bei 10.5pt Schrift
@@ -1924,8 +1887,6 @@
                                 firmaPara.font.name = 'Dreyfus Sans';
                                 firmaPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                                 firmaPara.font.bold = false;
-                                firmaPara.font.strikethrough = false;  // Explizit keine Durchstreichung
-                                firmaPara.font.underline = Word.UnderlineType.none;  // Keine Unterstreichung
                             }
                         }
                     }
@@ -1997,8 +1958,6 @@
                             // Font für gesamte Tabelle
                             signatureTable.font.name = 'Dreyfus Sans';
                             signatureTable.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt für Unterschriften
-                            signatureTable.font.strikethrough = false;
-                            signatureTable.font.underline = Word.UnderlineType.none;
                             
                             // Rahmen entfernen nach Microsoft-Dokumentation
                             signatureTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
@@ -2022,11 +1981,9 @@
                             await context.sync();
                             
                             // Abstand nach der kombinierten Tabelle
-                            const spacingPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                            const spacingPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacingPara.spaceAfter = 30;
                             spacingPara.font.size = 1;
-                            spacingPara.font.strikethrough = false;
-                            spacingPara.font.underline = Word.UnderlineType.none;
                             
                         } catch (tableError) {
                             console.error('Fehler bei der Unterschriften-Tabelle:', tableError);
@@ -2036,8 +1993,6 @@
                                 sig1Para.font.name = 'Dreyfus Sans';
                                 sig1Para.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                                 sig1Para.spaceAfter = 20;
-                                sig1Para.font.strikethrough = false;
-                                sig1Para.font.underline = Word.UnderlineType.none;
                             }
                         }
                     }
@@ -2064,11 +2019,9 @@
                         }
 
                         if (beilagenText) {
-                            const spacerPara = context.document.body.insertParagraph('', Word.InsertLocation.end);
+                            const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
                             spacerPara.spaceAfter = 15;
                             spacerPara.font.size = 1;
-                            spacerPara.font.strikethrough = false;
-                            spacerPara.font.underline = Word.UnderlineType.none;
 
                             const beilagenPara = context.document.body.insertParagraph(beilagenText, Word.InsertLocation.end);
                             beilagenPara.font.size = FONT_SIZES.BEILAGEN.size;  // Beilagen 10pt
@@ -2076,8 +2029,6 @@
                             beilagenPara.alignment = Word.Alignment.left;
                             beilagenPara.lineSpacing = 1.2;  // ~12pt bei 10pt Schrift
                             beilagenPara.spaceAfter = 0;
-                            beilagenPara.font.strikethrough = false;
-                            beilagenPara.font.underline = Word.UnderlineType.none;
                         }
                     }
 
