@@ -190,6 +190,41 @@
             margin-bottom: 2px;
         }
 
+        /* Loading Indicator */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .content.hidden {
+            display: none;
+        }
+
+        .data-source-indicator {
+            font-size: 0.7rem;
+            color: #666;
+            text-align: right;
+            padding: 2px 5px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 3px;
+            margin-bottom: 10px;
+        }
+
+        .retry-btn {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            margin-left: 5px;
+        }
+
         /* Debug-Info für Entwicklung */
         .debug-info {
             background-color: #e9ecef;
@@ -203,27 +238,46 @@
 </head>
 <body>
     <div class="header-bar">
-        <h5 class="mb-0">Dreyfus Söhne & Cie AG, Banquiers</h5>
+        <h5 class="mb-0" data-i18n="header.company">...</h5>
     </div>
     <div class="sub-header">
-        <small>Dreyfus Inkasso</small>
+        <small data-i18n="header.subtitle">...</small>
     </div>
 
-    <div class="container">
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading">
+        <div data-i18n="loading.dataLoading">...</div>
+        <div class="mt-2">
+            <div class="spinner-border spinner-border-sm" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="mt-2">
+            <small id="loadingDetails" data-i18n="loading.connectingGithub">...</small>
+        </div>
+    </div>
+
+    <div class="container content hidden" id="mainContent">
+        <!-- Data Source Indicator -->
+        <div class="data-source-indicator" id="dataSourceIndicator">
+            <span data-i18n="indicators.dataSource">...</span>: <span data-i18n="indicators.determining">...</span>
+            <button type="button" class="retry-btn d-none" id="retryDataLoad">🔄 <span data-i18n="buttons.reload">...</span></button>
+        </div>
+
         <form id="inkassoForm">
-            <div class="section-title">KONTO</div>
+            <div class="section-title" data-i18n="sections.account">...</div>
             
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="kontoNr" class="form-label">Konto-Nr.</label>
+                        <label for="kontoNr" class="form-label" data-i18n="form.accountNumber">...</label>
                         <input type="text" class="form-control" id="kontoNr" placeholder="z.B. 123456789">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="nameVorname" class="form-label">Name / Vorname</label>
-                        <input type="text" class="form-control" id="nameVorname" placeholder="Name und Vorname eingeben">
+                        <label for="nameVorname" class="form-label" data-i18n="form.nameFirstname">...</label>
+                        <input type="text" class="form-control" id="nameVorname" data-i18n-placeholder="form.nameFirstnamePlaceholder">
                     </div>
                 </div>
             </div>
@@ -231,7 +285,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="waehrung" class="form-label">Währung / Kontoart</label>
+                        <label for="waehrung" class="form-label" data-i18n="form.currencyAccountType">...</label>
                         <div style="display: flex; align-items: center;">
                             <select class="form-select currency-select" id="waehrung">
                                 <option value="CHF" selected>CHF</option>
@@ -245,23 +299,20 @@
                 </div>
             </div>
 
-            <div class="section-title">INKASSO</div>
+            <div class="section-title" data-i18n="sections.collection">...</div>
 
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="inkassopapier" class="form-label">Inkassopapier</label>
+                        <label for="inkassopapier" class="form-label" data-i18n="form.collectionPaper">...</label>
                         <select class="form-select" id="inkassopapier">
-                            <option value="Check" selected>Check</option>
-                            <option value="Wechsel">Wechsel</option>
-                            <option value="Quittung">Quittung</option>
-                            <option value="Andere">Andere</option>
+                            <!-- Options will be populated dynamically -->
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="waehrungInkasso" class="form-label">Währung</label>
+                        <label for="waehrungInkasso" class="form-label" data-i18n="form.currency">...</label>
                         <select class="form-select" id="waehrungInkasso">
                             <option value="CHF" selected>CHF</option>
                             <option value="EUR">EUR</option>
@@ -273,7 +324,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Betrag <small class="text-muted">(geben Sie die Beträge ein - Total wird automatisch berechnet)</small></label>
+                <label class="form-label"><span data-i18n="form.amount">...</span> <small class="text-muted" data-i18n="form.amountHint">...</small></label>
                 <div id="betragContainer">
                     <div class="betrag-row">
                         <span class="currency-display">CHF</span>
@@ -321,51 +372,49 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="total" class="form-label">Total <small class="text-muted">(wird automatisch berechnet)</small></label>
+                        <label for="total" class="form-label"><span data-i18n="form.total">...</span> <small class="text-muted" data-i18n="form.totalCalculated">...</small></label>
                         <input type="text" class="form-control total-field" id="total" value="0.00" readonly>
                     </div>
                 </div>
             </div>
 
-            <div class="section-title">MITTEILUNG / WEISUNG</div>
+            <div class="section-title" data-i18n="sections.messageInstruction">...</div>
 
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="fehlendesIndossament">
-                <label class="form-check-label" for="fehlendesIndossament">
-                    Fehlendes Indossament garantieren
-                </label>
+                <label class="form-check-label" for="fehlendesIndossament" data-i18n="form.missingEndorsement">...</label>
             </div>
 
             <div class="form-group">
-                <label for="spezielleWeisung" class="form-label">Spezielle Weisung</label>
-                <textarea class="form-control" id="spezielleWeisung" rows="3" placeholder="Hier können Sie spezielle Weisungen eingeben..."></textarea>
+                <label for="spezielleWeisung" class="form-label" data-i18n="form.specialInstruction">...</label>
+                <textarea class="form-control" id="spezielleWeisung" rows="3" data-i18n-placeholder="form.specialInstructionPlaceholder"></textarea>
             </div>
 
             <div class="row">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label for="referenz" class="form-label">Referenz</label>
-                        <input type="text" class="form-control" id="referenz" placeholder="Referenznummer eingeben">
+                        <label for="referenz" class="form-label" data-i18n="form.reference">...</label>
+                        <input type="text" class="form-control" id="referenz" data-i18n-placeholder="form.referencePlaceholder">
                     </div>
 
                     <div class="form-group">
-                        <label for="buchungstext" class="form-label">Buchungstext Gutschrift</label>
-                        <textarea class="form-control" id="buchungstext" rows="2" placeholder="Buchungstext eingeben"></textarea>
+                        <label for="buchungstext" class="form-label" data-i18n="form.bookingText">...</label>
+                        <textarea class="form-control" id="buchungstext" rows="2" data-i18n-placeholder="form.bookingTextPlaceholder"></textarea>
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <div class="right-fields">
                         <div class="form-group">
-                            <label for="abteilung" class="form-label">Abteilung</label>
+                            <label for="abteilung" class="form-label" data-i18n="form.department">...</label>
                             <input type="text" class="form-control" id="abteilung" placeholder="z.B. EDV">
                         </div>
                         <div class="form-group">
-                            <label for="kuerzel" class="form-label">Kürzel</label>
+                            <label for="kuerzel" class="form-label" data-i18n="form.initials">...</label>
                             <input type="text" class="form-control" id="kuerzel" placeholder="z.B. SO2">
                         </div>
                         <div class="form-group">
-                            <label for="telefon" class="form-label">Telefon</label>
+                            <label for="telefon" class="form-label" data-i18n="form.phone">...</label>
                             <input type="text" class="form-control" id="telefon" placeholder="z.B. 287">
                         </div>
                     </div>
@@ -373,8 +422,8 @@
             </div>
 
             <div class="d-grid gap-2 mt-4">
-                <button type="submit" class="btn btn-primary">OK</button>
-                <button type="button" class="btn btn-secondary" id="cancelBtn">Abbrechen</button>
+                <button type="submit" class="btn btn-primary" data-i18n="buttons.ok">...</button>
+                <button type="button" class="btn btn-secondary" id="cancelBtn" data-i18n="buttons.cancel">...</button>
             </div>
         </form>
 
@@ -383,32 +432,400 @@
         <!-- Debug-Info (nur in Entwicklung sichtbar) -->
         <div id="debugInfo" class="debug-info">
             <strong>Debug Info:</strong> <span id="debugText"></span>
-            <button type="button" class="btn btn-sm btn-info mt-2" onclick="testCalculation()">Test-Berechnung</button>
+            <button type="button" class="btn btn-sm btn-info mt-2" onclick="testCalculation()" data-i18n="buttons.testCalculation">...</button>
         </div>
     </div>
 
     <script>
+        // === KONFIGURATION FÜR EXTERNE DATENLADUNG ===
+        const DATA_CONFIG = {
+            // Primäre Datenquelle (GitHub Pages - automatisches CORS)
+            PRIMARY_URL: 'https://keshbe.github.io/brief-generator-addin/data.json',
+            LANGUAGE_URL: 'https://keshbe.github.io/brief-generator-addin/language.json',
+            
+            // Cache-Einstellungen
+            CACHE_DURATION: 5 * 60 * 1000, // 5 Minuten in Millisekunden
+            
+            // Retry-Einstellungen
+            MAX_RETRIES: 3,
+            RETRY_DELAY: 1000, // 1 Sekunde
+            
+            // Timeout-Einstellungen
+            FETCH_TIMEOUT: 10000 // 10 Sekunden
+        };
+
+        // === GLOBALE DATEN-VARIABLEN ===
+        let appData = null;
+        let translations = null;
+        let inkassoPapierOptionen = {};
+        let dataSourceInfo = { source: 'unknown', timestamp: null, error: null };
+        let currentLanguage = 'de'; // Default Sprache
+
+        // === CACHE-SYSTEM ===
+        class DataCache {
+            constructor(type) {
+                this.cacheKey = `dreyfus_inkasso_${type}_cache`;
+                this.timestampKey = `dreyfus_inkasso_${type}_timestamp`;
+            }
+
+            set(data) {
+                try {
+                    sessionStorage.setItem(this.cacheKey, JSON.stringify(data));
+                    sessionStorage.setItem(this.timestampKey, Date.now().toString());
+                    console.log(`${this.cacheKey} im Cache gespeichert`);
+                } catch (error) {
+                    console.warn('Cache-Speicherung fehlgeschlagen:', error);
+                }
+            }
+
+            get() {
+                try {
+                    const timestamp = sessionStorage.getItem(this.timestampKey);
+                    if (!timestamp) return null;
+
+                    const age = Date.now() - parseInt(timestamp);
+                    if (age > DATA_CONFIG.CACHE_DURATION) {
+                        console.log(`${this.cacheKey} Cache-Daten sind veraltet`);
+                        this.clear();
+                        return null;
+                    }
+
+                    const data = sessionStorage.getItem(this.cacheKey);
+                    if (data) {
+                        console.log(`${this.cacheKey} aus Cache geladen`);
+                        return JSON.parse(data);
+                    }
+                } catch (error) {
+                    console.warn('Cache-Laden fehlgeschlagen:', error);
+                    this.clear();
+                }
+                return null;
+            }
+
+            clear() {
+                try {
+                    sessionStorage.removeItem(this.cacheKey);
+                    sessionStorage.removeItem(this.timestampKey);
+                } catch (error) {
+                    // Ignoriere Fehler beim Löschen
+                }
+            }
+        }
+
+        const dataCache = new DataCache('data');
+        const languageCache = new DataCache('language');
+
+        // === EXTERNE DATENLADUNG MIT RETRY-LOGIC ===
+        async function fetchWithTimeout(url, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), DATA_CONFIG.FETCH_TIMEOUT);
+
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal,
+                    mode: 'cors',
+                    cache: 'no-cache',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache',
+                        ...options.headers
+                    }
+                });
+                
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response;
+            } catch (error) {
+                clearTimeout(timeoutId);
+                throw error;
+            }
+        }
+
+        async function loadExternalData(url, attempt = 1) {
+            try {
+                console.log(`Lade Daten von ${url} (Versuch ${attempt}/${DATA_CONFIG.MAX_RETRIES})`);
+                
+                const response = await fetchWithTimeout(url);
+                const data = await response.json();
+                
+                console.log('Externe Daten erfolgreich geladen');
+                return data;
+                
+            } catch (error) {
+                console.warn(`Versuch ${attempt} fehlgeschlagen:`, error.message);
+                
+                if (attempt < DATA_CONFIG.MAX_RETRIES) {
+                    await new Promise(resolve => setTimeout(resolve, DATA_CONFIG.RETRY_DELAY));
+                    return loadExternalData(url, attempt + 1);
+                }
+                
+                throw error;
+            }
+        }
+
+        async function loadLanguages() {
+            try {
+                // Versuche Sprachen zu laden
+                const languageData = await loadExternalData(DATA_CONFIG.LANGUAGE_URL);
+                languageCache.set(languageData);
+                translations = languageData;
+                console.log('Übersetzungen geladen:', Object.keys(translations));
+                
+                // Automatische Spracherkennung
+                autoDetectLanguage();
+                
+                return languageData;
+            } catch (error) {
+                console.error('Sprachen konnten nicht geladen werden:', error);
+                throw new Error('Übersetzungen nicht verfügbar');
+            }
+        }
+
+        async function loadData() {
+            try {
+                showLoading(true);
+                
+                // 1. Lade Übersetzungen
+                await loadLanguages();
+                
+                // 2. Lade App-Daten
+                try {
+                    const data = await loadExternalData(DATA_CONFIG.PRIMARY_URL);
+                    
+                    dataCache.set(data);
+                    dataSourceInfo = { 
+                        source: 'external', 
+                        timestamp: new Date(), 
+                        error: null,
+                        url: DATA_CONFIG.PRIMARY_URL 
+                    };
+                    
+                    initializeDataFromSource(data);
+                    initializeUI();
+                    showLoading(false);
+                    return;
+                } catch (error) {
+                    console.error('Daten konnten nicht geladen werden:', error);
+                    throw new Error('App-Daten nicht verfügbar');
+                }
+                
+            } catch (error) {
+                console.error('Datenladen fehlgeschlagen:', error);
+                showLoading(false);
+                dataSourceInfo = { source: 'error', timestamp: new Date(), error: error.message };
+                
+                showStatus(getText('status.errorLoadingData'), 'error');
+                updateDataSourceIndicator();
+                
+                // Zeige Retry-Button
+                document.getElementById('retryDataLoad').classList.remove('d-none');
+            }
+        }
+
+        function getText(key) {
+            if (!translations || !currentLanguage) {
+                return '...';
+            }
+            
+            const keys = key.split('.');
+            let value = translations[currentLanguage];
+            
+            for (const k of keys) {
+                if (value && typeof value === 'object' && k in value) {
+                    value = value[k];
+                } else {
+                    return '...';
+                }
+            }
+            
+            return typeof value === 'string' ? value : '...';
+        }
+
+        function translateUI() {
+            if (!translations || !currentLanguage) {
+                console.warn('Übersetzungen nicht verfügbar');
+                return;
+            }
+
+            // Alle Elemente mit data-i18n Attribut übersetzen
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const text = getText(key);
+                if (text !== '...') {
+                    element.textContent = text;
+                }
+            });
+            
+            // Placeholder übersetzen
+            const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+            placeholderElements.forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                const text = getText(key);
+                if (text !== '...') {
+                    element.placeholder = text;
+                }
+            });
+            
+            // Update Indicators
+            updateDataSourceIndicator();
+        }
+
+        function autoDetectLanguage() {
+            if (!translations) return;
+            
+            // Versuche Word-Sprache zu erkennen
+            if (typeof Office !== 'undefined' && Office.context && Office.context.displayLanguage) {
+                const wordLang = Office.context.displayLanguage.split('-')[0].toLowerCase();
+                if (translations[wordLang]) {
+                    currentLanguage = wordLang;
+                    console.log('Automatische Spracherkennung (Word):', wordLang);
+                    translateUI();
+                    return;
+                }
+            }
+            
+            // Fallback: Browser-Sprache
+            const browserLang = navigator.language.split('-')[0].toLowerCase();
+            if (translations[browserLang]) {
+                currentLanguage = browserLang;
+                console.log('Browser-Spracherkennung:', browserLang);
+            } else {
+                currentLanguage = 'de'; // Default
+            }
+            
+            translateUI();
+        }
+
+        function updateDataSourceIndicator() {
+            const indicator = document.getElementById('dataSourceIndicator');
+            
+            let statusText = '';
+            let statusClass = '';
+            
+            switch(dataSourceInfo.source) {
+                case 'external':
+                    statusText = getText('indicators.dataSourceExternal');
+                    statusClass = 'text-success';
+                    break;
+                case 'cache':
+                    statusText = getText('indicators.dataSourceCached');
+                    statusClass = 'text-warning';
+                    break;
+                case 'error':
+                    statusText = getText('indicators.dataSourceError');
+                    statusClass = 'text-danger';
+                    break;
+                default:
+                    statusText = getText('indicators.dataSourceUnknown');
+                    statusClass = 'text-muted';
+            }
+            
+            indicator.innerHTML = `
+                <span class="${statusClass}">${getText('indicators.dataSource')}: ${statusText}</span>
+                ${dataSourceInfo.timestamp ? ` (${dataSourceInfo.timestamp.toLocaleTimeString()})` : ''}
+                <button type="button" class="retry-btn ${dataSourceInfo.source === 'error' ? '' : 'd-none'}" id="retryDataLoad">🔄 ${getText('buttons.reload')}</button>
+            `;
+            
+            // Event Listener für Retry-Button
+            const retryBtn = document.getElementById('retryDataLoad');
+            if (retryBtn) {
+                retryBtn.onclick = () => {
+                    retryBtn.classList.add('d-none');
+                    loadData();
+                };
+            }
+        }
+
+        function showLoading(show) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const mainContent = document.getElementById('mainContent');
+            
+            if (show) {
+                loadingIndicator.classList.add('show');
+                mainContent.classList.add('hidden');
+            } else {
+                loadingIndicator.classList.remove('show');
+                mainContent.classList.remove('hidden');
+            }
+        }
+
+        function initializeDataFromSource(data) {
+            // Globale Variablen aus Datenquelle setzen
+            inkassoPapierOptionen = data.inkassoPapierOptionen || {};
+            
+            console.log('Daten initialisiert:', Object.keys(data));
+        }
+
+        function initializeUI() {
+            // Inkassopapier Dropdown befüllen
+            populateInkassopapierSelect();
+            
+            // Event Handlers initialisieren
+            initializeEventHandlers();
+            
+            // Standardwerte setzen
+            setDefaultValues();
+            
+            // Betrags-Berechnung einrichten
+            setupBetragCalculation();
+            
+            // Währungs-Synchronisation
+            setupCurrencySync();
+            
+            // UI übersetzen
+            translateUI();
+            
+            // Indikatoren aktualisieren
+            updateDataSourceIndicator();
+            
+            console.log('UI erfolgreich initialisiert - Aktuelle Sprache:', currentLanguage);
+        }
+
+        function populateInkassopapierSelect() {
+            const inkassopapierSelect = document.getElementById('inkassopapier');
+            
+            // Clear existing options
+            inkassopapierSelect.innerHTML = '';
+            
+            // Add options based on current language
+            if (inkassoPapierOptionen[currentLanguage]) {
+                inkassoPapierOptionen[currentLanguage].forEach(option => {
+                    const opt = document.createElement('option');
+                    opt.value = option.value;
+                    opt.textContent = option.text;
+                    if (option.selected) {
+                        opt.selected = true;
+                    }
+                    inkassopapierSelect.appendChild(opt);
+                });
+            }
+        }
+
         // Office.js Initialisierung
         if (typeof Office !== 'undefined') {
             Office.onReady((info) => {
                 if (info.host === Office.HostType.Word) {
                     console.log('Dreyfus Inkasso Add-In ist bereit');
-                    initializeEventHandlers();
-                    setupBetragCalculation();
-                    setupCurrencySync();
-                    setDefaultValues();
+                    
+                    // Daten laden
+                    loadData();
                 } else {
-                    showStatus('Dieses Add-In funktioniert nur in Microsoft Word', 'error');
+                    showStatus(getText('errors.onlyWord'), 'error');
                 }
             });
         } else {
             // Fallback für Browser-Test
             document.addEventListener('DOMContentLoaded', () => {
                 console.log('Browser-Test-Modus (ohne Word)');
-                initializeEventHandlers();
-                setupBetragCalculation();
-                setupCurrencySync();
-                setDefaultValues();
+                
+                // Daten laden
+                loadData();
                 
                 // Zeige Warnung
                 const warning = document.createElement('div');
@@ -421,7 +838,7 @@
         function initializeEventHandlers() {
             document.getElementById('inkassoForm').addEventListener('submit', erstelleInkasso);
             document.getElementById('cancelBtn').addEventListener('click', () => {
-                showStatus('Aktion abgebrochen. Ihre Eingaben bleiben erhalten.', 'info');
+                showStatus(getText('status.cancelled'), 'info');
             });
         }
 
@@ -430,7 +847,7 @@
             const heute = new Date();
             
             // Debug-Info anzeigen
-            document.getElementById('debugText').textContent = 'Total-Berechnung ist aktiv. Geben Sie Beträge ein!';
+            document.getElementById('debugText').textContent = getText('debug.totalCalculationActive');
             
             // Initiale Total-Berechnung
             calculateTotal();
@@ -557,12 +974,12 @@
 
             // Prüfe ob Word verfügbar ist
             if (typeof Word === 'undefined') {
-                showStatus('⚠️ Inkasso-Erstellung funktioniert nur in Microsoft Word!', 'error');
+                showStatus(getText('errors.onlyInWord'), 'error');
                 return;
             }
 
             try {
-                showStatus('Inkasso wird erstellt...', 'info');
+                showStatus(getText('status.creating'), 'info');
 
                 // Sammle alle Daten
                 const formData = {
@@ -612,8 +1029,8 @@
                         section.rightMargin = 72;  // 2.54 cm
                     }
 
-                    // Titel
-                    const titleParagraph = context.document.body.insertParagraph('KONTO', Word.InsertLocation.start);
+                    // Titel mit übersetzten Texten
+                    const titleParagraph = context.document.body.insertParagraph(getText('sections.account'), Word.InsertLocation.start);
                     titleParagraph.font.bold = true;
                     titleParagraph.font.size = 14;
                     titleParagraph.spaceAfter = 12;
@@ -624,17 +1041,17 @@
                     const kontoTable = context.document.body.insertTable(3, 2, Word.InsertLocation.end);
                     kontoTable.styleBuiltIn = Word.Style.tableGrid;
                     
-                    kontoTable.rows.items[0].cells.items[0].body.insertText('Konto-Nr.', Word.InsertLocation.start);
+                    kontoTable.rows.items[0].cells.items[0].body.insertText(getText('form.accountNumber'), Word.InsertLocation.start);
                     kontoTable.rows.items[0].cells.items[1].body.insertText(formData.kontoNr, Word.InsertLocation.start);
                     
-                    kontoTable.rows.items[1].cells.items[0].body.insertText('Name / Vorname', Word.InsertLocation.start);
+                    kontoTable.rows.items[1].cells.items[0].body.insertText(getText('form.nameFirstname'), Word.InsertLocation.start);
                     kontoTable.rows.items[1].cells.items[1].body.insertText(formData.nameVorname, Word.InsertLocation.start);
                     
-                    kontoTable.rows.items[2].cells.items[0].body.insertText('Währung / Kontoart', Word.InsertLocation.start);
+                    kontoTable.rows.items[2].cells.items[0].body.insertText(getText('form.currencyAccountType'), Word.InsertLocation.start);
                     kontoTable.rows.items[2].cells.items[1].body.insertText(`${formData.waehrung} ${formData.kontoart}`, Word.InsertLocation.start);
 
                     // CHECKBETRAG
-                    const checkTitleParagraph = context.document.body.insertParagraph('CHECKBETRAG', Word.InsertLocation.end);
+                    const checkTitleParagraph = context.document.body.insertParagraph(getText('sections.checkAmount'), Word.InsertLocation.end);
                     checkTitleParagraph.font.bold = true;
                     checkTitleParagraph.font.size = 14;
                     checkTitleParagraph.spaceBefore = 24;
@@ -644,7 +1061,7 @@
                     context.document.body.insertParagraph('', Word.InsertLocation.end);
                     const inkassoTable = context.document.body.insertTable(1, 2, Word.InsertLocation.end);
                     inkassoTable.styleBuiltIn = Word.Style.tableGrid;
-                    inkassoTable.rows.items[0].cells.items[0].body.insertText('Inkassopapier', Word.InsertLocation.start);
+                    inkassoTable.rows.items[0].cells.items[0].body.insertText(getText('form.collectionPaper'), Word.InsertLocation.start);
                     inkassoTable.rows.items[0].cells.items[1].body.insertText(formData.inkassopapier, Word.InsertLocation.start);
 
                     context.document.body.insertParagraph('', Word.InsertLocation.end);
@@ -655,9 +1072,9 @@
                     
                     // Header mit Linien
                     const headerRow = betragTable.rows.items[0];
-                    headerRow.cells.items[0].body.insertText('Währung', Word.InsertLocation.start);
+                    headerRow.cells.items[0].body.insertText(getText('form.currency'), Word.InsertLocation.start);
                     headerRow.cells.items[0].body.paragraphs.items[0].font.bold = true;
-                    headerRow.cells.items[1].body.insertText('Betrag', Word.InsertLocation.start);
+                    headerRow.cells.items[1].body.insertText(getText('form.amount'), Word.InsertLocation.start);
                     headerRow.cells.items[1].body.paragraphs.items[0].font.bold = true;
                     
                     // Trennlinie
@@ -692,7 +1109,7 @@
                     totalTable.rows.items[0].cells.items[0].mergeTo(totalTable.rows.items[0].cells.items[2]);
                     
                     // Total
-                    totalTable.rows.items[1].cells.items[0].body.insertText('Total', Word.InsertLocation.start);
+                    totalTable.rows.items[1].cells.items[0].body.insertText(getText('form.total'), Word.InsertLocation.start);
                     totalTable.rows.items[1].cells.items[0].body.paragraphs.items[0].font.bold = true;
                     totalTable.rows.items[1].cells.items[1].body.insertText(formData.waehrungInkasso, Word.InsertLocation.start);
                     totalTable.rows.items[1].cells.items[1].body.paragraphs.items[0].font.bold = true;
@@ -701,7 +1118,7 @@
                     totalTable.rows.items[1].cells.items[2].body.paragraphs.items[0].alignment = Word.Alignment.right;
 
                     // Mitteilung / Weisungen
-                    const mitteilungParagraph = context.document.body.insertParagraph('MITTEILUNG / WEISUNGEN', Word.InsertLocation.end);
+                    const mitteilungParagraph = context.document.body.insertParagraph(getText('sections.messageInstruction'), Word.InsertLocation.end);
                     mitteilungParagraph.font.bold = true;
                     mitteilungParagraph.font.size = 14;
                     mitteilungParagraph.spaceBefore = 24;
@@ -712,24 +1129,24 @@
                     const mitteilungTable = context.document.body.insertTable(5, 2, Word.InsertLocation.end);
                     mitteilungTable.styleBuiltIn = Word.Style.tableGrid;
                     
-                    mitteilungTable.rows.items[0].cells.items[0].body.insertText('Fehlendes Indossament garantieren', Word.InsertLocation.start);
-                    mitteilungTable.rows.items[0].cells.items[1].body.insertText(formData.fehlendesIndossament ? 'Ja' : 'Nein', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[0].cells.items[0].body.insertText(getText('form.missingEndorsement'), Word.InsertLocation.start);
+                    mitteilungTable.rows.items[0].cells.items[1].body.insertText(formData.fehlendesIndossament ? getText('general.yes') : getText('general.no'), Word.InsertLocation.start);
                     
                     mitteilungTable.rows.items[1].cells.items[0].body.insertText('', Word.InsertLocation.start);
                     mitteilungTable.rows.items[1].cells.items[1].body.insertText('', Word.InsertLocation.start);
                     
-                    mitteilungTable.rows.items[2].cells.items[0].body.insertText('Spezielle Weisungen', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[2].cells.items[0].body.insertText(getText('form.specialInstruction'), Word.InsertLocation.start);
                     mitteilungTable.rows.items[2].cells.items[1].body.insertText(formData.spezielleWeisung || '', Word.InsertLocation.start);
                     
-                    mitteilungTable.rows.items[3].cells.items[0].body.insertText('Referenz', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[3].cells.items[0].body.insertText(getText('form.reference'), Word.InsertLocation.start);
                     mitteilungTable.rows.items[3].cells.items[1].body.insertText(formData.referenz || '', Word.InsertLocation.start);
                     
-                    mitteilungTable.rows.items[4].cells.items[0].body.insertText('Buchungstext Gutschrift', Word.InsertLocation.start);
+                    mitteilungTable.rows.items[4].cells.items[0].body.insertText(getText('form.bookingText'), Word.InsertLocation.start);
                     mitteilungTable.rows.items[4].cells.items[1].body.insertText(formData.buchungstext || '', Word.InsertLocation.start);
 
                     // Datum und Visum
                     const heute = new Date();
-                    const datumText = `Datum ${heute.toLocaleDateString('de-CH')} ${heute.toLocaleTimeString('de-CH', {hour: '2-digit', minute: '2-digit'})} Visum`;
+                    const datumText = `${getText('footer.date')} ${heute.toLocaleDateString('de-CH')} ${heute.toLocaleTimeString('de-CH', {hour: '2-digit', minute: '2-digit'})} ${getText('footer.visa')}`;
                     const datumParagraph = context.document.body.insertParagraph(datumText, Word.InsertLocation.end);
                     datumParagraph.spaceBefore = 24;
 
@@ -739,17 +1156,17 @@
                     footerTable.styleBuiltIn = Word.Style.tableGrid;
                     
                     footerTable.rows.items[0].cells.items[0].body.insertText('────────────────────────────────────────────────────────────────────────', Word.InsertLocation.start);
-                    footerTable.rows.items[1].cells.items[0].body.insertText('EDV    SO2    287                               EDV / SO2 / 287', Word.InsertLocation.start);
+                    footerTable.rows.items[1].cells.items[0].body.insertText(`${formData.abteilung || 'EDV'}    ${formData.kuerzel || 'SO2'}    ${formData.telefon || '287'}                               ${formData.abteilung || 'EDV'} / ${formData.kuerzel || 'SO2'} / ${formData.telefon || '287'}`, Word.InsertLocation.start);
                     footerTable.rows.items[1].cells.items[0].body.paragraphs.items[0].font.size = 9;
 
                     await context.sync();
                 });
 
-                showStatus('Inkasso wurde erfolgreich erstellt!', 'success');
+                showStatus(getText('status.success'), 'success');
 
             } catch (error) {
                 console.error('Fehler beim Erstellen des Inkassos:', error);
-                showStatus('Fehler beim Erstellen des Inkassos: ' + error.message, 'error');
+                showStatus(getText('errors.creatingCollection') + ': ' + error.message, 'error');
             }
         }
 
@@ -770,7 +1187,7 @@
             // Berechne Total
             calculateTotal();
             
-            alert('Test-Berechnung durchgeführt:\n1\'000.00 + 2\'500.50 + 750.25 = 4\'250.75\n\nHinweis: Die Zahlen wurden korrekt formatiert!');
+            alert(getText('test.calculationCompleted'));
         }
 
         // Global verfügbar machen
