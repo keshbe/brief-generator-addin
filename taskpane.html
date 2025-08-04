@@ -1637,66 +1637,54 @@
                         }
 
                         if (footerData && firmenName) {
-                            // Footer-Tabelle für Linie erstellen
-                            const footerTable = footer.insertTable(3, 1, Word.InsertLocation.start);
+                            // Footer-Info in 2 Zeilen mit | als Trennzeichen
                             
-                            // Erste Zeile: Trennlinie
-                            const lineCell = footerTable.getCell(0, 0);
-                            lineCell.body.clear();
+                            // Erste Zeile: Firmenname | Büro-Info | Adresse (alles in einer Zeile)
+                            // Format: Dreyfus Söhne & Cie AG, Banquiers | Aeschenvorstadt 16 | Postfach | 4002 Basel | Schweiz
+                            const addressParts = footerData.adresse.split(', ');
+                            let addressLine = firmenName;
+                            if (footerData.buero) {
+                                addressLine += ', ' + footerData.buero;
+                            }
+                            addressLine += ' | ' + addressParts.join(' | ');
                             
-                            // Nutze die untere Rahmenlinie der Zelle als Trennlinie
-                            lineCell.getBorder(Word.BorderLocation.bottom).type = Word.BorderType.single;
-                            lineCell.getBorder(Word.BorderLocation.bottom).color = DSC_COLORS.GRAU;
-                            lineCell.getBorder(Word.BorderLocation.bottom).width = 0.5;
+                            const addressPara = footer.insertParagraph(addressLine, Word.InsertLocation.start);
+                            addressPara.font.name = 'Dreyfus Sans';
+                            addressPara.font.size = FONT_SIZES.FOOTER.size;  // 9pt
+                            addressPara.font.color = DSC_COLORS.GRAU;  // DSC Grau
+                            addressPara.alignment = Word.Alignment.center;
+                            addressPara.spaceAfter = 0;
+                            addressPara.spaceBefore = 0;
+                            addressPara.lineSpacing = FONT_SIZES.FOOTER.lineSpacing;  // 12pt Zeilenabstand
                             
-                            // Andere Rahmen entfernen
-                            lineCell.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
-                            lineCell.getBorder(Word.BorderLocation.left).type = Word.BorderType.none;
-                            lineCell.getBorder(Word.BorderLocation.right).type = Word.BorderType.none;
+                            // Zweite Zeile: Telefon | E-Mail | Website
+                            let contactLine = footerData.telefon + ' | ' + footerData.email;
+                            // Website hinzufügen falls vorhanden (normalerweise www.dreyfusbank.ch)
+                            if (footerData.website) {
+                                contactLine += ' | ' + footerData.website;
+                            } else {
+                                // Fallback: Standard-Website
+                                contactLine += ' | www.dreyfusbank.ch';
+                            }
                             
-                            const linePara = lineCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
-                            linePara.font.size = 1;
-                            linePara.lineSpacing = 1;
-                            linePara.spaceAfter = 6;
+                            const contactPara = footer.insertParagraph(contactLine, Word.InsertLocation.end);
+                            contactPara.font.name = 'Dreyfus Sans';
+                            contactPara.font.size = FONT_SIZES.FOOTER.size;  // 9pt
+                            contactPara.font.color = DSC_COLORS.GRAU;  // DSC Grau
+                            contactPara.alignment = Word.Alignment.center;
+                            contactPara.spaceAfter = 0;
+                            contactPara.spaceBefore = 0;
+                            contactPara.lineSpacing = FONT_SIZES.FOOTER.lineSpacing;  // 12pt Zeilenabstand
                             
-                            // Zweite Zeile: Adresszeilen
-                            const addressCell = footerTable.getCell(1, 0);
-                            addressCell.body.clear();
-                            addressCell.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
-                            
-                            const footerLines = [
-                                firmenName,
-                                footerData.buero,
-                                footerData.adresse,
-                                footerData.telefon,
-                                footerData.email
-                            ];
-
-                            // Footer-Zeilen einfügen
-                            footerLines.forEach((line, index) => {
-                                const footerParagraph = addressCell.body.insertParagraph(line, Word.InsertLocation.end);
-                                footerParagraph.font.name = 'Dreyfus Sans';
-                                footerParagraph.font.size = FONT_SIZES.FOOTER.size;  // 9pt
-                                footerParagraph.font.color = DSC_COLORS.GRAU;  // DSC Grau
-                                footerParagraph.alignment = Word.Alignment.center;
-                                footerParagraph.spaceAfter = 0;
-                                footerParagraph.spaceBefore = 0;
-                                footerParagraph.lineSpacing = FONT_SIZES.FOOTER.lineSpacing;  // 12pt Zeilenabstand bei 9pt Schrift
-                            });
-                            
-                            // Dritte Zeile: Tagline (Claim)
-                            const taglineCell = footerTable.getCell(2, 0);
-                            taglineCell.body.clear();
-                            taglineCell.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
-                            
+                            // Tagline (Claim)
                             const tagline = footerTaglines[sprachCode];
                             if (tagline) {
-                                const emptyParagraph = taglineCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
+                                const emptyParagraph = footer.insertParagraph('\u00A0', Word.InsertLocation.end);
                                 emptyParagraph.font.size = 6;
                                 emptyParagraph.lineSpacing = 1.0;
                                 emptyParagraph.spaceAfter = 0;
 
-                                const taglineParagraph = taglineCell.body.insertParagraph(tagline, Word.InsertLocation.end);
+                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.name = 'Dreyfus Sans';
                                 taglineParagraph.font.size = 9;  // 9pt
                                 taglineParagraph.font.color = DSC_COLORS.BRAUN;  // DSC Braun
@@ -1705,11 +1693,6 @@
                                 taglineParagraph.spaceAfter = 0;
                                 taglineParagraph.spaceBefore = 0;
                             }
-                            
-                            // Tabellen-Rahmen komplett entfernen
-                            footerTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
-                            footerTable.getBorder(Word.BorderLocation.insideHorizontal).type = Word.BorderType.none;
-                            footerTable.getBorder(Word.BorderLocation.insideVertical).type = Word.BorderType.none;
                         }
                     }
 
