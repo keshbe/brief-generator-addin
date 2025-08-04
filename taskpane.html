@@ -87,6 +87,11 @@
         textarea.form-control {
             resize: vertical;
         }
+        
+        .form-control:disabled {
+            background-color: #f5f5f5;
+            opacity: 0.7;
+        }
 
         .btn-primary {
             background-color: #0078d4;
@@ -333,6 +338,28 @@
             <div class="form-group">
                 <label for="betreff" class="form-label" data-i18n="form.subject">...</label>
                 <input type="text" class="form-control" id="betreff">
+            </div>
+
+            <!-- Anrede-Typ Auswahl -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="anredeTyp" class="form-label" data-i18n="form.salutationType">...</label>
+                        <select class="form-select" id="anredeTyp">
+                            <option value="neutral" data-i18n="form.salutationNeutral">...</option>
+                            <option value="weiblich" data-i18n="form.salutationFemale">...</option>
+                            <option value="maennlich" data-i18n="form.salutationMale">...</option>
+                            <option value="mehrere" data-i18n="form.salutationMultiple">...</option>
+                            <option value="custom" data-i18n="form.salutationCustom">...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="empfaengerName" class="form-label" data-i18n="form.recipientName">...</label>
+                        <input type="text" class="form-control" id="empfaengerName" placeholder="z.B. Müller">
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -989,6 +1016,11 @@
                     updateSelectOptions('abteilung2', abteilungen[currentLanguage]);
                     updateSelectOptions('beilage', beilagen[currentLanguage]);
                     
+                    // Standard Anrede setzen
+                    const anredeTyp = document.getElementById('anredeTyp').value || 'neutral';
+                    const empfaengerName = document.getElementById('empfaengerName').value;
+                    document.getElementById('anrede').value = generateAnrede(currentLanguage, anredeTyp, empfaengerName);
+                    
                     break;
                 }
             }
@@ -1259,6 +1291,10 @@
             document.getElementById('absender').addEventListener('change', onAbsenderChange);
             document.getElementById('anonym').addEventListener('change', onAnonymChange);
             document.getElementById('pasteAddress').addEventListener('click', pasteFromClipboard);
+            
+            // Anrede-Typ Event Handler
+            document.getElementById('anredeTyp').addEventListener('change', onAnredeTypChange);
+            document.getElementById('empfaengerName').addEventListener('input', onEmpfaengerNameChange);
         }
 
         function setDefaultValues() {
@@ -1273,6 +1309,10 @@
                 } else {
                     datumField.value = formatDateCI(heute, currentLanguage);
                 }
+                
+                // Standard Anrede-Typ auf "neutral" setzen
+                document.getElementById('anredeTyp').value = 'neutral';
+                onAnredeTypChange(); // Anrede generieren
             }
         }
 
@@ -1339,6 +1379,13 @@
             updateSelectOptions('abteilung1', abteilungen[sprachCode]);
             updateSelectOptions('abteilung2', abteilungen[sprachCode]);
             updateSelectOptions('beilage', beilagen[sprachCode]);
+            
+            // Anrede aktualisieren falls Typ ausgewählt
+            const anredeTyp = document.getElementById('anredeTyp').value;
+            if (anredeTyp && anredeTyp !== 'custom') {
+                const empfaengerName = document.getElementById('empfaengerName').value;
+                document.getElementById('anrede').value = generateAnrede(sprachCode, anredeTyp, empfaengerName);
+            }
         }
 
         function onAbsenderChange() {
@@ -1977,6 +2024,67 @@
                 console.error('Fehler beim Laden des Bildes:', error);
                 return null;
             }
+        }
+
+        // Anrede generieren basierend auf Typ
+        function generateAnrede(sprache, typ, name = '') {
+            const anredenData = anreden[sprache];
+            if (!anredenData) return '';
+            
+            switch(typ) {
+                case 'neutral':
+                    return anredenData.neutral;
+                case 'weiblich':
+                    return name ? `${anredenData.weiblich} ${name}` : anredenData.weiblich;
+                case 'maennlich':
+                    return name ? `${anredenData.maennlich} ${name}` : anredenData.maennlich;
+                case 'mehrere':
+                    return anredenData.mehrere;
+                default:
+                    return '';
+            }
+        }
+
+        // Event Handler für Anrede-Typ Änderung
+        function onAnredeTypChange() {
+            const typ = document.getElementById('anredeTyp').value;
+            const spracheId = document.getElementById('sprache').value;
+            if (!spracheId) return;
+            
+            const sprachCode = sprachen[spracheId].code.split('-')[0];
+            const anredeField = document.getElementById('anrede');
+            const empfaengerNameField = document.getElementById('empfaengerName');
+            
+            if (typ !== 'custom') {
+                const name = empfaengerNameField.value;
+                anredeField.value = generateAnrede(sprachCode, typ, name);
+                anredeField.readOnly = true;
+                
+                // Zeige/Verstecke Namensfeld je nach Typ
+                empfaengerNameField.disabled = (typ === 'neutral' || typ === 'mehrere');
+                if (empfaengerNameField.disabled) {
+                    empfaengerNameField.value = '';
+                }
+            } else {
+                anredeField.readOnly = false;
+                empfaengerNameField.disabled = true;
+                empfaengerNameField.value = '';
+            }
+        }
+
+        // Event Handler für Empfängername Änderung
+        function onEmpfaengerNameChange() {
+            const typ = document.getElementById('anredeTyp').value;
+            if (typ === 'custom' || typ === 'neutral' || typ === 'mehrere') return;
+            
+            const spracheId = document.getElementById('sprache').value;
+            if (!spracheId) return;
+            
+            const sprachCode = sprachen[spracheId].code.split('-')[0];
+            const name = document.getElementById('empfaengerName').value;
+            const anredeField = document.getElementById('anrede');
+            
+            anredeField.value = generateAnrede(sprachCode, typ, name);
         }
     </script>
 </body>
