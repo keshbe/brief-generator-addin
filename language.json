@@ -2,7 +2,8 @@
   "de": {
     "header": {
       "company": "Dreyfus Söhne & Cie AG, Banquiers",
-      "subtitle": "Dreyfus Brief"
+      "subtitle": "Dreyfus Brief",
+      "inkassoSubtitle": "Dreyfus Inkasso"
     },
     "loading": {
       "dataLoading": "Daten werden geladen...",
@@ -25,7 +26,9 @@
       "reload": "Neu laden",
       "pasteFromClipboard": "Aus Zwischenablage einfügen",
       "ok": "OK",
-      "close": "Schließen"
+      "close": "Schließen",
+      "cancel": "Abbrechen",
+      "testCalculation": "Test-Berechnung"
     },
     "form": {
       "language": "Sprache",
@@ -51,7 +54,27 @@
       "department2": "Abteilung 2",
       "enclosure": "Beilagen",
       "attachments": "Anlagen",
-      "none": "-- Keine --"
+      "none": "-- Keine --",
+      "accountNumber": "Konto-Nr.",
+      "nameFirstname": "Name / Vorname",
+      "nameFirstnamePlaceholder": "Name und Vorname eingeben",
+      "currencyAccountType": "Währung / Kontoart",
+      "collectionPaper": "Inkassopapier",
+      "currency": "Währung",
+      "amount": "Betrag",
+      "amountHint": "(geben Sie die Beträge ein - Total wird automatisch berechnet)",
+      "total": "Total",
+      "totalCalculated": "(wird automatisch berechnet)",
+      "missingEndorsement": "Fehlendes Indossament garantieren",
+      "specialInstruction": "Spezielle Weisung",
+      "specialInstructionPlaceholder": "Hier können Sie spezielle Weisungen eingeben...",
+      "reference": "Referenz",
+      "referencePlaceholder": "Referenznummer eingeben",
+      "bookingText": "Buchungstext Gutschrift",
+      "bookingTextPlaceholder": "Buchungstext eingeben",
+      "department": "Abteilung",
+      "initials": "Kürzel",
+      "phone": "Telefon"
     },
     "sections": {
       "logoOptions": "Logo-Optionen",
@@ -60,12 +83,16 @@
       "complimentaryClose": "Gruss",
       "signatures": "Unterschriften",
       "departments": "Abteilungen",
-      "enclosures": "Beilagen"
+      "enclosures": "Beilagen",
+      "account": "KONTO",
+      "collection": "INKASSO",
+      "checkAmount": "CHECKBETRAG",
+      "messageInstruction": "MITTEILUNG / WEISUNG"
     },
     "status": {
       "cancelled": "Aktion abgebrochen. Ihre Eingaben bleiben erhalten.",
-      "creating": "Brief wird erstellt...",
-      "success": "Brief wurde erfolgreich erstellt!",
+      "creating": "Dokument wird erstellt...",
+      "success": "Dokument wurde erfolgreich erstellt!",
       "clipboardInserted": "Adresse eingefügt",
       "clipboardError": "Bitte fügen Sie die Adresse manuell mit Strg+V ein.",
       "clipboardNotAvailable": "Zwischenablage ist in dieser Umgebung nicht verfügbar.",
@@ -75,14 +102,30 @@
       "selectLanguage": "Bitte wählen Sie eine Sprache aus.",
       "selectSender": "Bitte wählen Sie einen Absender aus.",
       "onlyWord": "Dieses Add-In funktioniert nur in Microsoft Word",
-      "onlyInWord": "⚠️ Brief-Erstellung funktioniert nur in Microsoft Word!",
-      "creatingLetter": "Fehler beim Erstellen des Briefes"
+      "onlyInWord": "⚠️ Dokument-Erstellung funktioniert nur in Microsoft Word!",
+      "creatingLetter": "Fehler beim Erstellen des Briefes",
+      "creatingCollection": "Fehler beim Erstellen des Inkassos"
+    },
+    "general": {
+      "yes": "Ja",
+      "no": "Nein"
+    },
+    "footer": {
+      "date": "Datum",
+      "visa": "Visum"
+    },
+    "debug": {
+      "totalCalculationActive": "Total-Berechnung ist aktiv. Geben Sie Beträge ein!"
+    },
+    "test": {
+      "calculationCompleted": "Test-Berechnung durchgeführt:\n1'000.00 + 2'500.50 + 750.25 = 4'250.75\n\nHinweis: Die Zahlen wurden korrekt formatiert!"
     }
   },
   "en": {
     "header": {
       "company": "Dreyfus Söhne & Cie AG, Banquiers",
-      "subtitle": "Dreyfus Letter"
+      "subtitle": "Dreyfus Letter",
+      "inkassoSubtitle": "Dreyfus Collection"
     },
     "loading": {
       "dataLoading": "Loading data...",
@@ -105,7 +148,9 @@
       "reload": "Reload",
       "pasteFromClipboard": "Paste from clipboard",
       "ok": "OK",
-      "close": "Close"
+      "close": "Close",
+      "cancel": "Cancel",
+      "testCalculation": "Test Calculation"
     },
     "form": {
       "language": "Language",
@@ -131,7 +176,27 @@
       "department2": "Department 2",
       "enclosure": "Enclosures",
       "attachments": "Attachments",
-      "none": "-- None --"
+      "none": "-- None --",
+      "accountNumber": "Account No.",
+      "nameFirstname": "Name / First name",
+      "nameFirstnamePlaceholder": "Enter name and first name",
+      "currencyAccountType": "Currency / Account type",
+      "collectionPaper": "Collection paper",
+      "currency": "Currency",
+      "amount": "Amount",
+      "amountHint": "(enter the amounts - total will be calculated automatically)",
+      "total": "Total",
+      "totalCalculated": "(calculated automatically)",
+      "missingEndorsement": "Guarantee missing endorsement",
+      "specialInstruction": "Special instruction",
+      "specialInstructionPlaceholder": "You can enter special instructions here...",
+      "reference": "Reference",
+      "referencePlaceholder": "Enter reference number",
+      "bookingText": "Booking text credit",
+      "bookingTextPlaceholder": "Enter booking text",
+      "department": "Department",
+      "initials": "Initials",
+      "phone": "Phone"
     },
     "sections": {
       "logoOptions": "Logo Options",
@@ -140,12 +205,16 @@
       "complimentaryClose": "Complimentary close",
       "signatures": "Signatures",
       "departments": "Departments",
-      "enclosures": "Enclosures"
+      "enclosures": "Enclosures",
+      "account": "ACCOUNT",
+      "collection": "COLLECTION",
+      "checkAmount": "CHECK AMOUNT",
+      "messageInstruction": "MESSAGE / INSTRUCTION"
     },
     "status": {
       "cancelled": "Action cancelled. Your entries remain saved.",
-      "creating": "Creating letter...",
-      "success": "Letter created successfully!",
+      "creating": "Creating document...",
+      "success": "Document created successfully!",
       "clipboardInserted": "Address inserted",
       "clipboardError": "Please paste the address manually with Ctrl+V.",
       "clipboardNotAvailable": "Clipboard is not available in this environment.",
@@ -155,14 +224,30 @@
       "selectLanguage": "Please select a language.",
       "selectSender": "Please select a sender.",
       "onlyWord": "This Add-In only works in Microsoft Word",
-      "onlyInWord": "⚠️ Letter creation only works in Microsoft Word!",
-      "creatingLetter": "Error creating letter"
+      "onlyInWord": "⚠️ Document creation only works in Microsoft Word!",
+      "creatingLetter": "Error creating letter",
+      "creatingCollection": "Error creating collection"
+    },
+    "general": {
+      "yes": "Yes",
+      "no": "No"
+    },
+    "footer": {
+      "date": "Date",
+      "visa": "Visa"
+    },
+    "debug": {
+      "totalCalculationActive": "Total calculation is active. Enter amounts!"
+    },
+    "test": {
+      "calculationCompleted": "Test calculation completed:\n1,000.00 + 2,500.50 + 750.25 = 4,250.75\n\nNote: The numbers were formatted correctly!"
     }
   },
   "fr": {
     "header": {
       "company": "Dreyfus Söhne & Cie AG, Banquiers",
-      "subtitle": "Lettre Dreyfus"
+      "subtitle": "Lettre Dreyfus",
+      "inkassoSubtitle": "Encaissement Dreyfus"
     },
     "loading": {
       "dataLoading": "Chargement des données...",
@@ -185,7 +270,9 @@
       "reload": "Recharger",
       "pasteFromClipboard": "Coller depuis le presse-papiers",
       "ok": "OK",
-      "close": "Fermer"
+      "close": "Fermer",
+      "cancel": "Annuler",
+      "testCalculation": "Test de calcul"
     },
     "form": {
       "language": "Langue",
@@ -211,7 +298,27 @@
       "department2": "Département 2",
       "enclosure": "Pièces jointes",
       "attachments": "Annexes",
-      "none": "-- Aucune --"
+      "none": "-- Aucune --",
+      "accountNumber": "No de compte",
+      "nameFirstname": "Nom / Prénom",
+      "nameFirstnamePlaceholder": "Entrer nom et prénom",
+      "currencyAccountType": "Devise / Type de compte",
+      "collectionPaper": "Papier d'encaissement",
+      "currency": "Devise",
+      "amount": "Montant",
+      "amountHint": "(entrez les montants - le total sera calculé automatiquement)",
+      "total": "Total",
+      "totalCalculated": "(calculé automatiquement)",
+      "missingEndorsement": "Garantir l'endossement manquant",
+      "specialInstruction": "Instruction spéciale",
+      "specialInstructionPlaceholder": "Vous pouvez entrer des instructions spéciales ici...",
+      "reference": "Référence",
+      "referencePlaceholder": "Entrer le numéro de référence",
+      "bookingText": "Texte de comptabilisation crédit",
+      "bookingTextPlaceholder": "Entrer le texte de comptabilisation",
+      "department": "Département",
+      "initials": "Initiales",
+      "phone": "Téléphone"
     },
     "sections": {
       "logoOptions": "Options du logo",
@@ -220,12 +327,16 @@
       "complimentaryClose": "Formule de politesse",
       "signatures": "Signatures",
       "departments": "Départements",
-      "enclosures": "Pièces jointes"
+      "enclosures": "Pièces jointes",
+      "account": "COMPTE",
+      "collection": "ENCAISSEMENT",
+      "checkAmount": "MONTANT DU CHÈQUE",
+      "messageInstruction": "MESSAGE / INSTRUCTION"
     },
     "status": {
       "cancelled": "Action annulée. Vos entrées sont conservées.",
-      "creating": "Création de la lettre en cours...",
-      "success": "Lettre créée avec succès!",
+      "creating": "Création du document en cours...",
+      "success": "Document créé avec succès!",
       "clipboardInserted": "Adresse insérée",
       "clipboardError": "Veuillez coller l'adresse manuellement avec Ctrl+V.",
       "clipboardNotAvailable": "Le presse-papiers n'est pas disponible dans cet environnement.",
@@ -235,14 +346,30 @@
       "selectLanguage": "Veuillez sélectionner une langue.",
       "selectSender": "Veuillez sélectionner un expéditeur.",
       "onlyWord": "Ce complément ne fonctionne que dans Microsoft Word",
-      "onlyInWord": "⚠️ La création de lettres ne fonctionne que dans Microsoft Word!",
-      "creatingLetter": "Erreur lors de la création de la lettre"
+      "onlyInWord": "⚠️ La création de documents ne fonctionne que dans Microsoft Word!",
+      "creatingLetter": "Erreur lors de la création de la lettre",
+      "creatingCollection": "Erreur lors de la création de l'encaissement"
+    },
+    "general": {
+      "yes": "Oui",
+      "no": "Non"
+    },
+    "footer": {
+      "date": "Date",
+      "visa": "Visa"
+    },
+    "debug": {
+      "totalCalculationActive": "Le calcul du total est actif. Entrez des montants!"
+    },
+    "test": {
+      "calculationCompleted": "Test de calcul terminé:\n1'000.00 + 2'500.50 + 750.25 = 4'250.75\n\nRemarque: Les nombres ont été formatés correctement!"
     }
   },
   "it": {
     "header": {
       "company": "Dreyfus Söhne & Cie AG, Banquiers",
-      "subtitle": "Lettera Dreyfus"
+      "subtitle": "Lettera Dreyfus",
+      "inkassoSubtitle": "Incasso Dreyfus"
     },
     "loading": {
       "dataLoading": "Caricamento dati...",
@@ -265,7 +392,9 @@
       "reload": "Ricarica",
       "pasteFromClipboard": "Incolla dagli appunti",
       "ok": "OK",
-      "close": "Chiudi"
+      "close": "Chiudi",
+      "cancel": "Annulla",
+      "testCalculation": "Test di calcolo"
     },
     "form": {
       "language": "Lingua",
@@ -291,7 +420,27 @@
       "department2": "Dipartimento 2",
       "enclosure": "Allegati",
       "attachments": "Documenti",
-      "none": "-- Nessuno --"
+      "none": "-- Nessuno --",
+      "accountNumber": "N. conto",
+      "nameFirstname": "Nome / Cognome",
+      "nameFirstnamePlaceholder": "Inserire nome e cognome",
+      "currencyAccountType": "Valuta / Tipo di conto",
+      "collectionPaper": "Carta d'incasso",
+      "currency": "Valuta",
+      "amount": "Importo",
+      "amountHint": "(inserire gli importi - il totale sarà calcolato automaticamente)",
+      "total": "Totale",
+      "totalCalculated": "(calcolato automaticamente)",
+      "missingEndorsement": "Garantire girata mancante",
+      "specialInstruction": "Istruzione speciale",
+      "specialInstructionPlaceholder": "Qui è possibile inserire istruzioni speciali...",
+      "reference": "Riferimento",
+      "referencePlaceholder": "Inserire numero di riferimento",
+      "bookingText": "Testo contabilizzazione accredito",
+      "bookingTextPlaceholder": "Inserire testo contabilizzazione",
+      "department": "Dipartimento",
+      "initials": "Iniziali",
+      "phone": "Telefono"
     },
     "sections": {
       "logoOptions": "Opzioni logo",
@@ -300,12 +449,16 @@
       "complimentaryClose": "Formula di chiusura",
       "signatures": "Firme",
       "departments": "Dipartimenti",
-      "enclosures": "Allegati"
+      "enclosures": "Allegati",
+      "account": "CONTO",
+      "collection": "INCASSO",
+      "checkAmount": "IMPORTO ASSEGNO",
+      "messageInstruction": "MESSAGGIO / ISTRUZIONE"
     },
     "status": {
       "cancelled": "Azione annullata. Le tue voci rimangono salvate.",
-      "creating": "Creazione lettera in corso...",
-      "success": "Lettera creata con successo!",
+      "creating": "Creazione documento in corso...",
+      "success": "Documento creato con successo!",
       "clipboardInserted": "Indirizzo inserito",
       "clipboardError": "Si prega di incollare l'indirizzo manualmente con Ctrl+V.",
       "clipboardNotAvailable": "Gli appunti non sono disponibili in questo ambiente.",
@@ -315,8 +468,23 @@
       "selectLanguage": "Si prega di selezionare una lingua.",
       "selectSender": "Si prega di selezionare un mittente.",
       "onlyWord": "Questo componente aggiuntivo funziona solo in Microsoft Word",
-      "onlyInWord": "⚠️ La creazione di lettere funziona solo in Microsoft Word!",
-      "creatingLetter": "Errore nella creazione della lettera"
+      "onlyInWord": "⚠️ La creazione di documenti funziona solo in Microsoft Word!",
+      "creatingLetter": "Errore nella creazione della lettera",
+      "creatingCollection": "Errore nella creazione dell'incasso"
+    },
+    "general": {
+      "yes": "Sì",
+      "no": "No"
+    },
+    "footer": {
+      "date": "Data",
+      "visa": "Visto"
+    },
+    "debug": {
+      "totalCalculationActive": "Il calcolo del totale è attivo. Inserisci importi!"
+    },
+    "test": {
+      "calculationCompleted": "Test di calcolo completato:\n1'000.00 + 2'500.50 + 750.25 = 4'250.75\n\nNota: I numeri sono stati formattati correttamente!"
     }
   }
 }
