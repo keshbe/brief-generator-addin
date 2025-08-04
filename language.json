@@ -74,7 +74,14 @@
       "bookingTextPlaceholder": "Buchungstext eingeben",
       "department": "Abteilung",
       "initials": "Kürzel",
-      "phone": "Telefon"
+      "phone": "Telefon",
+      "salutationType": "Anrede-Typ",
+      "salutationNeutral": "Geschlechtsneutral",
+      "salutationFemale": "Weiblich",
+      "salutationMale": "Männlich",
+      "salutationMultiple": "Mehrere Personen",
+      "salutationCustom": "Individuell",
+      "recipientName": "Name Empfänger/in"
     },
     "sections": {
       "logoOptions": "Logo-Optionen",
@@ -123,7 +130,7 @@
   },
   "en": {
     "header": {
-      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "company": "Dreyfus Sons & Co Ltd, Banquiers",
       "subtitle": "Dreyfus Letter",
       "inkassoSubtitle": "Dreyfus Collection"
     },
@@ -196,7 +203,14 @@
       "bookingTextPlaceholder": "Enter booking text",
       "department": "Department",
       "initials": "Initials",
-      "phone": "Phone"
+      "phone": "Phone",
+      "salutationType": "Salutation Type",
+      "salutationNeutral": "Gender-neutral",
+      "salutationFemale": "Female",
+      "salutationMale": "Male",
+      "salutationMultiple": "Multiple recipients",
+      "salutationCustom": "Custom",
+      "recipientName": "Recipient Name"
     },
     "sections": {
       "logoOptions": "Logo Options",
@@ -245,7 +259,7 @@
   },
   "fr": {
     "header": {
-      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "company": "Les Fils Dreyfus & Cie SA, Banquiers",
       "subtitle": "Lettre Dreyfus",
       "inkassoSubtitle": "Encaissement Dreyfus"
     },
@@ -318,7 +332,14 @@
       "bookingTextPlaceholder": "Entrer le texte de comptabilisation",
       "department": "Département",
       "initials": "Initiales",
-      "phone": "Téléphone"
+      "phone": "Téléphone",
+      "salutationType": "Type de salutation",
+      "salutationNeutral": "Neutre",
+      "salutationFemale": "Féminin",
+      "salutationMale": "Masculin",
+      "salutationMultiple": "Plusieurs destinataires",
+      "salutationCustom": "Personnalisé",
+      "recipientName": "Nom du destinataire"
     },
     "sections": {
       "logoOptions": "Options du logo",
@@ -367,7 +388,7 @@
   },
   "it": {
     "header": {
-      "company": "Dreyfus Söhne & Cie AG, Banquiers",
+      "company": "Les Fils Dreyfus & Cie SA, Banquiers",
       "subtitle": "Lettera Dreyfus",
       "inkassoSubtitle": "Incasso Dreyfus"
     },
@@ -440,7 +461,14 @@
       "bookingTextPlaceholder": "Inserire testo contabilizzazione",
       "department": "Dipartimento",
       "initials": "Iniziali",
-      "phone": "Telefono"
+      "phone": "Telefono",
+      "salutationType": "Tipo di saluto",
+      "salutationNeutral": "Neutro",
+      "salutationFemale": "Femminile",
+      "salutationMale": "Maschile",
+      "salutationMultiple": "Più destinatari",
+      "salutationCustom": "Personalizzato",
+      "recipientName": "Nome destinatario"
     },
     "sections": {
       "logoOptions": "Opzioni logo",
