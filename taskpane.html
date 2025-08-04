@@ -1548,12 +1548,15 @@
                         
                         // Seitenränder für CD-Manual Konformität
                         currentSection.topMargin = 34;     // 12mm für Logo-Position
-                        currentSection.bottomMargin = 72;  // Standard 2.54cm
+                        currentSection.bottomMargin = 34;  // 12mm für Footer
                         currentSection.leftMargin = 71;    // 25mm genau
                         currentSection.rightMargin = 28;   // 10mm genau
                         
                         // Header-Abstand vom Seitenrand
                         currentSection.headerDistance = 34; // 12mm
+                        
+                        // Footer-Abstand vom Seitenrand
+                        currentSection.footerDistance = 28; // ~10mm für Footer
                         
                         await context.sync();
                     } else {
@@ -1610,10 +1613,7 @@
                         }
                     }
 
-                    // === FOOTER MIT CD-MANUAL KONFORMEN MAßEN ===
-                    // Footer-Format: 
-                    // - Adresse: Dreyfus Sans Regular, 9pt/12pt, DSC Grau
-                    // - Claim: Dreyfus Sans Regular, 9pt, DSC Braun
+                    // === FOOTER MIT CD-MANUAL KONFORMEN MAßEN UND LINIE ===
                     const footer = currentSection.getFooter(Word.HeaderFooterType.primary);
                     footer.clear();
 
@@ -1637,6 +1637,33 @@
                         }
 
                         if (footerData && firmenName) {
+                            // Footer-Tabelle für Linie erstellen
+                            const footerTable = footer.insertTable(3, 1, Word.InsertLocation.start);
+                            
+                            // Erste Zeile: Trennlinie
+                            const lineCell = footerTable.getCell(0, 0);
+                            lineCell.body.clear();
+                            
+                            // Nutze die untere Rahmenlinie der Zelle als Trennlinie
+                            lineCell.getBorder(Word.BorderLocation.bottom).type = Word.BorderType.single;
+                            lineCell.getBorder(Word.BorderLocation.bottom).color = DSC_COLORS.GRAU;
+                            lineCell.getBorder(Word.BorderLocation.bottom).width = 0.5;
+                            
+                            // Andere Rahmen entfernen
+                            lineCell.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
+                            lineCell.getBorder(Word.BorderLocation.left).type = Word.BorderType.none;
+                            lineCell.getBorder(Word.BorderLocation.right).type = Word.BorderType.none;
+                            
+                            const linePara = lineCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
+                            linePara.font.size = 1;
+                            linePara.lineSpacing = 1;
+                            linePara.spaceAfter = 6;
+                            
+                            // Zweite Zeile: Adresszeilen
+                            const addressCell = footerTable.getCell(1, 0);
+                            addressCell.body.clear();
+                            addressCell.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                            
                             const footerLines = [
                                 firmenName,
                                 footerData.buero,
@@ -1645,9 +1672,9 @@
                                 footerData.email
                             ];
 
-                            // Footer-Zeilen einfügen (Adresse)
+                            // Footer-Zeilen einfügen
                             footerLines.forEach((line, index) => {
-                                const footerParagraph = footer.insertParagraph(line, Word.InsertLocation.end);
+                                const footerParagraph = addressCell.body.insertParagraph(line, Word.InsertLocation.end);
                                 footerParagraph.font.name = 'Dreyfus Sans';
                                 footerParagraph.font.size = FONT_SIZES.FOOTER.size;  // 9pt
                                 footerParagraph.font.color = DSC_COLORS.GRAU;  // DSC Grau
@@ -1656,15 +1683,20 @@
                                 footerParagraph.spaceBefore = 0;
                                 footerParagraph.lineSpacing = FONT_SIZES.FOOTER.lineSpacing;  // 12pt Zeilenabstand bei 9pt Schrift
                             });
-
-                            // Tagline (Claim Spruch)
+                            
+                            // Dritte Zeile: Tagline (Claim)
+                            const taglineCell = footerTable.getCell(2, 0);
+                            taglineCell.body.clear();
+                            taglineCell.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                            
                             const tagline = footerTaglines[sprachCode];
                             if (tagline) {
-                                const emptyParagraph = footer.insertParagraph('\u00A0', Word.InsertLocation.end);
+                                const emptyParagraph = taglineCell.body.insertParagraph('\u00A0', Word.InsertLocation.start);
                                 emptyParagraph.font.size = 6;
                                 emptyParagraph.lineSpacing = 1.0;
+                                emptyParagraph.spaceAfter = 0;
 
-                                const taglineParagraph = footer.insertParagraph(tagline, Word.InsertLocation.end);
+                                const taglineParagraph = taglineCell.body.insertParagraph(tagline, Word.InsertLocation.end);
                                 taglineParagraph.font.name = 'Dreyfus Sans';
                                 taglineParagraph.font.size = 9;  // 9pt
                                 taglineParagraph.font.color = DSC_COLORS.BRAUN;  // DSC Braun
@@ -1673,6 +1705,11 @@
                                 taglineParagraph.spaceAfter = 0;
                                 taglineParagraph.spaceBefore = 0;
                             }
+                            
+                            // Tabellen-Rahmen komplett entfernen
+                            footerTable.getBorder(Word.BorderLocation.all).type = Word.BorderType.none;
+                            footerTable.getBorder(Word.BorderLocation.insideHorizontal).type = Word.BorderType.none;
+                            footerTable.getBorder(Word.BorderLocation.insideVertical).type = Word.BorderType.none;
                         }
                     }
 
@@ -1749,7 +1786,7 @@
                         }
                     }
 
-                    // Ort, Datum und Absenderkürzel
+                    // Ort, Datum und Absenderkürzel - LINKSBÜNDIG
                     let ortDatumText = '';
                     if (formData.ort && formData.datum) {
                         // Prüfen ob Ort bereits im Datum enthalten ist (CI/CD konform)
@@ -1770,8 +1807,8 @@
 
                     if (ortDatumText) {
                         const ortDatumPara = context.document.body.insertParagraph(ortDatumText, Word.InsertLocation.end);
-                        ortDatumPara.alignment = Word.Alignment.right;
-                        ortDatumPara.spaceAfter = 30;
+                        ortDatumPara.alignment = Word.Alignment.left;  // LINKSBÜNDIG statt rechtsbündig
+                        ortDatumPara.spaceAfter = 13;  // 13pt Abstand zum Betreff
                         ortDatumPara.font.name = 'Dreyfus Sans';
                         ortDatumPara.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt
                         ortDatumPara.lineSpacing = FONT_SIZES.GRUNDTEXT.lineSpacing;  // 13pt Zeilenabstand bei 10.5pt
@@ -1835,7 +1872,7 @@
                         }
                     }
 
-                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle
+                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle (BLEIBT UNVERÄNDERT)
                     if (formData.unterschrift1 || formData.unterschrift2) {
                         try {
                             // Sammle alle Daten für die Tabelle
@@ -1901,7 +1938,6 @@
                             signatureTable.font.size = FONT_SIZES.GRUNDTEXT.size;  // Grundtext 10.5pt für Unterschriften
                             
                             // Rahmen entfernen nach Microsoft-Dokumentation
-                            // getBorder ist korrekt für einzelne Locations
                             signatureTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
                             signatureTable.getBorder(Word.BorderLocation.bottom).type = Word.BorderType.none;
                             signatureTable.getBorder(Word.BorderLocation.left).type = Word.BorderType.none;
