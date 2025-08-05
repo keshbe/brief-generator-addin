@@ -1721,6 +1721,20 @@
                             // Zellpadding auf 0 setzen
                             addressTable.styleBuiltIn = Word.BuiltInStyleName.tableNormal;
                             
+                            // WICHTIG: Zell-Padding auf 0 setzen
+                            addressTable.styleFirstColumn = false;
+                            addressTable.styleLastColumn = false;
+                            addressTable.styleFirstRow = false;
+                            addressTable.styleLastRow = false;
+                            addressTable.styleBandedColumns = false;
+                            addressTable.styleBandedRows = false;
+                            
+                            // Setze explizit Zellenabstände
+                            addressTable.setCellPadding(Word.CellPaddingLocation.top, 0);
+                            addressTable.setCellPadding(Word.CellPaddingLocation.bottom, 0);
+                            addressTable.setCellPadding(Word.CellPaddingLocation.left, 0);
+                            addressTable.setCellPadding(Word.CellPaddingLocation.right, 0);
+                            
                             // Rahmen entfernen nach Microsoft-Dokumentation
                             addressTable.getBorder(Word.BorderLocation.top).type = Word.BorderType.none;
                             addressTable.getBorder(Word.BorderLocation.bottom).type = Word.BorderType.none;
@@ -1954,6 +1968,12 @@
                             
                             // WICHTIG: Tabelle linksbündig ohne Einzug
                             signatureTable.leftIndent = 0;  // Kein linker Einzug
+                            
+                            // WICHTIG: Zell-Padding auf 0 setzen für Unterschriften-Tabelle
+                            signatureTable.setCellPadding(Word.CellPaddingLocation.top, 0);
+                            signatureTable.setCellPadding(Word.CellPaddingLocation.bottom, 0);
+                            signatureTable.setCellPadding(Word.CellPaddingLocation.left, 0);
+                            signatureTable.setCellPadding(Word.CellPaddingLocation.right, 0);
                             
                             // Font für gesamte Tabelle
                             signatureTable.font.name = 'Dreyfus Sans';
