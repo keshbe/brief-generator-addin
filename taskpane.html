@@ -1703,11 +1703,7 @@
 
                     // === HAUPTINHALT ===
                     
-                    // 13pt Abstand nach dem Logo
-                    const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
-                    spacerPara.spaceBefore = 0;
-                    spacerPara.spaceAfter = 13;  // 13pt Abstand nach unten
-                    spacerPara.font.size = 1;
+                    // Kein Abstand nach dem Logo - direkt mit Adresse beginnen
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
