@@ -1703,7 +1703,12 @@
 
                     // === HAUPTINHALT ===
                     
-                    // ENTFERNT: 13pt Abstand nach dem Logo
+                    // Berechne den benötigten Abstand für 53mm vom oberen Seitenrand
+                    // 53mm vom oberen Rand minus Header-Höhe (12mm) = 41mm = 116.28pt
+                    const spacerBeforeAddress = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
+                    spacerBeforeAddress.font.size = 1;
+                    spacerBeforeAddress.spaceBefore = 0;
+                    spacerBeforeAddress.spaceAfter = 116; // Exakt positioniert bei 53mm vom oberen Rand
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
@@ -1936,12 +1941,11 @@
                                 tableData.push(abteilungRow);
                             }
                             
-                            // Tabelle mit Daten erstellen
+                            // Tabelle OHNE Daten erstellen (um Doppelungen zu vermeiden)
                             const signatureTable = context.document.body.insertTable(
                                 tableData.length,  // Anzahl Zeilen
                                 2,                 // Anzahl Spalten
-                                Word.InsertLocation.end,
-                                tableData         // Daten direkt mitgeben
+                                Word.InsertLocation.end
                             );
                             
                             // Tabelle konfigurieren nach Microsoft-Dokumentation
@@ -1963,12 +1967,38 @@
                             signatureTable.getBorder(Word.BorderLocation.insideHorizontal).type = Word.BorderType.none;
                             signatureTable.getBorder(Word.BorderLocation.insideVertical).type = Word.BorderType.none;
                             
-                            // Spaltenbreiten über Zellen setzen (da columns Collection nicht direkt zugänglich)
+                            // Sync bevor wir die Zellen bearbeiten
+                            await context.sync();
+                            
+                            // Jetzt die Zellen manuell befüllen und formatieren
                             const columnWidth = CD_MANUAL_MEASURES.signatureSpacing;
                             
                             for (let i = 0; i < tableData.length; i++) {
                                 const cell1 = signatureTable.getCell(i, 0);
                                 const cell2 = signatureTable.getCell(i, 1);
+                                
+                                // Zellen laden
+                                context.load(cell1, 'body');
+                                context.load(cell2, 'body');
+                                await context.sync();
+                                
+                                // Zellen leeren und Text einfügen
+                                cell1.body.clear();
+                                cell2.body.clear();
+                                
+                                if (tableData[i][0]) {
+                                    const para1 = cell1.body.insertParagraph(tableData[i][0], Word.InsertLocation.start);
+                                    para1.spaceBefore = 0;
+                                    para1.spaceAfter = 0;
+                                }
+                                
+                                if (tableData[i][1]) {
+                                    const para2 = cell2.body.insertParagraph(tableData[i][1], Word.InsertLocation.start);
+                                    para2.spaceBefore = 0;
+                                    para2.spaceAfter = 0;
+                                }
+                                
+                                // Zellenbreite setzen
                                 cell1.width = columnWidth;
                                 cell2.width = columnWidth;
                                 
