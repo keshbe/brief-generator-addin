@@ -571,8 +571,8 @@
             logoSizeMM: 30,             // 30mm x 30mm
             
             // Adresse Position
-            addressLeftMM: 122,         // 122mm von links (vom Papierrand)
-            addressTopMM: 53,           // 53mm von oben (vom Papierrand)
+            addressLeftMM: 122,         // 122mm von links
+            addressTopMM: 53,           // 53mm von oben
             
             // Ort/Datum Position
             dateTopMM: 95,              // 95mm von oben
@@ -1703,13 +1703,11 @@
 
                     // === HAUPTINHALT ===
                     
-                    // Adresse muss bei EXAKT 53mm vom oberen PAPIERRAND beginnen
-                    // 53mm = 150pt
-                    // Da der Header bei 12mm (34pt) beginnt, brauchen wir: 150pt - 34pt = 116pt Abstand
-                    const spacerBeforeAddress = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
-                    spacerBeforeAddress.font.size = 1;
-                    spacerBeforeAddress.spaceBefore = 0;
-                    spacerBeforeAddress.spaceAfter = 116; // Positioniert Adresse bei exakt 53mm vom Papierrand
+                    // 13pt Abstand nach dem Logo
+                    const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
+                    spacerPara.spaceBefore = 0;
+                    spacerPara.spaceAfter = 13;  // 13pt Abstand nach unten
+                    spacerPara.font.size = 1;
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
@@ -1893,7 +1891,7 @@
                         }
                     }
 
-                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle mit PADDING 0
+                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle (BLEIBT UNVERÄNDERT)
                     if (formData.unterschrift1 || formData.unterschrift2) {
                         try {
                             // Sammle alle Daten für die Tabelle
@@ -1916,48 +1914,30 @@
                                 tableData.push(funktionRow);
                             }
                             
-                            // Debug: Ausgabe der tableData um Doppelungen zu finden
-                            console.log('TableData vor Tabellenerstellung:', JSON.stringify(tableData));
-                            
-                            // Prüfe ob Abteilungen korrekt gefiltert sind
-                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '' && formData.abteilung1 !== '1') ||
-                                (formData.abteilung2 && formData.abteilung2 !== '' && formData.abteilung2 !== '1');
+                            // ZEILE 3: Abteilungen (falls vorhanden)
+                            const hasAbteilungen = (formData.abteilung1 && formData.abteilung1 !== '1') ||
+                                (formData.abteilung2 && formData.abteilung2 !== '1');
                             
                             if (hasAbteilungen) {
                                 let abt1Text = '';
                                 let abt2Text = '';
                                 
-                                if (formData.abteilung1 && formData.abteilung1 !== '' && formData.abteilung1 !== '1') {
-                                    const abt1Element = document.getElementById('abteilung1');
-                                    if (abt1Element && abt1Element.selectedOptions[0]) {
-                                        const abt1Selected = abt1Element.selectedOptions[0].text;
-                                        // Nur hinzufügen wenn nicht "Keine" oder leer
-                                        if (abt1Selected && abt1Selected !== '' && !abt1Selected.toLowerCase().includes('keine')) {
-                                            abt1Text = abt1Selected;
-                                        }
+                                if (formData.abteilung1 && formData.abteilung1 !== '1') {
+                                    const abt1Selected = document.getElementById('abteilung1').selectedOptions[0].text;
+                                    if (abt1Selected !== getText('form.none')) {
+                                        abt1Text = abt1Selected;
                                     }
                                 }
                                 
-                                if (formData.abteilung2 && formData.abteilung2 !== '' && formData.abteilung2 !== '1' && !formData.anonym) {
-                                    const abt2Element = document.getElementById('abteilung2');
-                                    if (abt2Element && abt2Element.selectedOptions[0]) {
-                                        const abt2Selected = abt2Element.selectedOptions[0].text;
-                                        // Nur hinzufügen wenn nicht "Keine" oder leer
-                                        if (abt2Selected && abt2Selected !== '' && !abt2Selected.toLowerCase().includes('keine')) {
-                                            abt2Text = abt2Selected;
-                                        }
+                                if (formData.abteilung2 && formData.abteilung2 !== '1' && !formData.anonym) {
+                                    const abt2Selected = document.getElementById('abteilung2').selectedOptions[0].text;
+                                    if (abt2Selected !== getText('form.none')) {
+                                        abt2Text = abt2Selected;
                                     }
                                 }
                                 
-                                // ZEILE 3: Abteilungen nur hinzufügen wenn wirklich vorhanden
-                                const abteilungRow = [];
-                                abteilungRow[0] = abt1Text || ''; // Leerer String statt undefined
-                                abteilungRow[1] = abt2Text || ''; // Leerer String statt undefined
-                                
-                                // Nur hinzufügen wenn mindestens eine Abteilung vorhanden ist
-                                if (abt1Text || abt2Text) {
-                                    tableData.push(abteilungRow);
-                                }
+                                const abteilungRow = [abt1Text, abt2Text];
+                                tableData.push(abteilungRow);
                             }
                             
                             // Tabelle mit Daten erstellen
@@ -1987,66 +1967,14 @@
                             signatureTable.getBorder(Word.BorderLocation.insideHorizontal).type = Word.BorderType.none;
                             signatureTable.getBorder(Word.BorderLocation.insideVertical).type = Word.BorderType.none;
                             
-                            // Sync nach Tabellenerstellung
-                            await context.sync();
-                            
-                            // Spaltenbreiten über Zellen setzen und Formatierung anpassen
+                            // Spaltenbreiten über Zellen setzen (da columns Collection nicht direkt zugänglich)
                             const columnWidth = CD_MANUAL_MEASURES.signatureSpacing;
                             
                             for (let i = 0; i < tableData.length; i++) {
                                 const cell1 = signatureTable.getCell(i, 0);
                                 const cell2 = signatureTable.getCell(i, 1);
-                                
-                                // Zellen laden
-                                context.load(cell1, 'body');
-                                context.load(cell2, 'body');
-                                
                                 cell1.width = columnWidth;
                                 cell2.width = columnWidth;
-                                
-                                // PADDING auf 0 setzen für beide Zellen
-                                cell1.setPadding(Word.CellPaddingLocation.top, 0);
-                                cell1.setPadding(Word.CellPaddingLocation.bottom, 0);
-                                cell1.setPadding(Word.CellPaddingLocation.left, 0);
-                                cell1.setPadding(Word.CellPaddingLocation.right, 0);
-                                
-                                cell2.setPadding(Word.CellPaddingLocation.top, 0);
-                                cell2.setPadding(Word.CellPaddingLocation.bottom, 0);
-                                cell2.setPadding(Word.CellPaddingLocation.left, 0);
-                                cell2.setPadding(Word.CellPaddingLocation.right, 0);
-                            }
-                            
-                            // Sync nach Padding-Einstellungen
-                            await context.sync();
-                            
-                            // Jetzt die Paragraphen in den Zellen formatieren (entfernt interne Abstände)
-                            for (let i = 0; i < tableData.length; i++) {
-                                const cell1 = signatureTable.getCell(i, 0).body;
-                                const cell2 = signatureTable.getCell(i, 1).body;
-                                
-                                // Paragraphen ohne Abstände
-                                const paragraphs1 = cell1.paragraphs;
-                                const paragraphs2 = cell2.paragraphs;
-                                
-                                context.load(paragraphs1);
-                                context.load(paragraphs2);
-                                await context.sync();
-                                
-                                // Alle Paragraphen in Zelle 1 formatieren
-                                for (let j = 0; j < paragraphs1.items.length; j++) {
-                                    paragraphs1.items[j].spaceBefore = 0;
-                                    paragraphs1.items[j].spaceAfter = 0;
-                                    paragraphs1.items[j].leftIndent = 0;
-                                    paragraphs1.items[j].rightIndent = 0;
-                                }
-                                
-                                // Alle Paragraphen in Zelle 2 formatieren
-                                for (let j = 0; j < paragraphs2.items.length; j++) {
-                                    paragraphs2.items[j].spaceBefore = 0;
-                                    paragraphs2.items[j].spaceAfter = 0;
-                                    paragraphs2.items[j].leftIndent = 0;
-                                    paragraphs2.items[j].rightIndent = 0;
-                                }
                             }
                             
                             // Synchronisation nach Formatierung
