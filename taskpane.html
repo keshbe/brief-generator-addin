@@ -1694,6 +1694,12 @@
                                 taglineParagraph.alignment = Word.Alignment.center;
                                 taglineParagraph.spaceAfter = 0;
                                 taglineParagraph.spaceBefore = 0;
+                                
+                                // Verhindere zusätzliche Leerzeile nach Tagline
+                                taglineParagraph.lineSpacing = 1;
+                                
+                                // Setze den Footer-Body direkt nach der Tagline
+                                await context.sync();
                             }
                         }
                     }
