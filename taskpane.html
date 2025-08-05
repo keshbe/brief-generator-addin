@@ -1703,11 +1703,13 @@
 
                     // === HAUPTINHALT ===
                     
-                    // 13pt Abstand nach dem Logo
-                    const spacerPara = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
-                    spacerPara.spaceBefore = 0;
-                    spacerPara.spaceAfter = 13;  // 13pt Abstand nach unten
-                    spacerPara.font.size = 1;
+                    // Adresse muss bei EXAKT 53mm vom oberen PAPIERRAND beginnen
+                    // 53mm = 150pt
+                    // Da der Header bei 12mm (34pt) beginnt, brauchen wir: 150pt - 34pt = 116pt Abstand
+                    const spacerBeforeAddress = context.document.body.insertParagraph('\u00A0', Word.InsertLocation.end);
+                    spacerBeforeAddress.font.size = 1;
+                    spacerBeforeAddress.spaceBefore = 0;
+                    spacerBeforeAddress.spaceAfter = 116; // Positioniert Adresse bei exakt 53mm vom Papierrand
 
                     // Empfängeradresse mit Tabelle für horizontale Positionierung
                     if (formData.adresse) {
@@ -1891,7 +1893,7 @@
                         }
                     }
 
-                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle (BLEIBT UNVERÄNDERT)
+                    // Unterschriften, Funktionen und Abteilungen - alles in EINER Tabelle mit PADDING 0
                     if (formData.unterschrift1 || formData.unterschrift2) {
                         try {
                             // Sammle alle Daten für die Tabelle
@@ -1975,6 +1977,17 @@
                                 const cell2 = signatureTable.getCell(i, 1);
                                 cell1.width = columnWidth;
                                 cell2.width = columnWidth;
+                                
+                                // PADDING auf 0 setzen für beide Zellen
+                                cell1.setPadding(Word.CellPaddingLocation.top, 0);
+                                cell1.setPadding(Word.CellPaddingLocation.bottom, 0);
+                                cell1.setPadding(Word.CellPaddingLocation.left, 0);
+                                cell1.setPadding(Word.CellPaddingLocation.right, 0);
+                                
+                                cell2.setPadding(Word.CellPaddingLocation.top, 0);
+                                cell2.setPadding(Word.CellPaddingLocation.bottom, 0);
+                                cell2.setPadding(Word.CellPaddingLocation.left, 0);
+                                cell2.setPadding(Word.CellPaddingLocation.right, 0);
                             }
                             
                             // Synchronisation nach Formatierung
